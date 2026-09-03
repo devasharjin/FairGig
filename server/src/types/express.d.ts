@@ -2,9 +2,11 @@ import "express";
 import { JwtPayload } from "jsonwebtoken";
 
 export interface UserPayload extends JwtPayload {
+  userId?: string;
+  id?: string;
   email?: string;
   name?: string;
-  role?: string;
+  role?: string[] | string;
 }
 
 declare global {

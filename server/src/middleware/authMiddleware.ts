@@ -1,39 +1,50 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
-import { UserPayload } from "../types/express.js";
+import { UserRole } from "../models/user.model.js";
 import { fail } from "../shared/envelope.js";
+import { verifyAccessToken, AccessTokenPayload } from "../utils/jwt.utils.js";
 
-
-type Role = "admin" | "faculty" | "student" | "customer";
+type Role = UserRole | string;
 
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
-  const token = req.cookies?.accessToken;
+  // Extract token from HTTP-Only cookie or Authorization Bearer header
+  const authHeader = req.headers.authorization;
+  const tokenFromHeader = authHeader?.startsWith("Bearer ")
+    ? authHeader.split(" ")[1]
+    : null;
+  const token = req.cookies?.accessToken || tokenFromHeader;
 
   if (!token) {
     return fail(res, "Unauthorized", null, 401);
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as UserPayload;
+    const decoded = verifyAccessToken<AccessTokenPayload>(token);
     if (!decoded) {
-      throw new Error("Invalid token");
+      return fail(res, "Invalid or expired token", null, 401);
     }
     req.user = decoded;
     next();
   } catch (error) {
-    return fail(res, "Forbidden", null, 403);
+    return fail(res, "Invalid or expired token", null, 401);
   }
 }
 
-
 export function requireRole(...allowedRoles: Role[]) {
   return (req: Request, res: Response, next: NextFunction) => {
-    if (
-      !req.user ||
-      typeof req.user === "string" ||
-      !allowedRoles.includes(req.user.role as Role)
-    ) {
-      return fail(res, "Forbidden", null, 403);
+    if (!req.user || typeof req.user === "string") {
+      return fail(res, "Forbidden: User not authenticated", null, 403);
+    }
+
+    const userRoles = Array.isArray(req.user.role)
+      ? req.user.role
+      : typeof req.user.role === "string"
+      ? [req.user.role]
+      : [];
+
+    const hasPermission = allowedRoles.some((role) => userRoles.includes(role));
+
+    if (!hasPermission) {
+      return fail(res, "Forbidden: Insufficient privileges", null, 403);
     }
 
     next();
