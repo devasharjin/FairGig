@@ -1,20 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import {
   Building2,
-  X,
   MapPin,
   Phone,
   Mail,
   ArrowRight,
   Loader2,
-  Landmark,
   ChevronRight,
-  Layers,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
-import { cooperativeRegister, getMe, getFederations } from "@/features/auth/api";
+import { cooperativeRegister, getMe } from "@/features/auth/api";
 import { useAuthStore } from "@/features/auth/store";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,73 +24,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { CooperativeRegisterPayload, FederationOption } from "@/features/auth/types";
 
-// Categorized Services for the Select component
-const SERVICE_CATEGORIES = [
-  {
-    category: "Electrical & Technical",
-    services: [
-      "Electrical Installations",
-      "HVAC & Cooling Systems",
-      "Solar & Renewable Energy",
-      "Appliance Maintenance",
-    ],
-  },
-  {
-    category: "Plumbing & Piping",
-    services: [
-      "Plumbing & Sanitation",
-      "Industrial Piping",
-      "Water Treatment & Filtration",
-    ],
-  },
-  {
-    category: "Civil & Construction",
-    services: [
-      "Carpentry & Woodwork",
-      "Commercial Painting",
-      "Flooring & Tiling",
-      "Masonry & Brickwork",
-    ],
-  },
-  {
-    category: "Facility & Operations",
-    services: [
-      "Deep Cleaning & Sanitization",
-      "Pest Control Services",
-      "Facility Management",
-      "Logistics & Transport",
-    ],
-  },
-];
+import type { CooperativeRegisterPayload } from "@/features/auth/types";
 
-const PRESET_FEDERATIONS: FederationOption[] = [
-  {
-    _id: "65f0a2c3d4e5f6a7b8c90101",
-    federativeName: "National Apex Federation of Labour Cooperatives",
-    federativeAddress: "New Delhi",
-  },
-  {
-    _id: "65f0a2c3d4e5f6a7b8c90102",
-    federativeName: "All-India Construction & Trades Guild Federation",
-    federativeAddress: "Mumbai, Maharashtra",
-  },
-  {
-    _id: "65f0a2c3d4e5f6a7b8c90103",
-    federativeName: "Southern Regional Cooperative Workers Union",
-    federativeAddress: "Bengaluru, Karnataka",
-  },
-];
+
 
 export default function CooperativeRegisterForm() {
   const navigate = useNavigate();
@@ -114,39 +48,8 @@ export default function CooperativeRegisterForm() {
   const [cooperativeEmail, setCooperativeEmail] = useState("");
   const [cooperativePhone, setCooperativePhone] = useState("");
   const [cooperativeAddress, setCooperativeAddress] = useState("");
-  const [services, setServices] = useState<string[]>([]);
-
-  // Federation
-  const [federationsList, setFederationsList] = useState<FederationOption[]>(PRESET_FEDERATIONS);
-  const [federationSelection, setFederationSelection] = useState<string>("none");
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    let isMounted = true;
-    getFederations()
-      .then((data) => {
-        if (isMounted && Array.isArray(data) && data.length > 0) {
-          setFederationsList(data);
-        }
-      })
-      .catch(() => { });
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const handleAddService = (service: string) => {
-    if (!service) return;
-    if (services.includes(service)) {
-      toast.error(`"${service}" is already added.`);
-      return;
-    }
-    setServices((prev) => [...prev, service]);
-  };
-
-  const handleRemoveService = (serviceToRemove: string) => {
-    setServices((prev) => prev.filter((s) => s !== serviceToRemove));
-  };
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -164,7 +67,6 @@ export default function CooperativeRegisterForm() {
         cooperativeEmail: cooperativeEmail.trim() || undefined,
         cooperativePhone: cooperativePhone.trim() || undefined,
         cooperativeAddress: cooperativeAddress.trim() || undefined,
-        federationId: federationSelection !== "none" ? federationSelection : undefined,
       };
 
       await cooperativeRegister(payload);
@@ -279,104 +181,7 @@ export default function CooperativeRegisterForm() {
               />
             </div>
 
-            {/* Federation Affiliation Dropdown */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <Label className="text-xs font-semibold text-foreground/85 flex items-center gap-1.5">
-                  <Landmark className="size-3.5 text-primary" />
-                  Apex Federation Affiliation
-                </Label>
-                <span className="text-[10px] text-muted-foreground">Optional</span>
-              </div>
-              <Select value={federationSelection} onValueChange={(val) => val && setFederationSelection(val)}>
-                <SelectTrigger className="w-full h-10 rounded-xl text-xs sm:text-sm bg-input/20 border-border/80 cursor-pointer">
-                  <SelectValue placeholder="Select apex federation or independent" />
-                </SelectTrigger>
-                <SelectContent className="max-h-56">
-                  <SelectItem value="none" className="text-xs py-2 cursor-pointer font-medium">
-                    ⚡ Independent Society (No Apex Federation)
-                  </SelectItem>
-                  <SelectGroup>
-                    <SelectLabel className="text-[10px] text-primary uppercase font-bold px-2 py-1">
-                      Affiliated Federations
-                    </SelectLabel>
-                    {federationsList.map((f) => (
-                      <SelectItem key={f._id} value={f._id} className="text-xs py-2 cursor-pointer">
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-foreground">{f.federativeName}</span>
-                          {f.federativeAddress && (
-                            <span className="text-[10px] text-muted-foreground">{f.federativeAddress}</span>
-                          )}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
 
-            {/* Trade Services Offered */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <Label className="text-xs font-semibold text-foreground/85 flex items-center gap-1.5">
-                  <Layers className="size-3.5 text-primary" />
-                  Core Trade Services Offered
-                </Label>
-                <span className="text-[11px] text-muted-foreground">
-                  {services.length} selected
-                </span>
-              </div>
-
-              <Select value="" onValueChange={(val) => { if (val) handleAddService(val); }}>
-                <SelectTrigger className="w-full h-10 rounded-xl text-xs sm:text-sm bg-input/20 border-border/80 cursor-pointer">
-                  <SelectValue placeholder="Add services offered by your members..." />
-                </SelectTrigger>
-                <SelectContent className="max-h-56">
-                  {SERVICE_CATEGORIES.map((cat) => (
-                    <SelectGroup key={cat.category}>
-                      <SelectLabel className="text-[10px] uppercase font-bold text-primary px-2 py-1">
-                        {cat.category}
-                      </SelectLabel>
-                      {cat.services.map((s) => {
-                        const isSelected = services.includes(s);
-                        return (
-                          <SelectItem
-                            key={s}
-                            value={s}
-                            disabled={isSelected}
-                            className="text-xs py-1.5 cursor-pointer"
-                          >
-                            {isSelected ? `✓ ${s}` : s}
-                          </SelectItem>
-                        );
-                      })}
-                    </SelectGroup>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              {services.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {services.map((s) => (
-                    <Badge
-                      key={s}
-                      variant="secondary"
-                      className="text-xs py-1 px-2.5 rounded-lg gap-1.5 bg-primary/10 text-primary border border-primary/20 hover:bg-primary/15 transition-all"
-                    >
-                      <span>{s}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveService(s)}
-                        className="hover:text-destructive transition-colors cursor-pointer"
-                        title={`Remove ${s}`}
-                      >
-                        <X className="size-3" />
-                      </button>
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
 
             {/* Submit Button */}
             <Button

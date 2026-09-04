@@ -24,9 +24,7 @@ export const cooperativeRegister = async (
     cooperativePhone,
     cooperativeEmail,
     cooperativeLogo,
-    federationId,
     members,
-    services,
   } = req.body;
 
   // Check if cooperative profile already exists for this user
@@ -53,10 +51,6 @@ export const cooperativeRegister = async (
     }
   }
 
-  // Validate federationId if provided
-  if (federationId && !mongoose.Types.ObjectId.isValid(federationId)) {
-    return fail(res, "Invalid federation ID", null, 400);
-  }
 
   // Validate members array if provided
   if (members !== undefined) {
@@ -71,10 +65,6 @@ export const cooperativeRegister = async (
     }
   }
 
-  // Validate services array if provided
-  if (services !== undefined && !Array.isArray(services)) {
-    return fail(res, "Services must be an array of strings", null, 400);
-  }
 
   // Create cooperative
   const cooperative = await Cooperative.create({
@@ -85,9 +75,7 @@ export const cooperativeRegister = async (
     cooperativePhone: cooperativePhone?.trim() || undefined,
     cooperativeEmail: cooperativeEmail?.trim() || undefined,
     cooperativeLogo: cooperativeLogo?.trim() || undefined,
-    federationId: federationId || undefined,
     members: members || [],
-    services: services || [],
     verificationStatus: VerificationStatus.PENDING,
   });
 

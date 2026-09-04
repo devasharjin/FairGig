@@ -22,7 +22,6 @@ export const workerRegister = async (
 
   const {
     cooperativeId,
-    federationId,
     skills,
     availability,
     yearsOfExperience,
@@ -75,18 +74,11 @@ export const workerRegister = async (
     return fail(res, "Invalid cooperative ID", null, 400);
   }
 
-  if (
-    federationId &&
-    !mongoose.Types.ObjectId.isValid(federationId)
-  ) {
-    return fail(res, "Invalid federation ID", null, 400);
-  }
 
   // Create worker
   const worker = await Worker.create({
     userId,
     cooperativeId: cooperativeId || undefined,
-    federationId: federationId || undefined,
     skills,
     availability: availability || AvailabilityStatus.FULL_TIME,
     yearsOfExperience: yearsOfExperience ?? 0,

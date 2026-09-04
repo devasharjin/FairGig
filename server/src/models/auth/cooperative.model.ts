@@ -3,7 +3,6 @@ import { VerificationStatus } from "./worker.model";
 
 export interface ICooperative extends Document {
   userId: mongoose.Types.ObjectId;
-  federationId?: mongoose.Types.ObjectId;
   cooperativeName: string;
   cooperativeDescription?: string;
   cooperativeAddress?: string;
@@ -11,7 +10,6 @@ export interface ICooperative extends Document {
   cooperativeEmail?: string;
   cooperativeLogo?: string;
   members: mongoose.Types.ObjectId[];
-  services: string[];
   verificationStatus: VerificationStatus;
   createdAt: Date;
   updatedAt: Date;
@@ -24,11 +22,6 @@ const cooperativeSchema = new Schema<ICooperative>(
       ref: "User",
       required: [true, "User ID is required"],
       unique: true,
-      index: true,
-    },
-    federationId: {
-      type: Schema.Types.ObjectId,
-      ref: "Federative",
       index: true,
     },
     cooperativeName: {
@@ -63,10 +56,6 @@ const cooperativeSchema = new Schema<ICooperative>(
         ref: "Worker",
       },
     ],
-    services: {
-      type: [String],
-      default: [],
-    },
     verificationStatus: {
       type: String,
       enum: Object.values(VerificationStatus),

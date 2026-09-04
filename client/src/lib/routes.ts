@@ -16,8 +16,6 @@ export function getRoleDashboardPath(
 
     if (uppercaseRoles.includes("SUPERADMIN")) {
       selectedRole = "SUPERADMIN";
-    } else if (uppercaseRoles.includes("FEDERATION")) {
-      selectedRole = "FEDERATION";
     } else if (uppercaseRoles.includes("COOPERATIVE")) {
       selectedRole = "COOPERATIVE";
     } else if (uppercaseRoles.includes("WORKER")) {
@@ -45,8 +43,6 @@ export function getRoleDashboardPath(
       return "/worker";
     case "COOPERATIVE":
       return "/cooperative";
-    case "FEDERATION":
-      return "/federation";
     case "SUPERADMIN":
       return "/admin";
     default:

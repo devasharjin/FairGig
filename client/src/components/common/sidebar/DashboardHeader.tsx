@@ -5,7 +5,7 @@ import { NavbarUserDropdown } from "@/components/common/navbar/NavbarUserDropdow
 import { useSidebar } from "./SidebarContext";
 
 export interface DashboardHeaderProps {
-  currentPortal: "worker" | "superadmin" | "cooperative" | "federation";
+  currentPortal: "worker" | "superadmin" | "cooperative";
   portalTitle?: string;
   portalBadge?: string;
   children?: React.ReactNode;

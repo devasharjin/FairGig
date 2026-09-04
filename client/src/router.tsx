@@ -11,7 +11,6 @@ import { RoleGuardLayout } from "./components/auth/RoleGuard";
 import CustomerLayout from "./components/layout/customerLayout";
 import WorkerLayout from "./components/layout/workerLayout";
 import CooperativeLayout from "./components/layout/cooperateLayout";
-import FederationLayout from "./components/layout/federateLayout";
 import SuperAdminLayout from "./components/layout/superAdminLayout";
 
 // Auth Pages
@@ -19,13 +18,11 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import WorkerRegister from "./pages/auth/WorkerRegister";
 import CooperativeRegister from "./pages/auth/CooperativeRegister";
-import FederateRegister from "./pages/auth/FederateRegister";
 
 // Role Home Pages
 import CustomerHome from "./pages/customer/Home";
 import WorkerHome from "./pages/worker/Home";
 import CooperativeHome from "./pages/cooperative/Home";
-import FederationHome from "./pages/federation/Home";
 import SuperAdminHome from "./pages/superAdmin/Home";
 
 function DashboardRedirect() {
@@ -70,10 +67,6 @@ export const router = createBrowserRouter([
             path: "register/cooperative",
             element: <CooperativeRegister />,
           },
-          {
-            path: "register/federation",
-            element: <FederateRegister />,
-          }
         ],
       },
 
@@ -151,30 +144,6 @@ export const router = createBrowserRouter([
             ],
           },
 
-          // FEDERATION (/federation)
-          {
-            path: "federation",
-            element: <RoleGuardLayout allow={["FEDERATION"]} />,
-            children: [
-              {
-                element: <FederationLayout />,
-                children: [
-                  {
-                    index: true,
-                    element: <FederationHome />,
-                  },
-                  {
-                    path: "cooperatives",
-                    element: <FederationHome />,
-                  },
-                  {
-                    path: "policies",
-                    element: <FederationHome />,
-                  },
-                ],
-              },
-            ],
-          },
 
           // SUPER ADMIN (/admin)
           {
@@ -217,10 +186,6 @@ export const router = createBrowserRouter([
           {
             path: "dashboard/cooperative",
             element: <Navigate to="/cooperative" replace />,
-          },
-          {
-            path: "dashboard/federation",
-            element: <Navigate to="/federation" replace />,
           },
           {
             path: "dashboard/superadmin",

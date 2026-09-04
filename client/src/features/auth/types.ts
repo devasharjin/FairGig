@@ -61,7 +61,6 @@ export type UserRegisterPayload = CustomerRegisterPayload;
 export interface WorkerRegisterPayload {
   skills: string[];
   cooperativeId?: string;
-  federationId?: string;
   availability?: WorkerAvailability;
   yearsOfExperience?: number;
   address?: WorkerAddress;
@@ -77,27 +76,8 @@ export interface CooperativeRegisterPayload {
   cooperativePhone?: string;
   cooperativeEmail?: string;
   cooperativeLogo?: string;
-  federationId?: string;
   members?: string[];
-  services?: string[];
 }
-
-/**
- * Payload for POST /api/auth/register/federation (Requires Authentication)
- */
-export interface FederativeRegisterPayload {
-  federativeName: string;
-  federativeDescription?: string;
-  federativeAddress?: string;
-  federativePhone?: string;
-  federativeEmail?: string;
-  federativeLogo?: string;
-  members?: string[];
-  services?: string[];
-}
-
-// Alias for Federative registration
-export type FederationRegisterPayload = FederativeRegisterPayload;
 
 /**
  * Payload for POST /api/auth/refresh-token
@@ -115,7 +95,6 @@ export interface WorkerProfile {
   _id: string;
   userId: string;
   cooperativeId?: string | CooperativeProfile;
-  federationId?: string | FederativeProfile;
   skills: string[];
   availability: WorkerAvailability;
   yearsOfExperience: number;
@@ -129,7 +108,6 @@ export interface WorkerProfile {
 export interface CooperativeProfile {
   _id: string;
   userId: string;
-  federationId?: string | FederativeProfile;
   cooperativeName: string;
   cooperativeDescription?: string;
   cooperativeAddress?: string;
@@ -137,7 +115,6 @@ export interface CooperativeProfile {
   cooperativeEmail?: string;
   cooperativeLogo?: string;
   members?: string[] | WorkerProfile[];
-  services?: string[];
   verificationStatus: VerificationStatus;
   createdAt?: string;
   updatedAt?: string;
@@ -148,31 +125,6 @@ export interface CooperativeOption {
   cooperativeName: string;
   cooperativeDescription?: string;
   cooperativeAddress?: string;
-  services?: string[];
-}
-
-export interface FederativeProfile {
-  _id: string;
-  userId: string;
-  federativeName: string;
-  federativeDescription?: string;
-  federativeAddress?: string;
-  federativePhone?: string;
-  federativeEmail?: string;
-  federativeLogo?: string;
-  members?: string[] | CooperativeProfile[];
-  services?: string[];
-  verificationStatus: VerificationStatus;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-export interface FederationOption {
-  _id: string;
-  federativeName: string;
-  federativeDescription?: string;
-  federativeAddress?: string;
-  services?: string[];
 }
 
 // ==========================================
@@ -195,7 +147,6 @@ export type MeResponse = AppUser & {
   user?: AppUser;
   worker?: WorkerProfile | null;
   cooperative?: CooperativeProfile | null;
-  federative?: FederativeProfile | null;
-  profile?: WorkerProfile | CooperativeProfile | FederativeProfile | null;
+  profile?: WorkerProfile | CooperativeProfile | null;
 };
 

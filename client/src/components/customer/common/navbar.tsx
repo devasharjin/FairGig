@@ -95,7 +95,7 @@ export const CustomerNavbar = () => {
       {/* Mobile Navigation Sheet */}
       <Sheet open={isMobileOpen} onOpenChange={setIsMobileOpen}>
         <SheetContent
-          side="right"
+          side="left"
           className="p-0 w-72 sm:w-80 flex flex-col gap-0 outline-none"
           showCloseButton={true}
         >

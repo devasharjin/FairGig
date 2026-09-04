@@ -80,7 +80,7 @@ export const Footer = () => {
                         </div>
                     </Link>
                     <p className="text-muted-foreground leading-relaxed max-w-sm">
-                        FairGig is India's premier multi-stakeholder cooperative network uniting customers, trade professionals, local worker cooperatives, and apex state federations for transparent, dignified labor.
+                        FairGig is India's premier multi-stakeholder cooperative network uniting customers, trade professionals, and worker cooperatives for transparent, dignified labor.
                     </p>
                     <div className="space-y-2 text-muted-foreground pt-1">
                         <div className="flex items-center gap-2">
@@ -119,12 +119,6 @@ export const Footer = () => {
                         <li>
                             <Link to="/register/cooperative" className="hover:text-foreground hover:underline transition-colors flex items-center gap-1">
                                 Cooperative Societies
-                                <ArrowUpRight className="size-3 text-muted-foreground" />
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/register/federation" className="hover:text-foreground hover:underline transition-colors flex items-center gap-1">
-                                Apex Federations
                                 <ArrowUpRight className="size-3 text-muted-foreground" />
                             </Link>
                         </li>

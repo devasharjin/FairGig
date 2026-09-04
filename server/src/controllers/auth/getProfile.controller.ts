@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import User, { UserRole } from "../../models/auth/user.model";
 import Worker from "../../models/auth/worker.model";
 import Cooperative from "../../models/auth/cooperative.model";
-import Federative from "../../models/auth/federative.model";
 import { fail, ok } from "../../shared/envelope";
 
 export async function getProfile(req: Request, res: Response) {
@@ -21,26 +20,17 @@ export async function getProfile(req: Request, res: Response) {
 
   let worker: any = null;
   let cooperative: any = null;
-  let federative: any = null;
 
   // 3. Fetch role-specific profile details
   if (user.role.includes(UserRole.WORKER) || user.role.includes(UserRole.CUSTOMER)) {
-    worker = await Worker.findOne({ userId }).populate(
-      "cooperativeId federationId"
-    );
+    worker = await Worker.findOne({ userId }).populate("cooperativeId");
   }
 
   if (user.role.includes(UserRole.COOPERATIVE)) {
-    cooperative = await Cooperative.findOne({ userId }).populate(
-      "federationId members"
-    );
+    cooperative = await Cooperative.findOne({ userId }).populate("members");
   }
 
-  if (user.role.includes(UserRole.FEDERATION)) {
-    federative = await Federative.findOne({ userId }).populate("members");
-  }
-
-  const profile = worker || cooperative || federative || null;
+  const profile = worker || cooperative || null;
 
   return ok(
     res,
@@ -48,7 +38,6 @@ export async function getProfile(req: Request, res: Response) {
       user,
       worker,
       cooperative,
-      federative,
       profile,
     },
     "User profile retrieved successfully"

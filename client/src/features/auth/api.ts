@@ -3,7 +3,6 @@ import type {
   CustomerRegisterPayload,
   WorkerRegisterPayload,
   CooperativeRegisterPayload,
-  FederativeRegisterPayload,
   LoginPayload,
   MeResponse,
 } from "./types";
@@ -40,17 +39,8 @@ export const cooperativeRegister = async (payload: CooperativeRegisterPayload) =
   return res;
 };
 
-export const federativeRegister = async (payload: FederativeRegisterPayload) => {
-  const res = await apiPost<any, FederativeRegisterPayload>("/api/auth/register/federation", payload);
-  return res;
-};
-
 export const getCooperatives = async () => {
   const res = await apiGet<any>("/api/auth/cooperatives");
   return (res?.data || res || []) as import("./types").CooperativeOption[];
 };
-
-export const getFederations = async () => {
-  const res = await apiGet<any>("/api/auth/federations");
-  return (res?.data || res || []) as import("./types").FederationOption[];
-};
+

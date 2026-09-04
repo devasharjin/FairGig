@@ -6,7 +6,7 @@ import { DashboardHeader } from "./DashboardHeader";
 import type { PortalBrandingConfig, SidebarGroupConfig } from "./types";
 
 export interface DashboardLayoutProps {
-  currentPortal: "worker" | "superadmin" | "cooperative" | "federation";
+  currentPortal: "worker" | "superadmin" | "cooperative";
   branding: PortalBrandingConfig;
   groups: SidebarGroupConfig[];
   headerActions?: React.ReactNode;

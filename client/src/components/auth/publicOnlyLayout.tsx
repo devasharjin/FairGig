@@ -20,7 +20,6 @@ export const PublicOnlyLayout = () => {
 
     const isWorker = roles.includes("WORKER");
     const isCoop = roles.includes("COOPERATIVE");
-    const isFed = roles.includes("FEDERATION");
 
     // Allow logged-in customers to register as a worker if they aren't already one
     if (location.pathname === "/register/worker") {
@@ -34,17 +33,6 @@ export const PublicOnlyLayout = () => {
     if (location.pathname === "/register/cooperative") {
       if (isCoop) {
         return <Navigate to="/cooperative" replace />;
-      }
-      return <Outlet />;
-    }
-
-    // Allow logged-in users to register as a federation if they aren't already one
-    if (
-      location.pathname === "/register/federation" ||
-      location.pathname === "/register/federate"
-    ) {
-      if (isFed) {
-        return <Navigate to="/federation" replace />;
       }
       return <Outlet />;
     }

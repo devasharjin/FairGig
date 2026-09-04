@@ -4,7 +4,6 @@ import {
   LogOut,
   Wrench,
   Building2,
-  Landmark,
   Store,
   ChevronDown,
   ShieldAlert,
@@ -25,7 +24,7 @@ import {
 import { cn } from "@/lib/utils";
 
 export interface NavbarUserDropdownProps {
-  currentPortal?: "customer" | "worker" | "cooperative" | "federation" | "superadmin";
+  currentPortal?: "customer" | "worker" | "cooperative" | "superadmin";
   className?: string;
 }
 
@@ -47,7 +46,6 @@ export const NavbarUserDropdown = ({
 
   const isWorker = userRoles.includes("WORKER");
   const isCooperative = userRoles.includes("COOPERATIVE");
-  const isFederation = userRoles.includes("FEDERATION");
   const isSuperAdmin = userRoles.includes("SUPERADMIN") || userRoles.includes("ADMIN");
 
   const handleLogout = async () => {
@@ -185,23 +183,6 @@ export const NavbarUserDropdown = ({
             </DropdownMenuItem>
           )}
 
-          {/* Federation Option */}
-          {currentPortal !== "federation" && (
-            <DropdownMenuItem
-              onClick={() => navigate(isFederation ? "/federation" : "/register/federation")}
-              className="cursor-pointer gap-2.5 py-2.5 px-3 rounded-xl transition-colors"
-            >
-              <Landmark className={cn("size-4", isFederation ? "text-primary" : "text-muted-foreground")} />
-              <div className="flex flex-col">
-                <span className="font-medium text-sm">
-                  {isFederation ? "Federation Dashboard" : "Register as Federation"}
-                </span>
-                <span className="text-[11px] text-muted-foreground">
-                  {isFederation ? "Apex policies & standards" : "Apex union for policy & welfare"}
-                </span>
-              </div>
-            </DropdownMenuItem>
-          )}
 
           {/* SuperAdmin Option (only if user has superadmin role and not currently in admin portal) */}
           {isSuperAdmin && currentPortal !== "superadmin" && (

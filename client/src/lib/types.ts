@@ -1,4 +1,4 @@
-export type UserRole = "WORKER" | "CUSTOMER" | "COOPERATIVE" | "FEDERATION" | "SUPERADMIN";
+export type UserRole = "WORKER" | "CUSTOMER" | "COOPERATIVE" | "SUPERADMIN";
 
 export type AppUser = {
   _id?: string;

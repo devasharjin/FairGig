@@ -14,7 +14,6 @@ export enum VerificationStatus {
 export interface IWorker extends Document {
   userId: mongoose.Types.ObjectId;
   cooperativeId?: mongoose.Types.ObjectId;
-  federationId?: mongoose.Types.ObjectId;
   skills: string[];
   availability: AvailabilityStatus;
   yearsOfExperience: number;
@@ -46,11 +45,6 @@ const workerSchema = new Schema<IWorker>(
       index: true,
     },
 
-    federationId: {
-      type: Schema.Types.ObjectId,
-      ref: "Federative",
-      index: true,
-    },
 
     skills: {
       type: [String],
