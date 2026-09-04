@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { UserRole } from "../models/user.model.js";
-import { fail } from "../shared/envelope.js";
-import { verifyAccessToken, AccessTokenPayload } from "../utils/jwt.utils.js";
+import { UserRole } from "../models/auth/user.model";
+import { fail } from "../shared/envelope";
+import { verifyAccessToken, AccessTokenPayload } from "../utils/jwt.utils";
 
 type Role = UserRole | string;
 
@@ -38,8 +38,8 @@ export function requireRole(...allowedRoles: Role[]) {
     const userRoles = Array.isArray(req.user.role)
       ? req.user.role
       : typeof req.user.role === "string"
-      ? [req.user.role]
-      : [];
+        ? [req.user.role]
+        : [];
 
     const hasPermission = allowedRoles.some((role) => userRoles.includes(role));
 

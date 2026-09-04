@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Federative from "../../models/federative.model";
+import Federative from "../../models/auth/federative.model";
 import { ok } from "../../shared/envelope";
 
 export const getFederations = async (

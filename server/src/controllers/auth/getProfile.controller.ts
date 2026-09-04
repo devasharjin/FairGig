@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import User, { UserRole } from "../../models/user.model";
-import Worker from "../../models/worker.model";
-import Cooperative from "../../models/cooperative.model";
-import Federative from "../../models/federative.model";
+import User, { UserRole } from "../../models/auth/user.model";
+import Worker from "../../models/auth/worker.model";
+import Cooperative from "../../models/auth/cooperative.model";
+import Federative from "../../models/auth/federative.model";
 import { fail, ok } from "../../shared/envelope";
 
 export async function getProfile(req: Request, res: Response) {

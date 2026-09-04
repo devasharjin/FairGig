@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import User, { AccountStatus } from "../../models/user.model";
+import User, { AccountStatus } from "../../models/auth/user.model";
 import { fail, ok } from "../../shared/envelope";
 import { generateAuthTokens } from "../../utils/jwt.utils";
 import { comparePassword } from "../../utils/password";

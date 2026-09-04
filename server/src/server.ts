@@ -6,6 +6,9 @@ import dotenv from 'dotenv';
 import { connectDB } from './config/database';
 import dns from 'dns';
 import authRoutes from './routes/auth/auth.routes';
+import adminCategoryRoutes from './routes/admin/category.routes';
+import adminServiceRoutes from './routes/admin/service.routes';
+import cooperativeServiceRoutes from './routes/cooperative/cooperativeService.routes';
 import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
 
@@ -37,6 +40,9 @@ app.get('/health', (req: Request, res: Response) => {
 
 // API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/admin/categories', adminCategoryRoutes);
+app.use('/api/admin/services', adminServiceRoutes);
+app.use('/api/cooperative/services', cooperativeServiceRoutes);
 
 // Error Middlewares (must be registered after routes)
 app.use(notFound);

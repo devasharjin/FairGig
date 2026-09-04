@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-import User, { UserRole } from "../../models/user.model";
-import Cooperative from "../../models/cooperative.model";
-import { VerificationStatus } from "../../models/worker.model";
-import { fail, ok } from "../../shared/envelope";
-import { generateAuthTokens } from "../../utils/jwt.utils";
+import User, { UserRole } from "../../../models/auth/user.model";
+import Cooperative from "../../../models/auth/cooperative.model";
+import { VerificationStatus } from "../../../models/auth/worker.model";
+import { fail, ok } from "../../../shared/envelope";
+import { generateAuthTokens } from "../../../utils/jwt.utils";
 
 export const cooperativeRegister = async (
   req: Request,

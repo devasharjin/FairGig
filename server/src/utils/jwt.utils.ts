@@ -1,5 +1,5 @@
 import jwt, { Secret, SignOptions } from "jsonwebtoken";
-import { UserRole } from "../models/user.model";
+import { UserRole } from "../models/auth/user.model";
 import { jwtConfig } from "../config/jwt.config";
 
 export interface AccessTokenPayload {

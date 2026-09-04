@@ -1,16 +1,16 @@
 import { Router } from "express";
 import { requireAuth } from "../../middleware/authMiddleware";
 import { asyncHandler } from "../../shared/asyncHandler";
-import { userRegister } from "../../controllers/auth/userRegister.controller";
-import { workerRegister } from "../../controllers/auth/workerRegister";
-import { cooperativeRegister } from "../../controllers/auth/cooperativeRegister";
-import { federativeRegister } from "../../controllers/auth/federativeRegister";
+import { workerRegister } from "../../controllers/auth/register/workerRegister";
+import { cooperativeRegister } from "../../controllers/auth/register/cooperativeRegister";
+import { federativeRegister } from "../../controllers/auth/register/federativeRegister";
 import { login } from "../../controllers/auth/login.controller";
 import { refreshToken } from "../../controllers/auth/refreshToken.controller";
 import { logout } from "../../controllers/auth/logout.controller";
 import { getProfile } from "../../controllers/auth/getProfile.controller";
 import { getCooperatives } from "../../controllers/auth/getCooperatives.controller";
 import { getFederations } from "../../controllers/auth/getFederations.controller";
+import { userRegister } from "../../controllers/auth/register/userRegister.controller";
 
 
 const router = Router();

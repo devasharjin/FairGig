@@ -1,16 +1,59 @@
-import { Outlet } from "react-router-dom";
-import CooperativeNavbar from "../cooperative/common/navbar";
-import Footer from "../common/footer";
+import {
+  Building2,
+  Layers,
+  Users,
+  Briefcase,
+} from "lucide-react";
+import {
+  DashboardLayout,
+  type PortalBrandingConfig,
+  type SidebarGroupConfig,
+} from "@/components/common/sidebar";
+
+const cooperativeBranding: PortalBrandingConfig = {
+  title: "fairgig",
+  subtitle: "Cooperative Portal",
+  badge: "SOCIETY",
+  icon: Building2,
+  homePath: "/cooperative",
+};
+
+const cooperativeNavGroups: SidebarGroupConfig[] = [
+  {
+    heading: "Overview",
+    items: [
+      {
+        title: "Dashboard",
+        to: "/cooperative",
+        icon: Layers,
+        end: true,
+      },
+    ],
+  },
+  {
+    heading: "Society Operations",
+    items: [
+      {
+        title: "Members Directory",
+        to: "/cooperative/members",
+        icon: Users,
+      },
+      {
+        title: "Contracts & Bids",
+        to: "/cooperative/bids",
+        icon: Briefcase,
+      },
+    ],
+  },
+];
 
 export const CooperativeLayout = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <CooperativeNavbar />
-      <main className="flex-1 w-full">
-        <Outlet />
-      </main>
-      <Footer />
-    </div>
+    <DashboardLayout
+      currentPortal="cooperative"
+      branding={cooperativeBranding}
+      groups={cooperativeNavGroups}
+    />
   );
 };
 

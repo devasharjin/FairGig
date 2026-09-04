@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Cooperative from "../../models/cooperative.model";
+import Cooperative from "../../models/auth/cooperative.model";
 import { ok } from "../../shared/envelope";
 
 export const getCooperatives = async (

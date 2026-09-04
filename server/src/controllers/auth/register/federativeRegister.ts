@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-import User, { UserRole } from "../../models/user.model";
-import Federative from "../../models/federative.model";
-import { VerificationStatus } from "../../models/worker.model";
-import { fail, ok } from "../../shared/envelope";
-import { generateAuthTokens } from "../../utils/jwt.utils";
+import User, { UserRole } from "../../../models/auth/user.model";
+import Federative from "../../../models/auth/federative.model";
+import { VerificationStatus } from "../../../models/auth/worker.model";
+import { fail, ok } from "../../../shared/envelope";
+import { generateAuthTokens } from "../../../utils/jwt.utils";
 
 export const federativeRegister = async (
   req: Request,

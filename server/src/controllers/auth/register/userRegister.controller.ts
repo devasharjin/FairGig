@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { fail, ok } from "../../shared/envelope";
-import { hashPassword } from "../../utils/password";
-import User, { UserRole } from "../../models/user.model";
-import { generateAuthTokens } from "../../utils/jwt.utils";
+import { fail, ok } from "../../../shared/envelope";
+import User, { UserRole } from "../../../models/auth/user.model";
+import { hashPassword } from "../../../utils/password";
+import { generateAuthTokens } from "../../../utils/jwt.utils";
 
 export async function userRegister(req: Request, res: Response) {
   const { name, email, phone, password } = req.body;
@@ -33,7 +33,7 @@ export async function userRegister(req: Request, res: Response) {
     password: hashedPassword,
     role: [UserRole.CUSTOMER],
   });
-  
+
   const tokens = generateAuthTokens(customer);
 
   const isProd = process.env.NODE_ENV === "production";

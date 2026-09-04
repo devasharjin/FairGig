@@ -1,7 +1,7 @@
 
 import type { NextFunction, Request, Response } from "express";
-import { fail } from "../shared/envelope.js";
-import { AppError } from "../shared/appError.js";
+import { fail } from "../shared/envelope";
+import { AppError } from "../shared/appError";
 
 export function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
     if (err instanceof AppError) {
