@@ -9,6 +9,8 @@ import authRoutes from './routes/auth/auth.routes';
 import adminCategoryRoutes from './routes/admin/category.routes';
 import adminServiceRoutes from './routes/admin/service.routes';
 import customerCategoryRoutes from './routes/customer/category.routes';
+import cooperativeRoutes from './routes/cooperative/workerVerification.routes';
+import adminVerificationRoutes from './routes/admin/verification.routes';
 import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
 
@@ -42,7 +44,9 @@ app.get('/health', (req: Request, res: Response) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/admin/categories', adminCategoryRoutes);
 app.use('/api/admin/services', adminServiceRoutes);
+app.use('/api/admin/verifications', adminVerificationRoutes);
 app.use('/api/customer', customerCategoryRoutes);
+app.use('/api/cooperative', cooperativeRoutes);
 
 // Error Middlewares (must be registered after routes)
 app.use(notFound);

@@ -34,8 +34,8 @@ export const workerRegister = async (payload: WorkerRegisterPayload | FormData) 
   return res;
 };
 
-export const cooperativeRegister = async (payload: CooperativeRegisterPayload) => {
-  const res = await apiPost<any, CooperativeRegisterPayload>("/api/auth/register/cooperative", payload);
+export const cooperativeRegister = async (payload: CooperativeRegisterPayload | FormData) => {
+  const res = await apiPost<any, CooperativeRegisterPayload | FormData>("/api/auth/register/cooperative", payload);
   return res;
 };
 

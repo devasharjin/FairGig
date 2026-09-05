@@ -8,7 +8,7 @@ export const getCooperatives = async (
 ): Promise<Response> => {
   const cooperatives = await Cooperative.find(
     {},
-    "_id cooperativeName cooperativeDescription cooperativeAddress cooperativePhone services verificationStatus"
+    "_id cooperativeName cooperativeAddress cooperativePhone services verificationStatus"
   ).sort({ cooperativeName: 1 });
 
   return ok(res, cooperatives, "Cooperatives retrieved successfully");

@@ -1,38 +1,39 @@
-import { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import {
-  Building2,
-  MapPin,
-  Phone,
-  Mail,
-  ArrowRight,
-  Loader2,
-  ChevronRight,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { cooperativeRegister, getMe } from "@/features/auth/api";
 import { useAuthStore } from "@/features/auth/store";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
-import type { CooperativeRegisterPayload } from "@/features/auth/types";
+import { CooperativeRegisterStepper } from "./CooperativeRegisterStepper";
+import { CooperativeDetailsStep } from "./CooperativeDetailsStep";
+import { CooperativeDocumentsStep } from "./CooperativeDocumentsStep";
 
-
+const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
+const ALLOWED_LOGO_TYPES = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
+const ALLOWED_CERT_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/jpg",
+  "application/pdf",
+];
 
 export default function CooperativeRegisterForm() {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
+
+  // Stepper state
+  const [currentStep, setCurrentStep] = useState<1 | 2>(1);
 
   // Check roles
   const userRoles: string[] = Array.isArray(user?.role)
@@ -43,39 +44,178 @@ export default function CooperativeRegisterForm() {
 
   const isAlreadyCooperative = userRoles.includes("COOPERATIVE");
 
-  // Form states
+  // Step 1 states
   const [cooperativeName, setCooperativeName] = useState("");
   const [cooperativeEmail, setCooperativeEmail] = useState("");
   const [cooperativePhone, setCooperativePhone] = useState("");
   const [cooperativeAddress, setCooperativeAddress] = useState("");
+
+  // Step 2 states
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const logoInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [certificateFile, setCertificateFile] = useState<File | null>(null);
+  const [certificatePreview, setCertificatePreview] = useState<string | null>(null);
+  const certificateInputRef = useRef<HTMLInputElement | null>(null);
+
   const [isLoading, setIsLoading] = useState(false);
-  
+
+  // Step 1 validation
+  const validateStep1 = (): boolean => {
+    if (!cooperativeName.trim() || cooperativeName.trim().length < 3) {
+      toast.error("Please enter a valid cooperative legal name (at least 3 characters).");
+      return false;
+    }
+
+    if (!cooperativeEmail.trim()) {
+      toast.error("Official cooperative email address is required.");
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cooperativeEmail.trim())) {
+      toast.error("Please enter a valid official email address.");
+      return false;
+    }
+
+    if (!cooperativePhone.trim() || cooperativePhone.trim().length < 7) {
+      toast.error("Please enter a valid contact phone number.");
+      return false;
+    }
+
+    if (!cooperativeAddress.trim() || cooperativeAddress.trim().length < 5) {
+      toast.error("Please enter the complete registered office address.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleNextToStep2 = () => {
+    if (validateStep1()) {
+      setCurrentStep(2);
+    }
+  };
+
+  const handleStepClick = (step: 1 | 2) => {
+    if (step === 2) {
+      if (validateStep1()) {
+        setCurrentStep(2);
+      }
+    } else {
+      setCurrentStep(1);
+    }
+  };
+
+  // Logo file selection
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!ALLOWED_LOGO_TYPES.includes(file.type)) {
+      toast.error("Invalid logo format. Please select a JPG, PNG, or WebP image.");
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      toast.error("Logo file size exceeds the 10MB limit.");
+      return;
+    }
+
+    if (logoPreview) {
+      URL.revokeObjectURL(logoPreview);
+    }
+
+    setLogoFile(file);
+    setLogoPreview(URL.createObjectURL(file));
+  };
+
+  const handleRemoveLogo = () => {
+    if (logoPreview) {
+      URL.revokeObjectURL(logoPreview);
+    }
+    setLogoFile(null);
+    setLogoPreview(null);
+    if (logoInputRef.current) {
+      logoInputRef.current.value = "";
+    }
+  };
+
+  // Certificate file selection
+  const handleCertificateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!ALLOWED_CERT_TYPES.includes(file.type)) {
+      toast.error("Invalid certificate format. Please select a PDF or Image (JPG, PNG).");
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      toast.error("Certificate file size exceeds the 10MB limit.");
+      return;
+    }
+
+    if (certificatePreview) {
+      URL.revokeObjectURL(certificatePreview);
+    }
+
+    setCertificateFile(file);
+    if (file.type.startsWith("image/")) {
+      setCertificatePreview(URL.createObjectURL(file));
+    } else {
+      setCertificatePreview(null);
+    }
+  };
+
+  const handleRemoveCertificate = () => {
+    if (certificatePreview) {
+      URL.revokeObjectURL(certificatePreview);
+    }
+    setCertificateFile(null);
+    setCertificatePreview(null);
+    if (certificateInputRef.current) {
+      certificateInputRef.current.value = "";
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!cooperativeName.trim() || cooperativeName.trim().length < 3) {
-      toast.error("Please enter a valid cooperative society name.");
+    if (!validateStep1()) {
+      setCurrentStep(1);
+      return;
+    }
+
+    if (!logoFile) {
+      toast.error("Please upload the official Cooperative Society Logo.");
+      return;
+    }
+
+    if (!certificateFile) {
+      toast.error("Please upload the official Government Registration Certificate or Bylaws.");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      const payload: CooperativeRegisterPayload = {
-        cooperativeName: cooperativeName.trim(),
-        cooperativeEmail: cooperativeEmail.trim() || undefined,
-        cooperativePhone: cooperativePhone.trim() || undefined,
-        cooperativeAddress: cooperativeAddress.trim() || undefined,
-      };
+      const formData = new FormData();
+      formData.append("cooperativeName", cooperativeName.trim());
+      formData.append("cooperativeEmail", cooperativeEmail.trim().toLowerCase());
+      formData.append("cooperativePhone", cooperativePhone.trim());
+      formData.append("cooperativeAddress", cooperativeAddress.trim());
+      formData.append("cooperativeLogo", logoFile);
+      formData.append("verificationCertificate", certificateFile);
 
-      await cooperativeRegister(payload);
-      toast.success("Cooperative society registered successfully!");
+      await cooperativeRegister(formData);
+      toast.success("Cooperative registered! Your profile is submitted for verification.");
 
       try {
         const updated = await getMe();
         if (updated) setUser(updated);
-      } catch { }
+      } catch {}
 
       navigate("/cooperative", { replace: true });
     } catch (err: any) {
@@ -93,127 +233,61 @@ export default function CooperativeRegisterForm() {
   if (isAlreadyCooperative) return <Navigate to="/cooperative" replace />;
 
   return (
-    <div className="w-full max-w-xl mx-auto">
-      <Card className="border border-border/70 bg-card/90 shadow-2xl backdrop-blur-xl rounded-2xl sm:rounded-3xl overflow-hidden transition-all">
-        {/* Header */}
-        <CardHeader className="space-y-1.5 pb-3 pt-6 sm:pt-7 px-5 sm:px-8 text-center sm:text-left">
-          <div className="flex items-center justify-center sm:justify-start gap-2">
-            <Badge
-              variant="secondary"
-              className="rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider gap-1.5"
-            >
-              <Building2 className="size-3 text-primary" />
-              Society Onboarding
-            </Badge>
-          </div>
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-            Register a Cooperative Society
-          </h2>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            Unite skilled tradesmen under a registered cooperative to bid collectively on contracts.
-          </p>
+    <div className="w-full mx-auto">
+      <Card className="border border-border/80 bg-card/95 shadow-2xl backdrop-blur-xl rounded-2xl sm:rounded-3xl overflow-hidden transition-all">
+        {/* Header with 2-Step Navigator */}
+        <CardHeader className="space-y-4 pb-5 pt-6 sm:pt-8 px-5 sm:px-8 border-b border-border/50 bg-gradient-to-r from-muted/30 via-background to-muted/20">
+          <CooperativeRegisterStepper
+            currentStep={currentStep}
+            onStepClick={handleStepClick}
+          />
         </CardHeader>
 
-        {/* Compact Form Body */}
-        <CardContent className="px-5 sm:px-8 space-y-3.5">
-          <form onSubmit={handleSubmit} className="space-y-3.5">
-            {/* Cooperative Legal Name */}
-            <div className="space-y-1.5">
-              <Label htmlFor="coopName" className="text-xs font-semibold text-foreground/85 flex items-center gap-1.5">
-                <Building2 className="size-3.5 text-primary" />
-                Cooperative Legal Name <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="coopName"
-                placeholder="e.g. Maharashtra Artisans Cooperative Society"
-                value={cooperativeName}
-                onChange={(e) => setCooperativeName(e.target.value)}
-                required
-                className="h-10 rounded-xl text-xs sm:text-sm bg-input/20 border-border/80"
-              />
-            </div>
-
-            {/* Email & Phone Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="coopEmail" className="text-xs font-semibold text-foreground/85 flex items-center gap-1.5">
-                  <Mail className="size-3.5 text-muted-foreground" />
-                  Official Email
-                </Label>
-                <Input
-                  id="coopEmail"
-                  type="email"
-                  placeholder="contact@coop.org"
-                  value={cooperativeEmail}
-                  onChange={(e) => setCooperativeEmail(e.target.value)}
-                  className="h-10 rounded-xl text-xs sm:text-sm bg-input/20 border-border/80"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="coopPhone" className="text-xs font-semibold text-foreground/85 flex items-center gap-1.5">
-                  <Phone className="size-3.5 text-muted-foreground" />
-                  Contact Phone
-                </Label>
-                <Input
-                  id="coopPhone"
-                  type="tel"
-                  placeholder="+91 98765 43210"
-                  value={cooperativePhone}
-                  onChange={(e) => setCooperativePhone(e.target.value)}
-                  className="h-10 rounded-xl text-xs sm:text-sm bg-input/20 border-border/80"
-                />
-              </div>
-            </div>
-
-            {/* Registered Address */}
-            <div className="space-y-1.5">
-              <Label htmlFor="coopAddress" className="text-xs font-semibold text-foreground/85 flex items-center gap-1.5">
-                <MapPin className="size-3.5 text-muted-foreground" />
-                Registered Address
-              </Label>
-              <Input
-                id="coopAddress"
-                placeholder="e.g. Cooperative Bhavan, Nariman Point, Mumbai"
-                value={cooperativeAddress}
-                onChange={(e) => setCooperativeAddress(e.target.value)}
-                className="h-10 rounded-xl text-xs sm:text-sm bg-input/20 border-border/80"
-              />
-            </div>
-
-
-
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full h-11 rounded-xl text-sm font-semibold shadow-md shadow-primary/20 hover:shadow-primary/30 transition-all cursor-pointer mt-2 active:scale-98"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="size-4 animate-spin mr-2" />
-                  Activating Society Profile...
-                </>
-              ) : (
-                <>
-                  Complete Cooperative Registration
-                  <ArrowRight className="size-4 ml-1.5" />
-                </>
-              )}
-            </Button>
-          </form>
+        {/* Step Content Body */}
+        <CardContent className="px-5 sm:px-8 py-6">
+          {currentStep === 1 ? (
+            <CooperativeDetailsStep
+              cooperativeName={cooperativeName}
+              setCooperativeName={setCooperativeName}
+              cooperativeEmail={cooperativeEmail}
+              setCooperativeEmail={setCooperativeEmail}
+              cooperativePhone={cooperativePhone}
+              setCooperativePhone={setCooperativePhone}
+              cooperativeAddress={cooperativeAddress}
+              setCooperativeAddress={setCooperativeAddress}
+              onNext={handleNextToStep2}
+            />
+          ) : (
+            <CooperativeDocumentsStep
+              logoFile={logoFile}
+              logoPreview={logoPreview}
+              logoInputRef={logoInputRef}
+              onLogoChange={handleLogoChange}
+              onRemoveLogo={handleRemoveLogo}
+              certificateFile={certificateFile}
+              certificatePreview={certificatePreview}
+              certificateInputRef={certificateInputRef}
+              onCertificateChange={handleCertificateChange}
+              onRemoveCertificate={handleRemoveCertificate}
+              isLoading={isLoading}
+              onBack={() => setCurrentStep(1)}
+              onSubmit={handleSubmit}
+            />
+          )}
         </CardContent>
 
-        <Separator className="bg-border/50 my-1" />
+        <Separator className="bg-border/50" />
 
         {/* Footer */}
-        <CardFooter className="flex items-center justify-between px-5 sm:px-8 py-3.5 text-xs text-muted-foreground">
-          <span>Need to switch account?</span>
+        <CardFooter className="flex flex-col sm:flex-row items-center justify-between px-5 sm:px-8 py-4 gap-2 text-xs text-muted-foreground bg-muted/10">
+          <span>
+            Signed in as <strong className="text-foreground">{user.email}</strong>
+          </span>
           <Link
             to="/login"
             className="font-medium text-primary hover:underline inline-flex items-center gap-1 transition-colors"
           >
-            Sign in
+            Switch Account
             <ChevronRight className="size-3" />
           </Link>
         </CardFooter>

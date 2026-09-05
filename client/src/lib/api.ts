@@ -96,6 +96,22 @@ export async function apiPut<TResponse, TBody = unknown>(
   }
 }
 
+export async function apiPatch<TResponse, TBody = unknown>(
+  url: string,
+  body?: TBody,
+  config?: AxiosRequestConfig
+): Promise<TResponse> {
+  try {
+    const response = await api.patch<ApiEnvelope<TResponse>>(url, body, config);
+    if (response.data.success === false || response.data.status === "error") {
+      throw new Error(response.data.message || "Request failed");
+    }
+    return response.data.data;
+  } catch (error: any) {
+    throw new Error(extractErrorMessage(error));
+  }
+}
+
 export async function apiDelete<TResponse>(url: string, config?: AxiosRequestConfig): Promise<TResponse> {
   try {
     const response = await api.delete<ApiEnvelope<TResponse>>(url, config);

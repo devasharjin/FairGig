@@ -2,10 +2,10 @@ import { Router } from "express";
 import { asyncHandler } from "../../shared/asyncHandler";
 import { requireAuth, requireRole } from "../../middleware/authMiddleware";
 import { UserRole } from "../../models/auth/user.model";
-import { createService } from "../../controllers/admin/service/createService.controller";
+import { createService } from "../../controllers/admin/services/createService.controller";
 import { getServices, getServiceById } from "../../controllers/common/service/getServices.controller";
-import { updateService } from "../../controllers/admin/service/updateService.controller";
-import { deleteService } from "../../controllers/admin/service/deleteService.controller";
+import { updateService } from "../../controllers/admin/services/updateService.controller";
+import { deleteService } from "../../controllers/admin/services/deleteService.controller";
 
 const router = Router();
 

@@ -23,8 +23,10 @@ import CooperativeRegister from "./pages/auth/CooperativeRegister";
 import CustomerHome from "./pages/customer/Home";
 import WorkerHome from "./pages/worker/Home";
 import CooperativeHome from "./pages/cooperative/Home";
+import WorkerVerifications from "./pages/cooperative/WorkerVerifications";
 import SuperAdminHome from "./pages/superAdmin/Home";
 import AdminServices from "./pages/superAdmin/Services";
+import AdminVerifications from "./pages/superAdmin/Verifications";
 import CustomerServices from "./pages/customer/Services";
 
 function DashboardRedirect() {
@@ -138,6 +140,10 @@ export const router = createBrowserRouter([
                     element: <CooperativeHome />,
                   },
                   {
+                    path: "verifications",
+                    element: <WorkerVerifications />,
+                  },
+                  {
                     path: "members",
                     element: <CooperativeHome />,
                   },
@@ -165,7 +171,7 @@ export const router = createBrowserRouter([
                   },
                   {
                     path: "verifications",
-                    element: <SuperAdminHome />,
+                    element: <AdminVerifications />,
                   },
                   {
                     path: "users",

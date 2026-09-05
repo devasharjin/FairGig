@@ -43,4 +43,10 @@ export const workerDocumentsUpload = upload.fields([
   { name: "certificate", maxCount: 1 },
 ]);
 
+// Middleware for cooperative registration verification documents & logo
+export const cooperativeDocumentsUpload = upload.fields([
+  { name: "cooperativeLogo", maxCount: 1 },
+  { name: "verificationCertificate", maxCount: 1 },
+]);
+
 export default upload;

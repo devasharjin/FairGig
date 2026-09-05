@@ -3,6 +3,7 @@ import {
   Layers,
   Users,
   Briefcase,
+  UserCheck,
 } from "lucide-react";
 import {
   DashboardLayout,
@@ -33,6 +34,11 @@ const cooperativeNavGroups: SidebarGroupConfig[] = [
   {
     heading: "Society Operations",
     items: [
+      {
+        title: "Worker Verifications",
+        to: "/cooperative/verifications",
+        icon: UserCheck,
+      },
       {
         title: "Members Directory",
         to: "/cooperative/members",

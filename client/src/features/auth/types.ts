@@ -100,11 +100,19 @@ export interface WorkerRegisterPayload {
  */
 export interface CooperativeRegisterPayload {
   cooperativeName: string;
-  cooperativeDescription?: string;
-  cooperativeAddress?: string;
-  cooperativePhone?: string;
-  cooperativeEmail?: string;
-  cooperativeLogo?: string;
+  cooperativeAddress: string;
+  cooperativePhone: string;
+  cooperativeEmail: string;
+  cooperativeLogoFile?: File;
+  verificationCertificateFile?: File;
+  cooperativeLogo?: {
+    url: string;
+    publicId: string;
+  };
+  verificationCertificate?: {
+    url: string;
+    publicId: string;
+  };
   members?: string[];
 }
 
@@ -153,13 +161,20 @@ export interface CooperativeProfile {
   _id: string;
   userId: string;
   cooperativeName: string;
-  cooperativeDescription?: string;
-  cooperativeAddress?: string;
-  cooperativePhone?: string;
-  cooperativeEmail?: string;
-  cooperativeLogo?: string;
+  cooperativeAddress: string;
+  cooperativePhone: string;
+  cooperativeEmail: string;
+  cooperativeLogo: {
+    url: string;
+    publicId: string;
+  };
+  verificationCertificate: {
+    url: string;
+    publicId: string;
+  };
   members?: string[] | WorkerProfile[];
   verificationStatus: VerificationStatus;
+  rejectedReason?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -167,7 +182,6 @@ export interface CooperativeProfile {
 export interface CooperativeOption {
   _id: string;
   cooperativeName: string;
-  cooperativeDescription?: string;
   cooperativeAddress?: string;
 }
 

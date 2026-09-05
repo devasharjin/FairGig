@@ -5,29 +5,20 @@ import Cooperative from "../../../models/auth/cooperative.model";
 import { VerificationStatus } from "../../../models/auth/worker.model";
 import { fail, ok } from "../../../shared/envelope";
 import { generateAuthTokens } from "../../../utils/jwt.utils";
+import { uploadToCloudinary } from "../../../services/cloudinaryservices";
 
 export const cooperativeRegister = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  // User ID attached by authentication middleware
+  // 1. User ID attached by authentication middleware
   if (!req.user || typeof req.user === "string") {
-    return fail(res, "Unauthorized", null, 401);
+    return fail(res, "Unauthorized. Please log in first.", null, 401);
   }
 
   const userId = req.user.id || (req.user as any).userId;
 
-  const {
-    cooperativeName,
-    cooperativeDescription,
-    cooperativeAddress,
-    cooperativePhone,
-    cooperativeEmail,
-    cooperativeLogo,
-    members,
-  } = req.body;
-
-  // Check if cooperative profile already exists for this user
+  // 2. Check if cooperative profile already exists for this user
   const existingCooperative = await Cooperative.findOne({ userId });
   if (existingCooperative) {
     return fail(
@@ -38,26 +29,49 @@ export const cooperativeRegister = async (
     );
   }
 
-  // Validate required fields
+  const {
+    cooperativeName,
+    cooperativeAddress,
+    cooperativePhone,
+    cooperativeEmail,
+    members,
+  } = req.body;
+
+  // 3. Validate required text fields
   if (!cooperativeName || typeof cooperativeName !== "string" || !cooperativeName.trim()) {
-    return fail(res, "Cooperative name is required", null, 400);
+    return fail(res, "Cooperative legal name is required", null, 400);
   }
 
-  // Validate email format if provided
-  if (cooperativeEmail) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(cooperativeEmail)) {
-      return fail(res, "Invalid cooperative email format", null, 400);
-    }
+  if (!cooperativeAddress || typeof cooperativeAddress !== "string" || !cooperativeAddress.trim()) {
+    return fail(res, "Cooperative registered address is required", null, 400);
   }
 
+  if (!cooperativePhone || typeof cooperativePhone !== "string" || !cooperativePhone.trim()) {
+    return fail(res, "Cooperative contact phone number is required", null, 400);
+  }
+
+  if (!cooperativeEmail || typeof cooperativeEmail !== "string" || !cooperativeEmail.trim()) {
+    return fail(res, "Cooperative official email is required", null, 400);
+  }
+
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(cooperativeEmail.trim())) {
+    return fail(res, "Invalid cooperative email format", null, 400);
+  }
 
   // Validate members array if provided
-  if (members !== undefined) {
-    if (!Array.isArray(members)) {
-      return fail(res, "Members must be an array of worker IDs", null, 400);
+  let parsedMembers = members;
+  if (typeof members === "string") {
+    try {
+      parsedMembers = JSON.parse(members);
+    } catch {
+      parsedMembers = [];
     }
-    const hasInvalidMember = members.some(
+  }
+
+  if (parsedMembers !== undefined && Array.isArray(parsedMembers)) {
+    const hasInvalidMember = parsedMembers.some(
       (id: string) => !mongoose.Types.ObjectId.isValid(id)
     );
     if (hasInvalidMember) {
@@ -65,21 +79,99 @@ export const cooperativeRegister = async (
     }
   }
 
+  // 4. Handle file uploads (cooperativeLogo & verificationCertificate)
+  const files = req.files as
+    | { [fieldname: string]: Express.Multer.File[] }
+    | undefined;
 
-  // Create cooperative
+  const logoFile = files?.cooperativeLogo?.[0];
+  const certificateFile = files?.verificationCertificate?.[0];
+
+  let logoData: { url: string; publicId: string } | null = null;
+  let certificateData: { url: string; publicId: string } | null = null;
+
+  // Upload logo if file is provided
+  if (logoFile) {
+    try {
+      const uploadRes = await uploadToCloudinary(logoFile, {
+        folder: "cooperatives/logos",
+      });
+      logoData = {
+        url: uploadRes.secure_url,
+        publicId: uploadRes.public_id,
+      };
+    } catch (err: any) {
+      return fail(
+        res,
+        `Cooperative logo upload failed: ${err?.message || "Cloud error"}`,
+        null,
+        500
+      );
+    }
+  } else if (req.body.cooperativeLogoUrl) {
+    logoData = {
+      url: req.body.cooperativeLogoUrl,
+      publicId: req.body.cooperativeLogoPublicId || `coop_logo_${Date.now()}`,
+    };
+  }
+
+  // Upload certificate if file is provided
+  if (certificateFile) {
+    try {
+      const uploadRes = await uploadToCloudinary(certificateFile, {
+        folder: "cooperatives/certificates",
+      });
+      certificateData = {
+        url: uploadRes.secure_url,
+        publicId: uploadRes.public_id,
+      };
+    } catch (err: any) {
+      return fail(
+        res,
+        `Verification certificate upload failed: ${err?.message || "Cloud error"}`,
+        null,
+        500
+      );
+    }
+  } else if (req.body.verificationCertificateUrl) {
+    certificateData = {
+      url: req.body.verificationCertificateUrl,
+      publicId: req.body.verificationCertificatePublicId || `coop_cert_${Date.now()}`,
+    };
+  }
+
+  // Ensure both verification documents are present
+  if (!logoData || !logoData.url) {
+    return fail(
+      res,
+      "Cooperative society logo is required (JPG, PNG, or WebP).",
+      null,
+      400
+    );
+  }
+
+  if (!certificateData || !certificateData.url) {
+    return fail(
+      res,
+      "Official cooperative registration certificate or bylaws document is required (PDF, JPG, PNG).",
+      null,
+      400
+    );
+  }
+
+  // 5. Create cooperative profile
   const cooperative = await Cooperative.create({
     userId,
     cooperativeName: cooperativeName.trim(),
-    cooperativeDescription: cooperativeDescription?.trim() || undefined,
-    cooperativeAddress: cooperativeAddress?.trim() || undefined,
-    cooperativePhone: cooperativePhone?.trim() || undefined,
-    cooperativeEmail: cooperativeEmail?.trim() || undefined,
-    cooperativeLogo: cooperativeLogo?.trim() || undefined,
-    members: members || [],
+    cooperativeAddress: cooperativeAddress.trim(),
+    cooperativePhone: cooperativePhone.trim(),
+    cooperativeEmail: cooperativeEmail.trim().toLowerCase(),
+    cooperativeLogo: logoData,
+    verificationCertificate: certificateData,
     verificationStatus: VerificationStatus.PENDING,
   });
 
-  // Add COOPERATIVE role to user's role array and retrieve updated user
+  // 6. Add COOPERATIVE role to user's role array and retrieve updated user
   const updatedUser = await User.findByIdAndUpdate(
     userId,
     { $addToSet: { role: UserRole.COOPERATIVE } },
@@ -111,6 +203,6 @@ export const cooperativeRegister = async (
   return ok(
     res,
     { cooperative, user: updatedUser, tokens },
-    "Cooperative registration submitted successfully"
+    "Cooperative registration submitted successfully for verification"
   );
 };

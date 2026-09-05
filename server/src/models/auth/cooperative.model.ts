@@ -4,13 +4,19 @@ import { VerificationStatus } from "./worker.model";
 export interface ICooperative extends Document {
   userId: mongoose.Types.ObjectId;
   cooperativeName: string;
-  cooperativeDescription?: string;
-  cooperativeAddress?: string;
-  cooperativePhone?: string;
-  cooperativeEmail?: string;
-  cooperativeLogo?: string;
-  members: mongoose.Types.ObjectId[];
+  cooperativeAddress: string;
+  cooperativePhone: string;
+  cooperativeEmail: string;
   verificationStatus: VerificationStatus;
+  rejectedReason?: string;
+  cooperativeLogo: {
+    url: string;
+    publicId: string;
+  };
+  verificationCertificate: {
+    url: string;
+    publicId: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -29,43 +35,59 @@ const cooperativeSchema = new Schema<ICooperative>(
       required: [true, "Cooperative name is required"],
       trim: true,
     },
-    cooperativeDescription: {
-      type: String,
-      trim: true,
-    },
     cooperativeAddress: {
       type: String,
+      required: [true, "Cooperative address is required"],
       trim: true,
     },
     cooperativePhone: {
       type: String,
+      required: [true, "Cooperative phone is required"],
       trim: true,
     },
     cooperativeEmail: {
       type: String,
+      required: [true, "Cooperative email is required"],
       trim: true,
       lowercase: true,
     },
-    cooperativeLogo: {
-      type: String,
-      trim: true,
-    },
-    members: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Worker",
-      },
-    ],
     verificationStatus: {
       type: String,
       enum: Object.values(VerificationStatus),
       default: VerificationStatus.PENDING,
       index: true,
     },
+    rejectedReason: {
+      type: String,
+      trim: true,
+    },
+    cooperativeLogo: {
+      url: {
+        type: String,
+        required: [true, "Cooperative logo URL is required"],
+        trim: true,
+      },
+      publicId: {
+        type: String,
+        required: [true, "Cooperative logo public ID is required"],
+        trim: true,
+      },
+    },
+    verificationCertificate: {
+      url: {
+        type: String,
+        required: [true, "Verification certificate URL is required"],
+        trim: true,
+      },
+      publicId: {
+        type: String,
+        required: [true, "Verification certificate public ID is required"],
+        trim: true,
+      },
+    },
   },
   {
     timestamps: true,
-    versionKey: false,
   }
 );
 
