@@ -43,8 +43,8 @@ export const CustomerNavbar = () => {
               Home
             </NavbarNavLink>
 
-            <NavbarNavLink to="/categories">
-              Categories
+            <NavbarNavLink to="/services">
+              Services
             </NavbarNavLink>
           </nav>
         </div>
@@ -126,12 +126,12 @@ export const CustomerNavbar = () => {
             </Link>
 
             <Link
-              to="/categories"
+              to="/services"
               onClick={() => setIsMobileOpen(false)}
               className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-foreground hover:bg-muted transition-colors"
             >
               <Grid className="size-4 text-muted-foreground" />
-              <span>Categories</span>
+              <span>Services</span>
             </Link>
           </div>
 

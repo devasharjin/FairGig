@@ -4,6 +4,7 @@ import {
   CheckCircle2,
   Users,
   CircleDot,
+  BaggageClaim,
 } from "lucide-react";
 import {
   DashboardLayout,
@@ -43,6 +44,11 @@ const superAdminNavGroups: SidebarGroupConfig[] = [
         title: "Users & Roles",
         to: "/admin/users",
         icon: Users,
+      },
+      {
+        title: "Services",
+        to: "/admin/services",
+        icon: BaggageClaim,
       },
     ],
   },

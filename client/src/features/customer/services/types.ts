@@ -1,0 +1,26 @@
+import type { Category } from "../categories/types";
+
+export type ServicePriceType = "hourly" | "meters";
+
+export interface CustomerService {
+  _id: string;
+  name: string;
+  description: string;
+  category: Category | string;
+  priceType: ServicePriceType;
+  hourlyPrice?: number;
+  metersPrice?: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CustomerServiceFilterParams {
+  search?: string;
+  q?: string;
+  category?: string;
+  priceType?: ServicePriceType | "all";
+  isActive?: boolean | string;
+  sortBy?: string;
+  order?: "asc" | "desc";
+}

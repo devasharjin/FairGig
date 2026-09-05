@@ -29,9 +29,10 @@ export async function updateCategory(req: Request, res: Response) {
     }
 
     // Check if another category with the same name exists
+    const escapedName = trimmedName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const existingCategory = await Category.findOne({
       _id: { $ne: id },
-      name: { $regex: new RegExp(`^${trimmedName}$`, "i") },
+      name: { $regex: new RegExp(`^${escapedName}$`, "i") },
     });
 
     if (existingCategory) {

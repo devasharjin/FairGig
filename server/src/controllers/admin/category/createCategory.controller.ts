@@ -16,8 +16,9 @@ export async function createCategory(req: Request, res: Response) {
   }
 
   // Check if category with same name already exists (case-insensitive)
+  const escapedName = trimmedName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const existingCategory = await Category.findOne({
-    name: { $regex: new RegExp(`^${trimmedName}$`, "i") },
+    name: { $regex: new RegExp(`^${escapedName}$`, "i") },
   });
 
   if (existingCategory) {

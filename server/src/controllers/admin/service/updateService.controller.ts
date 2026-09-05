@@ -16,7 +16,9 @@ export async function updateService(req: Request, res: Response) {
     return fail(res, "Service not found", null, 404);
   }
 
-  const { name, description, category, isActive } = req.body;
+  const { name, description, category, priceType, hourlyPrice, metersPrice, isActive } = req.body;
+
+  const targetCategory = category ? category : service.category;
 
   if (name !== undefined) {
     if (typeof name !== "string" || !name.trim()) {
@@ -29,13 +31,15 @@ export async function updateService(req: Request, res: Response) {
       return fail(res, "Service name must be between 2 and 100 characters", null, 400);
     }
 
+    const escapedName = trimmedName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const existingService = await Service.findOne({
       _id: { $ne: id },
-      name: { $regex: new RegExp(`^${trimmedName}$`, "i") },
+      category: targetCategory,
+      name: { $regex: new RegExp(`^${escapedName}$`, "i") },
     });
 
     if (existingService) {
-      return fail(res, "Service with this name already exists", null, 409);
+      return fail(res, "Service with this name already exists in this category", null, 409);
     }
 
     service.name = trimmedName;
@@ -46,8 +50,8 @@ export async function updateService(req: Request, res: Response) {
       return fail(res, "Service description cannot be empty", null, 400);
     }
 
-    if (description.trim().length > 500) {
-      return fail(res, "Service description cannot exceed 500 characters", null, 400);
+    if (description.trim().length > 1000) {
+      return fail(res, "Service description cannot exceed 1000 characters", null, 400);
     }
 
     service.description = description.trim();
@@ -66,12 +70,58 @@ export async function updateService(req: Request, res: Response) {
     service.category = new mongoose.Types.ObjectId(category);
   }
 
+  const effectivePriceType = priceType !== undefined ? priceType : service.priceType;
+
+  if (priceType !== undefined) {
+    if (!["hourly", "meters"].includes(priceType)) {
+      return fail(res, "Price type must be either 'hourly' or 'meters'", null, 400);
+    }
+    service.priceType = priceType;
+  }
+
+  if (hourlyPrice !== undefined) {
+    const parsedHourlyPrice = Number(hourlyPrice);
+    if (isNaN(parsedHourlyPrice) || parsedHourlyPrice < 0) {
+      return fail(res, "A valid non-negative hourly price is required", null, 400);
+    }
+    service.hourlyPrice = parsedHourlyPrice;
+  }
+
+  if (metersPrice !== undefined) {
+    const parsedMetersPrice = Number(metersPrice);
+    if (isNaN(parsedMetersPrice) || parsedMetersPrice < 0) {
+      return fail(res, "A valid non-negative meters price is required", null, 400);
+    }
+    service.metersPrice = parsedMetersPrice;
+  }
+
+  // Ensure required price field is populated according to effective priceType
+  if (effectivePriceType === "hourly" && (service.hourlyPrice === undefined || service.hourlyPrice === null)) {
+    return fail(res, "Hourly price is required when price type is hourly", null, 400);
+  }
+
+  if (effectivePriceType === "meters" && (service.metersPrice === undefined || service.metersPrice === null)) {
+    return fail(res, "Meters price is required when price type is meters", null, 400);
+  }
+
   if (isActive !== undefined) {
     service.isActive = Boolean(isActive);
   }
 
-  await service.save();
-  await service.populate("category", "name slug icon isActive");
-
-  return ok(res, service, "Service updated successfully");
+  try {
+    await service.save();
+    await service.populate("category", "name slug icon isActive");
+    return ok(res, service, "Service updated successfully");
+  } catch (err: any) {
+    if (err?.code === 11000) {
+      return fail(res, "Service with this name already exists in this category", null, 409);
+    }
+    if (err?.name === "ValidationError") {
+      const message = Object.values(err.errors || {})
+        .map((e: any) => e.message)
+        .join(", ");
+      return fail(res, message || "Service validation failed", null, 400);
+    }
+    throw err;
+  }
 }

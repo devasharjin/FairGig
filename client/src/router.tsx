@@ -24,6 +24,8 @@ import CustomerHome from "./pages/customer/Home";
 import WorkerHome from "./pages/worker/Home";
 import CooperativeHome from "./pages/cooperative/Home";
 import SuperAdminHome from "./pages/superAdmin/Home";
+import AdminServices from "./pages/superAdmin/Services";
+import CustomerServices from "./pages/customer/Services";
 
 function DashboardRedirect() {
   const user = useAuthStore((state) => state.user);
@@ -84,6 +86,10 @@ export const router = createBrowserRouter([
           {
             path: "categories",
             element: <CustomerHome />,
+          },
+          {
+            path: "services",
+            element: <CustomerServices />,
           },
         ],
       },
@@ -165,6 +171,10 @@ export const router = createBrowserRouter([
                     path: "users",
                     element: <SuperAdminHome />,
                   },
+                  {
+                    path : "services",
+                    element : <AdminServices />
+                  }
                 ],
               },
             ],

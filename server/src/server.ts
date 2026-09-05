@@ -8,6 +8,7 @@ import dns from 'dns';
 import authRoutes from './routes/auth/auth.routes';
 import adminCategoryRoutes from './routes/admin/category.routes';
 import adminServiceRoutes from './routes/admin/service.routes';
+import customerCategoryRoutes from './routes/customer/category.routes';
 import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
 
@@ -41,6 +42,7 @@ app.get('/health', (req: Request, res: Response) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/admin/categories', adminCategoryRoutes);
 app.use('/api/admin/services', adminServiceRoutes);
+app.use('/api/customer', customerCategoryRoutes);
 
 // Error Middlewares (must be registered after routes)
 app.use(notFound);

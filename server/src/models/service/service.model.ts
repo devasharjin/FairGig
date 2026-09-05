@@ -6,14 +6,10 @@ export interface IService extends Document {
   name: string;
   description: string;
   category: Types.ObjectId;
-
   priceType: ServicePriceType;
-
   hourlyPrice?: number;
   metersPrice?: number;
-
   isActive: boolean;
-
   createdAt: Date;
   updatedAt: Date;
 }
@@ -37,7 +33,7 @@ const serviceSchema = new Schema<IService>(
 
     category: {
       type: Schema.Types.ObjectId,
-      ref: "ServiceCategory",
+      ref: "Category",
       required: [true, "Service category is required"],
       index: true,
     },
