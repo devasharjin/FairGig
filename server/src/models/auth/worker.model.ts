@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose, { Document, Model, Schema, Types } from "mongoose";
 
 export enum AvailabilityStatus {
   FULL_TIME = "Full-Time",
@@ -11,85 +11,173 @@ export enum VerificationStatus {
   REJECTED = "Rejected",
 }
 
+export interface IVerificationDocuments {
+  identity: {
+    url: string;
+    status: VerificationStatus;
+    rejectionReason?: string;
+  };
+  certificate: {
+    url: string;
+    status: VerificationStatus;
+    rejectionReason?: string;
+  };
+}
+
 export interface IWorker extends Document {
-  userId: mongoose.Types.ObjectId;
-  cooperativeId?: mongoose.Types.ObjectId;
-  skills: string[];
+  userId: Types.ObjectId;
+  cooperativeId: Types.ObjectId;
+  skills: Types.ObjectId[];
   availability: AvailabilityStatus;
-  yearsOfExperience: number;
   verificationStatus: VerificationStatus;
-  rating: number;
-  address?: {
+  verificationDocuments: IVerificationDocuments;
+  experience: number;
+  location: {
+    address: string;
     city: string;
     state: string;
-    country: string;
     pincode: string;
+    latitude?: number;
+    longitude?: number;
   };
+  rating: number;
+  totalJobsCompleted: number;
+  isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const workerSchema = new Schema<IWorker>(
+const WorkerSchema = new Schema<IWorker>(
   {
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "User ID is required"],
+      required: true,
       unique: true,
       index: true,
     },
-
     cooperativeId: {
       type: Schema.Types.ObjectId,
       ref: "Cooperative",
+      required: [true, "Cooperative ID is required"],
       index: true,
     },
-
-
-    skills: {
-      type: [String],
-      default: [],
-    },
-
+    skills: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Service",
+      },
+    ],
     availability: {
       type: String,
       enum: Object.values(AvailabilityStatus),
       default: AvailabilityStatus.FULL_TIME,
-    },
-
-    yearsOfExperience: {
-      type: Number,
-      default: 0,
-      min: [0, "Years of experience cannot be negative"],
+      required: true,
     },
     verificationStatus: {
       type: String,
       enum: Object.values(VerificationStatus),
       default: VerificationStatus.PENDING,
+      required: true,
       index: true,
     },
-
+    verificationDocuments: {
+      identity: {
+        url: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        status: {
+          type: String,
+          enum: Object.values(VerificationStatus),
+          default: VerificationStatus.PENDING,
+        },
+        rejectionReason: {
+          type: String,
+          trim: true,
+        },
+      },
+      certificate: {
+        url: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+        status: {
+          type: String,
+          enum: Object.values(VerificationStatus),
+          default: VerificationStatus.PENDING,
+        },
+        rejectionReason: {
+          type: String,
+          trim: true,
+        },
+      },
+    },
+    experience: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+    location: {
+      address: {
+        type: String,
+        required: true,
+      },
+      city: {
+        type: String,
+        required: true,
+      },
+      state: {
+        type: String,
+        required: true,
+      },
+      pincode: {
+        type: String,
+        required: true,
+      },
+      latitude: {
+        type: Number,
+        default: 0.0,
+      },
+      longitude: {
+        type: Number,
+        default: 0.0,
+      },
+    },
     rating: {
       type: Number,
+      min: 0,
+      max: 5,
       default: 0,
-      min: [0, "Rating cannot be less than 0"],
-      max: [5, "Rating cannot exceed 5"],
     },
-
-    address: {
-      city: { type: String, default: "" },
-      state: { type: String, default: "" },
-      country: { type: String, default: "" },
-      pincode: { type: String, default: "" },
+    totalJobsCompleted: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
     },
   },
   {
     timestamps: true,
-    versionKey: false,
   }
 );
 
+WorkerSchema.index({
+  verificationStatus: 1,
+  isActive: 1,
+});
+
+WorkerSchema.index({
+  skills: 1,
+});
+
 const Worker: Model<IWorker> =
-  mongoose.models.Worker || mongoose.model<IWorker>("Worker", workerSchema);
+  mongoose.models.Worker ||
+  mongoose.model<IWorker>("Worker", WorkerSchema);
 
 export default Worker;

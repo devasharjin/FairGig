@@ -9,12 +9,18 @@ import { logout } from "../../controllers/auth/logout.controller";
 import { getProfile } from "../../controllers/auth/getProfile.controller";
 import { getCooperatives } from "../../controllers/auth/getCooperatives.controller";
 import { userRegister } from "../../controllers/auth/register/userRegister.controller";
+import { workerDocumentsUpload } from "../../middleware/multer.middleware";
 
 
 const router = Router();
 
 router.post("/register/customer", asyncHandler(userRegister));
-router.post("/register/worker", requireAuth, asyncHandler(workerRegister));
+router.post(
+  "/register/worker",
+  requireAuth,
+  workerDocumentsUpload,
+  asyncHandler(workerRegister)
+);
 router.post("/register/cooperative", requireAuth, asyncHandler(cooperativeRegister));
 router.post("/login", asyncHandler(login));
 router.post("/refresh-token", asyncHandler(refreshToken));

@@ -11,10 +11,33 @@ export type VerificationStatus = "Pending" | "Approved" | "Rejected";
 export type AccountStatus = "ACTIVE" | "INACTIVE" | "SUSPEND";
 
 export interface WorkerAddress {
+  address?: string;
   city?: string;
   state?: string;
   country?: string;
   pincode?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+export interface WorkerLocation {
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+export interface VerificationDocumentItem {
+  url: string;
+  status: VerificationStatus;
+  rejectionReason?: string;
+}
+
+export interface WorkerVerificationDocuments {
+  identity: VerificationDocumentItem;
+  certificate: VerificationDocumentItem;
 }
 
 export interface UserAddress {
@@ -49,7 +72,7 @@ export interface CustomerRegisterPayload {
   name: string;
   email: string;
   password: string;
-  phone?: string;
+  phone: string;
 }
 
 // Alias for Customer registration
@@ -60,10 +83,16 @@ export type UserRegisterPayload = CustomerRegisterPayload;
  */
 export interface WorkerRegisterPayload {
   skills: string[];
-  cooperativeId?: string;
+  cooperativeId: string;
   availability?: WorkerAvailability;
+  experience: number;
   yearsOfExperience?: number;
+  location: WorkerLocation;
   address?: WorkerAddress;
+  identityFile?: File;
+  certificateFile?: File;
+  identityUrl?: string;
+  certificateUrl?: string;
 }
 
 /**
@@ -91,16 +120,31 @@ export interface RefreshTokenPayload {
 // Profile & Entity Models
 // ==========================================
 
+export interface WorkerSkillItem {
+  _id: string;
+  name: string;
+  description?: string;
+  category?: any;
+  priceType?: "hourly" | "meters";
+  hourlyPrice?: number;
+  metersPrice?: number;
+}
+
 export interface WorkerProfile {
   _id: string;
   userId: string;
-  cooperativeId?: string | CooperativeProfile;
-  skills: string[];
+  cooperativeId: string | CooperativeProfile;
+  skills: (string | WorkerSkillItem)[];
   availability: WorkerAvailability;
-  yearsOfExperience: number;
+  experience: number;
+  yearsOfExperience?: number;
   verificationStatus: VerificationStatus;
-  rating: number;
+  verificationDocuments?: WorkerVerificationDocuments;
+  location?: WorkerLocation;
   address?: WorkerAddress;
+  rating: number;
+  totalJobsCompleted: number;
+  isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

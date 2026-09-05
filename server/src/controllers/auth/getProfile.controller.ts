@@ -23,7 +23,9 @@ export async function getProfile(req: Request, res: Response) {
 
   // 3. Fetch role-specific profile details
   if (user.role.includes(UserRole.WORKER) || user.role.includes(UserRole.CUSTOMER)) {
-    worker = await Worker.findOne({ userId }).populate("cooperativeId");
+    worker = await Worker.findOne({ userId })
+      .populate("cooperativeId")
+      .populate("skills", "name description priceType hourlyPrice metersPrice");
   }
 
   if (user.role.includes(UserRole.COOPERATIVE)) {

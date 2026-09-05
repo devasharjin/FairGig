@@ -9,7 +9,7 @@ export default function WorkerRegister() {
         <div className="absolute bottom-1/4 right-1/3 w-[360px] h-[360px] bg-primary/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="w-full max-w-xl my-auto">
+      <div className="w-full max-w-3xl my-auto">
         <WorkerRegisterForm />
       </div>
     </div>

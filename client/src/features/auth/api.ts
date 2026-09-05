@@ -29,8 +29,8 @@ export const customerRegister = async (payload: CustomerRegisterPayload) => {
   return res;
 };
 
-export const workerRegister = async (payload: WorkerRegisterPayload) => {
-  const res = await apiPost<any, WorkerRegisterPayload>("/api/auth/register/worker", payload);
+export const workerRegister = async (payload: WorkerRegisterPayload | FormData) => {
+  const res = await apiPost<any, WorkerRegisterPayload | FormData>("/api/auth/register/worker", payload);
   return res;
 };
 

@@ -73,6 +73,11 @@ export default function RegisterForm() {
       return;
     }
 
+    if (!phone.trim()) {
+      toast.error("Please enter your phone number.");
+      return;
+    }
+
     if (!password || password.length < 8) {
       toast.error("Password must be at least 8 characters long.");
       return;
@@ -89,7 +94,7 @@ export default function RegisterForm() {
       await customerRegister({
         name: name.trim(),
         email: email.trim().toLowerCase(),
-        phone: phone.trim() ? phone.trim() : undefined,
+        phone: phone.trim(),
         password,
       });
 
@@ -178,21 +183,19 @@ export default function RegisterForm() {
                 />
               </div>
 
-              {/* Phone Number (Optional) */}
+              {/* Phone Number */}
               <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="phone" className="text-xs font-semibold text-foreground/85 flex items-center gap-1.5">
-                    <Phone className="size-3.5 text-muted-foreground" />
-                    Phone Number
-                  </Label>
-                  <span className="text-[10px] text-muted-foreground">Optional</span>
-                </div>
+                <Label htmlFor="phone" className="text-xs font-semibold text-foreground/85 flex items-center gap-1.5">
+                  <Phone className="size-3.5 text-muted-foreground" />
+                  Phone Number <span className="text-destructive">*</span>
+                </Label>
                 <Input
                   id="phone"
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="+91 98765 43210"
+                  required
                   maxLength={20}
                   className="h-11 rounded-xl text-base sm:text-sm bg-input/20 border-border/80 focus-visible:ring-primary/20"
                 />

@@ -5,7 +5,7 @@ export type AppUser = {
   id?: string;
   name: string;
   email: string;
-  phone?: string;
+  phone: string;
   role: UserRole | UserRole[] | string | string[];
   isActive?: boolean;
   isEmailVerified?: boolean;

@@ -1,84 +1,29 @@
-import { useState, useEffect } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import {
-  Wrench,
-  X,
-  Building2,
-  ArrowRight,
-  Loader2,
-  Clock,
-  Briefcase,
-  MapPin,
-  ChevronRight,
-} from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import { workerRegister, getMe, getCooperatives } from "@/features/auth/api";
+import { getCustomerServices } from "@/features/customer/services/api";
+import type { CustomerService } from "@/features/customer/services/types";
 import { useAuthStore } from "@/features/auth/store";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { CooperativeOption, WorkerRegisterPayload } from "@/features/auth/types";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import type { CooperativeOption } from "@/features/auth/types";
 
-// Categorized trade skills for the dropdown
-const TRADE_SKILL_CATEGORIES = [
-  {
-    category: "Electrical & Technical",
-    skills: ["Electrical", "HVAC Repair", "Appliance Repair", "Solar Installation", "Security Systems"],
-  },
-  {
-    category: "Plumbing & Piping",
-    skills: ["Plumbing", "Pipe Fitting", "Water Purifier Repair", "Drain Cleaning"],
-  },
-  {
-    category: "Carpentry & Construction",
-    skills: ["Carpentry", "Masonry", "Painting", "Tile & Flooring", "Roofing"],
-  },
-  {
-    category: "Maintenance & Care",
-    skills: ["Deep Cleaning", "Pest Control", "Locksmith", "Gardening", "Glass Repair"],
-  },
-];
+import { WorkerRegisterStepper } from "./WorkerRegisterStepper";
+import { SkillsStep } from "./SkillsStep";
+import { LocationStep } from "./LocationStep";
+import { DocumentsStep } from "./DocumentsStep";
+import type { ServiceOption } from "./ServiceSelector";
 
-const PRESET_COOPERATIVES: CooperativeOption[] = [
-  {
-    _id: "65f0a1b2c3d4e5f6a7b8c901",
-    cooperativeName: "Metro Trades & Artisans Guild",
-    cooperativeAddress: "Mumbai, Maharashtra",
-  },
-  {
-    _id: "65f0a1b2c3d4e5f6a7b8c902",
-    cooperativeName: "National Skilled Workers Alliance",
-    cooperativeAddress: "Bengaluru, Karnataka",
-  },
-  {
-    _id: "65f0a1b2c3d4e5f6a7b8c903",
-    cooperativeName: "Urban Home Services Cooperative",
-    cooperativeAddress: "Delhi NCR",
-  },
-  {
-    _id: "65f0a1b2c3d4e5f6a7b8c904",
-    cooperativeName: "Apex Technicians Collective",
-    cooperativeAddress: "Pune, Maharashtra",
-  },
+const DEFAULT_SERVICES: ServiceOption[] = [
+  { _id: "65f0a1b2c3d4e5f6a7b8c101", name: "Electrician", category: "Electrical" },
+  { _id: "65f0a1b2c3d4e5f6a7b8c102", name: "Plumber", category: "Plumbing" },
+  { _id: "65f0a1b2c3d4e5f6a7b8c103", name: "Carpenter", category: "Carpentry" },
+  { _id: "65f0a1b2c3d4e5f6a7b8c104", name: "AC Technician", category: "HVAC & Cooling" },
+  { _id: "65f0a1b2c3d4e5f6a7b8c105", name: "House Painter", category: "Painting & Renovation" },
+  { _id: "65f0a1b2c3d4e5f6a7b8c106", name: "Appliance Repair", category: "Appliances" },
+  { _id: "65f0a1b2c3d4e5f6a7b8c107", name: "Masonry & Tiling", category: "Construction" },
+  { _id: "65f0a1b2c3d4e5f6a7b8c108", name: "Deep Home Cleaning", category: "Cleaning" },
 ];
 
 export default function WorkerRegisterForm() {
@@ -86,85 +31,266 @@ export default function WorkerRegisterForm() {
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
 
-  // Check roles
+  // Auth role checks
   const userRoles: string[] = Array.isArray(user?.role)
     ? user.role.map((r) => (typeof r === "string" ? r.toUpperCase() : ""))
     : typeof user?.role === "string"
     ? [user.role.toUpperCase()]
     : [];
-
   const isAlreadyWorker = userRoles.includes("WORKER");
 
-  // Form states
-  const [skills, setSkills] = useState<string[]>([]);
-  const [availability, setAvailability] = useState<"Full-Time" | "Part-Time">("Full-Time");
-  const [yearsOfExperience, setYearsOfExperience] = useState<number>(2);
+  // Step state
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
 
-  // Address
+  // Step 1: Services & Work settings
+  const [servicesList, setServicesList] = useState<ServiceOption[]>(DEFAULT_SERVICES);
+  const [selectedSkillIds, setSelectedSkillIds] = useState<string[]>([]);
+  const [isLoadingServices, setIsLoadingServices] = useState(true);
+  const [availability, setAvailability] = useState<"Full-Time" | "Part-Time">("Full-Time");
+  const [experience, setExperience] = useState<number>(3);
+  const [cooperativesList, setCooperativesList] = useState<CooperativeOption[]>([]);
+  const [cooperativeId, setCooperativeId] = useState<string>("");
+
+  // Step 2: Location
+  const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [stateName, setStateName] = useState("");
   const [pincode, setPincode] = useState("");
+  const [latitude, setLatitude] = useState<number | undefined>(undefined);
+  const [longitude, setLongitude] = useState<number | undefined>(undefined);
+  const [isDetectingLocation, setIsDetectingLocation] = useState(false);
 
-  // Cooperative
-  const [cooperativesList, setCooperativesList] = useState<CooperativeOption[]>(PRESET_COOPERATIVES);
-  const [coopSelection, setCoopSelection] = useState<string>("none");
-  const [isLoading, setIsLoading] = useState(false);
+  // Step 3: Verification Documents
+  const [identityFile, setIdentityFile] = useState<File | null>(null);
+  const [identityPreview, setIdentityPreview] = useState<string | null>(null);
+  const [certificateFile, setCertificateFile] = useState<File | null>(null);
+  const [certificatePreview, setCertificatePreview] = useState<string | null>(null);
 
+  const identityInputRef = useRef<HTMLInputElement | null>(null);
+  const certificateInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fetch real services and cooperatives
   useEffect(() => {
     let isMounted = true;
-    getCooperatives()
+
+    getCustomerServices({ isActive: true })
       .then((data) => {
         if (isMounted && Array.isArray(data) && data.length > 0) {
+          setServicesList(
+            data.map((s: CustomerService) => ({
+              _id: s._id,
+              name: s.name,
+              category:
+                typeof s.category === "object" && s.category?.name
+                  ? s.category.name
+                  : "Trade Skill",
+            }))
+          );
+        }
+        if (isMounted) setIsLoadingServices(false);
+      })
+      .catch(() => {
+        if (isMounted) setIsLoadingServices(false);
+      });
+
+    getCooperatives()
+      .then((data) => {
+        if (isMounted && Array.isArray(data)) {
           setCooperativesList(data);
+          // If cooperatives exist and none selected yet, optionally select the first one
+          if (data.length > 0 && !cooperativeId) {
+            setCooperativeId(data[0]._id);
+          }
         }
       })
       .catch(() => {});
+
     return () => {
       isMounted = false;
     };
   }, []);
 
-  const handleAddSkill = (skill: string) => {
-    if (!skill) return;
-    if (skills.includes(skill)) {
-      toast.error(`"${skill}" is already added.`);
+  const handleToggleSkill = (id: string) => {
+    setSelectedSkillIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  // Location Auto-Detect
+  const handleDetectLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser.");
       return;
     }
-    setSkills((prev) => [...prev, skill]);
+
+    setIsDetectingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLatitude(Number(position.coords.latitude.toFixed(6)));
+        setLongitude(Number(position.coords.longitude.toFixed(6)));
+        setIsDetectingLocation(false);
+        toast.success("GPS coordinates locked successfully!");
+      },
+      (error) => {
+        setIsDetectingLocation(false);
+        toast.error(`Could not detect GPS location: ${error.message}`);
+      },
+      { timeout: 10000, enableHighAccuracy: true }
+    );
   };
 
-  const handleRemoveSkill = (skillToRemove: string) => {
-    setSkills((prev) => prev.filter((s) => s !== skillToRemove));
+  // Document File Handlers
+  const handleIdentityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("File size cannot exceed 10MB.");
+      return;
+    }
+
+    const validTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
+    if (!validTypes.includes(file.type)) {
+      toast.error("Please upload a PDF, JPEG, PNG, or WebP file.");
+      return;
+    }
+
+    setIdentityFile(file);
+    setIdentityPreview(file.type.startsWith("image/") ? URL.createObjectURL(file) : null);
   };
 
+  const handleRemoveIdentity = () => {
+    setIdentityFile(null);
+    if (identityPreview) URL.revokeObjectURL(identityPreview);
+    setIdentityPreview(null);
+    if (identityInputRef.current) identityInputRef.current.value = "";
+  };
+
+  const handleCertificateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("File size cannot exceed 10MB.");
+      return;
+    }
+
+    const validTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
+    if (!validTypes.includes(file.type)) {
+      toast.error("Please upload a PDF, JPEG, PNG, or WebP file.");
+      return;
+    }
+
+    setCertificateFile(file);
+    setCertificatePreview(file.type.startsWith("image/") ? URL.createObjectURL(file) : null);
+  };
+
+  const handleRemoveCertificate = () => {
+    setCertificateFile(null);
+    if (certificatePreview) URL.revokeObjectURL(certificatePreview);
+    setCertificatePreview(null);
+    if (certificateInputRef.current) certificateInputRef.current.value = "";
+  };
+
+  // Step Validations
+  const validateStep1 = () => {
+    if (selectedSkillIds.length === 0) {
+      toast.error("Please select at least one trade skill.");
+      return false;
+    }
+    if (experience < 0 || isNaN(experience)) {
+      toast.error("Please enter a valid number of years of experience.");
+      return false;
+    }
+    if (!cooperativeId || cooperativeId === "none" || !cooperativeId.trim()) {
+      toast.error("Cooperative selection is mandatory. Please select an affiliated cooperative society.");
+      return false;
+    }
+    return true;
+  };
+
+  const validateStep2 = () => {
+    if (!address.trim()) {
+      toast.error("Please enter your street address or locality.");
+      return false;
+    }
+    if (!city.trim()) {
+      toast.error("Please enter your city.");
+      return false;
+    }
+    if (!stateName.trim()) {
+      toast.error("Please enter your state.");
+      return false;
+    }
+    if (!pincode.trim()) {
+      toast.error("Please enter your postal pincode.");
+      return false;
+    }
+    return true;
+  };
+
+  const handleStepClick = (step: 1 | 2 | 3) => {
+    if (step === 1) {
+      setCurrentStep(1);
+    } else if (step === 2 && validateStep1()) {
+      setCurrentStep(2);
+    } else if (step === 3 && validateStep1() && validateStep2()) {
+      setCurrentStep(3);
+    }
+  };
+
+  // Form Submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (skills.length === 0) {
-      toast.error("Please select at least one trade skill.");
+    if (!validateStep1()) {
+      setCurrentStep(1);
+      return;
+    }
+    if (!validateStep2()) {
+      setCurrentStep(2);
       return;
     }
 
-    setIsLoading(true);
+    if (!identityFile) {
+      toast.error("Please upload your government-issued Identity document.");
+      return;
+    }
+
+    if (!certificateFile) {
+      toast.error("Please upload your Trade or Skill Certificate.");
+      return;
+    }
+
+    setIsSubmitting(true);
 
     try {
-      const payload: WorkerRegisterPayload = {
-        skills,
-        availability,
-        yearsOfExperience: Number(yearsOfExperience) || 0,
-        address: {
-          city: city.trim() || undefined,
-          state: stateName.trim() || undefined,
-          pincode: pincode.trim() || undefined,
-        },
-      };
+      const formData = new FormData();
+      formData.append("skills", JSON.stringify(selectedSkillIds));
+      formData.append("availability", availability);
+      formData.append("experience", String(Math.max(0, Number(experience) || 0)));
+      formData.append("cooperativeId", cooperativeId.trim());
 
-      if (coopSelection !== "none" && coopSelection) {
-        payload.cooperativeId = coopSelection;
-      }
+      formData.append(
+        "location",
+        JSON.stringify({
+          address: address.trim(),
+          city: city.trim(),
+          state: stateName.trim(),
+          pincode: pincode.trim(),
+          latitude: latitude ?? 0,
+          longitude: longitude ?? 0,
+        })
+      );
 
-      await workerRegister(payload);
-      toast.success("Worker profile activated successfully!");
+      formData.append("identity", identityFile);
+      formData.append("certificate", certificateFile);
+
+      await workerRegister(formData);
+
+      toast.success("Worker profile registered successfully! Verification is pending.");
 
       try {
         const updated = await getMe();
@@ -176,260 +302,89 @@ export default function WorkerRegisterForm() {
       const errorMsg =
         err?.response?.data?.message ||
         err?.message ||
-        "Registration failed. Please try again.";
+        "Registration failed. Please check your details and try again.";
       toast.error(errorMsg);
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  // Auth & role checks
+  // Auth & role guards
   if (!user) return <Navigate to="/login?redirect=/register/worker" replace />;
   if (isAlreadyWorker) return <Navigate to="/worker" replace />;
 
   return (
-    <div className="w-full max-w-xl mx-auto">
-      <Card className="border border-border/70 bg-card/90 shadow-2xl backdrop-blur-xl rounded-2xl sm:rounded-3xl overflow-hidden transition-all">
-        {/* Header */}
-        <CardHeader className="space-y-1.5 pb-3 pt-6 sm:pt-7 px-5 sm:px-8 text-center sm:text-left">
-          <div className="flex items-center justify-center sm:justify-start gap-2">
-            <Badge
-              variant="secondary"
-              className="rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider gap-1.5"
-            >
-              <Wrench className="size-3 text-primary" />
-              Pro Registration
-            </Badge>
-          </div>
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-            Complete Your Worker Profile
-          </h2>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            Select your skills and affiliation to begin accepting guaranteed fair-wage gigs.
-          </p>
+    <div className="w-full">
+      <Card className="border border-border/60 bg-card/90 shadow-xl backdrop-blur-xl rounded-3xl overflow-hidden">
+        {/* Header & Stepper */}
+        <CardHeader className="p-6 sm:p-8 pb-4 border-b border-border/40 bg-muted/15">
+          <WorkerRegisterStepper
+            currentStep={currentStep}
+            onStepClick={handleStepClick}
+          />
         </CardHeader>
 
-        {/* Compact Form */}
-        <CardContent className="px-5 sm:px-8 space-y-3.5">
-          <form onSubmit={handleSubmit} className="space-y-3.5">
-            {/* 1. Trade Skills */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <Label className="text-xs font-semibold text-foreground/85 flex items-center gap-1.5">
-                  <Wrench className="size-3.5 text-primary" />
-                  Primary Trade Skills <span className="text-destructive">*</span>
-                </Label>
-                <span className="text-[11px] text-muted-foreground">
-                  {skills.length} selected
-                </span>
-              </div>
+        {/* Content Body */}
+        <CardContent className="p-6 sm:p-8">
+          <form onSubmit={handleSubmit}>
+            {currentStep === 1 && (
+              <SkillsStep
+                services={servicesList}
+                selectedSkillIds={selectedSkillIds}
+                onToggleSkill={handleToggleSkill}
+                isLoadingServices={isLoadingServices}
+                availability={availability}
+                onAvailabilityChange={setAvailability}
+                experience={experience}
+                onExperienceChange={setExperience}
+                cooperativesList={cooperativesList}
+                cooperativeId={cooperativeId}
+                onCooperativeChange={setCooperativeId}
+                onNext={() => {
+                  if (validateStep1()) setCurrentStep(2);
+                }}
+              />
+            )}
 
-              {/* Skills Dropdown */}
-              <Select value="" onValueChange={(val) => { if (val) handleAddSkill(val); }}>
-                <SelectTrigger className="w-full h-10 rounded-xl text-xs sm:text-sm bg-input/20 border-border/80 cursor-pointer">
-                  <SelectValue placeholder="Add trade skills (e.g. Electrical, Plumbing)..." />
-                </SelectTrigger>
-                <SelectContent className="max-h-56">
-                  {TRADE_SKILL_CATEGORIES.map((cat) => (
-                    <SelectGroup key={cat.category}>
-                      <SelectLabel className="text-[10px] uppercase font-bold text-primary px-2 py-1">
-                        {cat.category}
-                      </SelectLabel>
-                      {cat.skills.map((s) => {
-                        const isSelected = skills.includes(s);
-                        return (
-                          <SelectItem
-                            key={s}
-                            value={s}
-                            disabled={isSelected}
-                            className="text-xs py-1.5 cursor-pointer"
-                          >
-                            {isSelected ? `✓ ${s}` : s}
-                          </SelectItem>
-                        );
-                      })}
-                    </SelectGroup>
-                  ))}
-                </SelectContent>
-              </Select>
+            {currentStep === 2 && (
+              <LocationStep
+                address={address}
+                onAddressChange={setAddress}
+                city={city}
+                onCityChange={setCity}
+                stateName={stateName}
+                onStateNameChange={setStateName}
+                pincode={pincode}
+                onPincodeChange={setPincode}
+                latitude={latitude}
+                longitude={longitude}
+                isDetectingLocation={isDetectingLocation}
+                onDetectLocation={handleDetectLocation}
+                onBack={() => setCurrentStep(1)}
+                onNext={() => {
+                  if (validateStep2()) setCurrentStep(3);
+                }}
+              />
+            )}
 
-              {/* Selected Badges */}
-              {skills.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {skills.map((s) => (
-                    <Badge
-                      key={s}
-                      variant="secondary"
-                      className="text-xs py-1 px-2.5 rounded-lg gap-1.5 bg-primary/10 text-primary border border-primary/20 hover:bg-primary/15 transition-all"
-                    >
-                      <span>{s}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveSkill(s)}
-                        className="hover:text-destructive transition-colors cursor-pointer"
-                        title={`Remove ${s}`}
-                      >
-                        <X className="size-3" />
-                      </button>
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* 2. Experience & Availability Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* Experience */}
-              <div className="space-y-1.5">
-                <Label htmlFor="experience" className="text-xs font-semibold text-foreground/85 flex items-center gap-1.5">
-                  <Clock className="size-3.5 text-muted-foreground" />
-                  Experience (Years)
-                </Label>
-                <Input
-                  id="experience"
-                  type="number"
-                  min={0}
-                  max={50}
-                  value={yearsOfExperience}
-                  onChange={(e) => setYearsOfExperience(Math.max(0, parseInt(e.target.value) || 0))}
-                  className="h-10 rounded-xl text-xs sm:text-sm bg-input/20 border-border/80"
-                />
-              </div>
-
-              {/* Availability */}
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold text-foreground/85 flex items-center gap-1.5">
-                  <Briefcase className="size-3.5 text-muted-foreground" />
-                  Availability Status
-                </Label>
-                <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-input/20 border border-border/80 h-10">
-                  <button
-                    type="button"
-                    onClick={() => setAvailability("Full-Time")}
-                    className={cn(
-                      "rounded-lg text-xs font-medium transition-all cursor-pointer",
-                      availability === "Full-Time"
-                        ? "bg-primary text-primary-foreground shadow-xs font-semibold"
-                        : "text-muted-foreground hover:text-foreground"
-                    )}
-                  >
-                    Full-Time
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setAvailability("Part-Time")}
-                    className={cn(
-                      "rounded-lg text-xs font-medium transition-all cursor-pointer",
-                      availability === "Part-Time"
-                        ? "bg-primary text-primary-foreground shadow-xs font-semibold"
-                        : "text-muted-foreground hover:text-foreground"
-                    )}
-                  >
-                    Part-Time
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* 3. Cooperative Affiliation Dropdown */}
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <Label className="text-xs font-semibold text-foreground/85 flex items-center gap-1.5">
-                  <Building2 className="size-3.5 text-primary" />
-                  Cooperative Affiliation
-                </Label>
-                <span className="text-[10px] text-muted-foreground">Optional</span>
-              </div>
-              <Select value={coopSelection} onValueChange={(val) => val && setCoopSelection(val)}>
-                <SelectTrigger className="w-full h-10 rounded-xl text-xs sm:text-sm bg-input/20 border-border/80 cursor-pointer">
-                  <SelectValue placeholder="Select affiliation status" />
-                </SelectTrigger>
-                <SelectContent className="max-h-56">
-                  <SelectItem value="none" className="text-xs py-2 cursor-pointer font-medium">
-                    ⚡ Independent Pro (No Cooperative)
-                  </SelectItem>
-                  <SelectGroup>
-                    <SelectLabel className="text-[10px] text-primary uppercase font-bold px-2 py-1">
-                      Registered Cooperatives
-                    </SelectLabel>
-                    {cooperativesList.map((c) => (
-                      <SelectItem key={c._id} value={c._id} className="text-xs py-2 cursor-pointer">
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-foreground">{c.cooperativeName}</span>
-                          {c.cooperativeAddress && (
-                            <span className="text-[10px] text-muted-foreground">{c.cooperativeAddress}</span>
-                          )}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* 4. Service Location (Single 3-column row) */}
-            <div className="space-y-1.5">
-              <Label className="text-xs font-semibold text-foreground/85 flex items-center gap-1.5">
-                <MapPin className="size-3.5 text-muted-foreground" />
-                Primary Location <span className="text-muted-foreground font-normal">(Optional)</span>
-              </Label>
-              <div className="grid grid-cols-3 gap-2">
-                <Input
-                  placeholder="City"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  className="h-10 rounded-xl text-xs sm:text-sm bg-input/20 border-border/80"
-                />
-                <Input
-                  placeholder="State"
-                  value={stateName}
-                  onChange={(e) => setStateName(e.target.value)}
-                  className="h-10 rounded-xl text-xs sm:text-sm bg-input/20 border-border/80"
-                />
-                <Input
-                  placeholder="Pincode"
-                  value={pincode}
-                  onChange={(e) => setPincode(e.target.value)}
-                  maxLength={10}
-                  className="h-10 rounded-xl text-xs sm:text-sm bg-input/20 border-border/80"
-                />
-              </div>
-            </div>
-
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full h-11 rounded-xl text-sm font-semibold shadow-md shadow-primary/20 hover:shadow-primary/30 transition-all cursor-pointer mt-2 active:scale-98"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="size-4 animate-spin mr-2" />
-                  Activating Worker Profile...
-                </>
-              ) : (
-                <>
-                  Complete Worker Registration
-                  <ArrowRight className="size-4 ml-1.5" />
-                </>
-              )}
-            </Button>
+            {currentStep === 3 && (
+              <DocumentsStep
+                identityFile={identityFile}
+                identityPreview={identityPreview}
+                identityInputRef={identityInputRef}
+                onIdentityChange={handleIdentityChange}
+                onRemoveIdentity={handleRemoveIdentity}
+                certificateFile={certificateFile}
+                certificatePreview={certificatePreview}
+                certificateInputRef={certificateInputRef}
+                onCertificateChange={handleCertificateChange}
+                onRemoveCertificate={handleRemoveCertificate}
+                isSubmitting={isSubmitting}
+                onBack={() => setCurrentStep(2)}
+              />
+            )}
           </form>
         </CardContent>
-
-        <Separator className="bg-border/50 my-1" />
-
-        {/* Footer */}
-        <CardFooter className="flex items-center justify-between px-5 sm:px-8 py-3.5 text-xs text-muted-foreground">
-          <span>Need to switch account?</span>
-          <Link
-            to="/login"
-            className="font-medium text-primary hover:underline inline-flex items-center gap-1 transition-colors"
-          >
-            Sign in
-            <ChevronRight className="size-3" />
-          </Link>
-        </CardFooter>
       </Card>
     </div>
   );

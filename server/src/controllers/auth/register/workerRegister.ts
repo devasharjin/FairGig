@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import User, { UserRole } from "../../../models/auth/user.model";
 import Worker, {
   AvailabilityStatus,
@@ -7,93 +7,275 @@ import Worker, {
 } from "../../../models/auth/worker.model";
 import { fail, ok } from "../../../shared/envelope";
 import { generateAuthTokens } from "../../../utils/jwt.utils";
-
+import { uploadToCloudinary } from "../../../services/cloudinaryservices";
 
 export const workerRegister = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  // User ID should be attached by authentication middleware
+  // 1. Check user authentication
   if (!req.user || typeof req.user === "string") {
-    return fail(res, "Unauthorized", null, 401);
+    return fail(res, "Unauthorized. Please log in first.", null, 401);
   }
 
   const userId = req.user.id || (req.user as any).userId;
 
-  const {
-    cooperativeId,
-    skills,
-    availability,
-    yearsOfExperience,
-    address,
-  } = req.body;
-
-  // Check if worker profile already exists
+  // 2. Check if worker profile already exists for this user
   const existingWorker = await Worker.findOne({ userId });
-
   if (existingWorker) {
     return fail(
       res,
-      "Worker profile already exists for this user",
+      "Worker profile already exists for this account.",
       null,
       409
     );
   }
 
-  // Validate skills
+  // 3. Extract request body fields (support JSON or multipart/form-data)
+  let {
+    cooperativeId,
+    skills,
+    availability,
+    experience,
+    yearsOfExperience,
+    location,
+    address,
+    city,
+    state,
+    pincode,
+    latitude,
+    longitude,
+  } = req.body;
+
+  // Parse skills if stringified (FormData sends strings)
+  if (typeof skills === "string") {
+    try {
+      skills = JSON.parse(skills);
+    } catch {
+      skills = skills.split(",").map((s: string) => s.trim()).filter(Boolean);
+    }
+  }
+
   if (!Array.isArray(skills) || skills.length === 0) {
-    return fail(res, "At least one skill is required", null, 400);
+    return fail(res, "At least one skill (service) is required.", null, 400);
   }
 
-  // Validate availability
-  if (
-    availability &&
-    !Object.values(AvailabilityStatus).includes(availability)
-  ) {
-    return fail(res, "Invalid availability status", null, 400);
-  }
-
-  // Validate experience
-  if (
-    yearsOfExperience !== undefined &&
-    (typeof yearsOfExperience !== "number" || yearsOfExperience < 0)
-  ) {
+  // Validate that skill IDs are valid Mongo ObjectIds
+  const invalidSkills = skills.filter((s) => !mongoose.Types.ObjectId.isValid(s));
+  if (invalidSkills.length > 0) {
     return fail(
       res,
-      "Years of experience must be a non-negative number",
+      "One or more selected skill IDs are invalid services.",
       null,
       400
     );
   }
 
-  // Validate ObjectIds if provided
+  const skillObjectIds = skills.map((s) => new Types.ObjectId(s));
+
+  // Parse availability
   if (
-    cooperativeId &&
-    !mongoose.Types.ObjectId.isValid(cooperativeId)
+    availability &&
+    !Object.values(AvailabilityStatus).includes(availability as AvailabilityStatus)
   ) {
-    return fail(res, "Invalid cooperative ID", null, 400);
+    return fail(
+      res,
+      `Invalid availability status. Must be one of: ${Object.values(
+        AvailabilityStatus
+      ).join(", ")}`,
+      null,
+      400
+    );
+  }
+  const workerAvailability =
+    (availability as AvailabilityStatus) || AvailabilityStatus.FULL_TIME;
+
+  // Parse experience
+  const rawExp = experience !== undefined ? experience : yearsOfExperience;
+  const parsedExperience = Number(rawExp);
+  if (isNaN(parsedExperience) || parsedExperience < 0) {
+    return fail(
+      res,
+      "Experience must be a valid non-negative number.",
+      null,
+      400
+    );
   }
 
+  // Parse location
+  let parsedLocation: {
+    address: string;
+    city: string;
+    state: string;
+    pincode: string;
+    latitude?: number;
+    longitude?: number;
+  } = {
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+    latitude: 0,
+    longitude: 0,
+  };
 
-  // Create worker
-  const worker = await Worker.create({
+  if (typeof location === "string") {
+    try {
+      parsedLocation = { ...parsedLocation, ...JSON.parse(location) };
+    } catch {
+      // Fallback
+    }
+  } else if (typeof location === "object" && location !== null) {
+    parsedLocation = { ...parsedLocation, ...location };
+  }
+
+  // Fallback to top-level fields
+  if (!parsedLocation.address && address) parsedLocation.address = String(address).trim();
+  if (!parsedLocation.city && city) parsedLocation.city = String(city).trim();
+  if (!parsedLocation.state && state) parsedLocation.state = String(state).trim();
+  if (!parsedLocation.pincode && pincode) parsedLocation.pincode = String(pincode).trim();
+  if (latitude !== undefined) parsedLocation.latitude = Number(latitude) || 0;
+  if (longitude !== undefined) parsedLocation.longitude = Number(longitude) || 0;
+
+  if (
+    !parsedLocation.address ||
+    !parsedLocation.city ||
+    !parsedLocation.state ||
+    !parsedLocation.pincode
+  ) {
+    return fail(
+      res,
+      "Complete location details (address, city, state, pincode) are required.",
+      null,
+      400
+    );
+  }
+
+  // Validate cooperativeId (mandatory - independent worker is not permitted)
+  if (
+    !cooperativeId ||
+    typeof cooperativeId !== "string" ||
+    cooperativeId === "none" ||
+    cooperativeId === "null" ||
+    !cooperativeId.trim()
+  ) {
+    return fail(
+      res,
+      "Cooperative society selection is mandatory. You must choose an affiliated cooperative.",
+      null,
+      400
+    );
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(cooperativeId.trim())) {
+    return fail(res, "Invalid cooperative ID selected.", null, 400);
+  }
+
+  const validCoopId = new Types.ObjectId(cooperativeId.trim());
+
+  // 4. Handle verification documents (identity & certificate)
+  const files = req.files as
+    | { [fieldname: string]: Express.Multer.File[] }
+    | undefined;
+
+  const identityFile = files?.identity?.[0];
+  const certificateFile = files?.certificate?.[0];
+
+  let identityUrl: string = req.body.identityUrl || "";
+  let certificateUrl: string = req.body.certificateUrl || "";
+
+  // Upload identity document if file provided
+  if (identityFile) {
+    try {
+      const uploadRes = await uploadToCloudinary(identityFile, {
+        folder: "workers/identity",
+      });
+      identityUrl = uploadRes.secure_url;
+    } catch (err: any) {
+      return fail(
+        res,
+        `Identity document upload failed: ${err?.message || "Cloud error"}`,
+        null,
+        500
+      );
+    }
+  }
+
+  // Upload certificate document if file provided
+  if (certificateFile) {
+    try {
+      const uploadRes = await uploadToCloudinary(certificateFile, {
+        folder: "workers/certificates",
+      });
+      certificateUrl = uploadRes.secure_url;
+    } catch (err: any) {
+      return fail(
+        res,
+        `Certificate upload failed: ${err?.message || "Cloud error"}`,
+        null,
+        500
+      );
+    }
+  }
+
+  // Ensure both verification documents are present
+  if (!identityUrl) {
+    return fail(
+      res,
+      "Identity verification document is required (e.g. Aadhaar, Passport, or Government ID).",
+      null,
+      400
+    );
+  }
+
+  if (!certificateUrl) {
+    return fail(
+      res,
+      "Professional trade certificate is required (e.g. ITI, Diploma, or Trade Certificate).",
+      null,
+      400
+    );
+  }
+
+  // 5. Create Worker document
+  const worker: any = await Worker.create({
     userId,
-    cooperativeId: cooperativeId || undefined,
-    skills,
-    availability: availability || AvailabilityStatus.FULL_TIME,
-    yearsOfExperience: yearsOfExperience ?? 0,
+    cooperativeId: validCoopId,
+    skills: skillObjectIds,
+    availability: workerAvailability,
     verificationStatus: VerificationStatus.PENDING,
+    verificationDocuments: {
+      identity: {
+        url: identityUrl,
+        status: VerificationStatus.PENDING,
+      },
+      certificate: {
+        url: certificateUrl,
+        status: VerificationStatus.PENDING,
+      },
+    },
+    experience: parsedExperience,
+    location: {
+      address: parsedLocation.address,
+      city: parsedLocation.city,
+      state: parsedLocation.state,
+      pincode: parsedLocation.pincode,
+      latitude: parsedLocation.latitude ?? 0,
+      longitude: parsedLocation.longitude ?? 0,
+    },
     rating: 0,
-    address: address || undefined,
+    totalJobsCompleted: 0,
+    isActive: true,
   });
 
-  // Add WORKER role to user's role array and retrieve updated user
+  // 6. Update User role
   const updatedUser = await User.findByIdAndUpdate(
     userId,
     { $addToSet: { role: UserRole.WORKER } },
     { new: true }
   );
 
+  // 7. Re-issue JWT tokens with updated role
   let tokens;
   if (updatedUser) {
     tokens = generateAuthTokens(updatedUser);
@@ -116,9 +298,13 @@ export const workerRegister = async (
     });
   }
 
+  const populatedWorker = await Worker.findById(worker._id)
+    .populate("skills", "name description category priceType hourlyPrice metersPrice")
+    .populate("cooperativeId", "cooperativeName cooperativeAddress");
+
   return ok(
     res,
-    { worker, user: updatedUser, tokens },
-    "Worker registration submitted successfully"
+    { worker: populatedWorker || worker, user: updatedUser, tokens },
+    "Worker registration submitted successfully! Your profile is pending verification."
   );
 };

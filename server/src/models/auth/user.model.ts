@@ -16,7 +16,7 @@ export enum AccountStatus {
 export interface IUser extends Document {
   name: string;
   email: string;
-  phone?: string;
+  phone: string;
   password: string;
 
   role: UserRole[];
@@ -80,6 +80,7 @@ const userSchema = new Schema<IUser>(
 
     phone: {
       type: String,
+      required: [true, "Phone number is required"],
       trim: true,
       maxlength: [20, "Phone number cannot exceed 20 characters"],
     },

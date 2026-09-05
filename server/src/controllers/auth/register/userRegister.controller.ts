@@ -6,13 +6,17 @@ import { generateAuthTokens } from "../../../utils/jwt.utils";
 
 export async function userRegister(req: Request, res: Response) {
   const { name, email, phone, password } = req.body;
-  if (!name || !email || !password) {
+  if (!name || !email || !phone || !password) {
     return fail(res, "Missing required fields", null, 400);
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
     return fail(res, "Invalid email format", null, 400);
+  }
+
+  if (typeof phone !== "string" || !phone.trim()) {
+    return fail(res, "Phone number is required", null, 400);
   }
 
   if (password.length < 8) {
@@ -27,9 +31,9 @@ export async function userRegister(req: Request, res: Response) {
   const hashedPassword = await hashPassword(password);
 
   const customer = await User.create({
-    name,
-    email,
-    phone,
+    name: name.trim(),
+    email: email.trim().toLowerCase(),
+    phone: phone.trim(),
     password: hashedPassword,
     role: [UserRole.CUSTOMER],
   });
