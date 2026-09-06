@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
   Clock,
@@ -22,6 +23,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import type { CustomerService } from "@/features/customer/services/types";
+import { useCreateBooking } from "@/features/customer/bookings/hooks";
+import { useAuthStore } from "@/features/auth/store";
 
 interface ServiceBookingDialogProps {
   open: boolean;
@@ -34,10 +37,13 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
   onOpenChange,
   service,
 }) => {
+  const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
+  const createBooking = useCreateBooking();
+
   const [address, setAddress] = useState("");
   const [preferredDate, setPreferredDate] = useState("");
   const [notes, setNotes] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!service) return null;
 
@@ -50,24 +56,37 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
       ? service.category.name
       : "Standard Service";
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!user) {
+      toast.error("Please log in to book a service");
+      onOpenChange(false);
+      navigate("/login");
+      return;
+    }
+
     if (!address.trim()) {
       toast.error("Please provide your service location/address");
       return;
     }
 
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      toast.success(
-        `Dispatch request for "${service.name}" submitted! A cooperative gig worker will be assigned shortly.`
-      );
+    try {
+      await createBooking.mutateAsync({
+        serviceId: service._id,
+        address: address.trim(),
+        scheduledDate: preferredDate ? new Date(preferredDate).toISOString() : new Date().toISOString(),
+        customerNotes: notes.trim(),
+      });
+
       setAddress("");
       setPreferredDate("");
       setNotes("");
       onOpenChange(false);
-    }, 800);
+      navigate("/bookings");
+    } catch {
+      // Error handled by mutation toast
+    }
   };
 
   return (
@@ -130,7 +149,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
               placeholder="e.g. Flat 302, Green Valley Apartments, Main Street"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              disabled={isSubmitting}
+              disabled={createBooking.isPending}
               className="h-10 text-sm"
               required
             />
@@ -147,7 +166,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
               type="datetime-local"
               value={preferredDate}
               onChange={(e) => setPreferredDate(e.target.value)}
-              disabled={isSubmitting}
+              disabled={createBooking.isPending}
               className="h-10 text-xs sm:text-sm"
             />
           </div>
@@ -164,7 +183,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
               placeholder="Describe specific issues, tools needed, or access instructions..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              disabled={isSubmitting}
+              disabled={createBooking.isPending}
               className="w-full px-3 py-2 rounded-2xl border border-input bg-input/20 text-xs sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition resize-none"
             />
           </div>
@@ -175,17 +194,17 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              disabled={isSubmitting}
+              disabled={createBooking.isPending}
               className="h-10 px-4 rounded-xl text-xs sm:text-sm cursor-pointer"
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={createBooking.isPending}
               className="h-10 px-5 rounded-xl text-xs sm:text-sm font-semibold cursor-pointer shadow-sm"
             >
-              {isSubmitting ? "Dispatching..." : "Confirm & Dispatch"}
+              {createBooking.isPending ? "Dispatching..." : "Confirm & Dispatch"}
             </Button>
           </div>
         </form>

@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
+import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
@@ -9,6 +10,8 @@ import authRoutes from './routes/auth/auth.routes';
 import adminCategoryRoutes from './routes/admin/category.routes';
 import adminServiceRoutes from './routes/admin/service.routes';
 import customerCategoryRoutes from './routes/customer/category.routes';
+import customerBookingRoutes from './routes/customer/booking.routes';
+import workerGigRoutes from './routes/worker/gig.routes';
 import cooperativeRoutes from './routes/cooperative/workerVerification.routes';
 import adminVerificationRoutes from './routes/admin/verification.routes';
 import { notFound } from './middleware/notFound';
@@ -31,8 +34,9 @@ app.use(
 );
 
 // Standard Core Middlewares
+app.use(compression());
 app.use(cookieParser());
-app.use(express.json());
+app.use(express.json({ limit: "2mb" }));
 app.use(morgan('dev'));
 
 // Basic health check route
@@ -46,6 +50,8 @@ app.use('/api/admin/categories', adminCategoryRoutes);
 app.use('/api/admin/services', adminServiceRoutes);
 app.use('/api/admin/verifications', adminVerificationRoutes);
 app.use('/api/customer', customerCategoryRoutes);
+app.use('/api/customer/bookings', customerBookingRoutes);
+app.use('/api/worker/gigs', workerGigRoutes);
 app.use('/api/cooperative', cooperativeRoutes);
 
 // Error Middlewares (must be registered after routes)

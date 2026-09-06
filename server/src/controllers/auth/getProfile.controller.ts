@@ -21,15 +21,38 @@ export async function getProfile(req: Request, res: Response) {
   let worker: any = null;
   let cooperative: any = null;
 
-  // 3. Fetch role-specific profile details
+  // 3. Fetch role-specific profile details with lean projections
   if (user.role.includes(UserRole.WORKER) || user.role.includes(UserRole.CUSTOMER)) {
-    worker = await Worker.findOne({ userId })
-      .populate("cooperativeId")
-      .populate("skills", "name description priceType hourlyPrice metersPrice");
+    const workerDoc: any = await Worker.findOne({ userId })
+      .populate("cooperativeId", "cooperativeName cooperativeAddress cooperativePhone cooperativeEmail")
+      .populate("skills", "name description priceType hourlyPrice metersPrice")
+      .lean();
+
+    if (workerDoc) {
+      // Prevent multi-megabyte base64 strings from bloating the auth payload
+      if (workerDoc.verificationDocuments) {
+        if (workerDoc.verificationDocuments.identity?.url?.startsWith("data:")) {
+          workerDoc.verificationDocuments.identity.url = "data_document_uploaded";
+        }
+        if (workerDoc.verificationDocuments.certificate?.url?.startsWith("data:")) {
+          workerDoc.verificationDocuments.certificate.url = "data_document_uploaded";
+        }
+      }
+      worker = workerDoc;
+    }
   }
 
   if (user.role.includes(UserRole.COOPERATIVE)) {
-    cooperative = await Cooperative.findOne({ userId });
+    const coopDoc: any = await Cooperative.findOne({ userId }).lean();
+    if (coopDoc) {
+      if (coopDoc.cooperativeLogo?.url?.startsWith("data:")) {
+        coopDoc.cooperativeLogo.url = "data_logo_uploaded";
+      }
+      if (coopDoc.verificationCertificate?.url?.startsWith("data:")) {
+        coopDoc.verificationCertificate.url = "data_certificate_uploaded";
+      }
+      cooperative = coopDoc;
+    }
   }
 
   const profile = worker || cooperative || null;

@@ -5,6 +5,8 @@ import {
   Briefcase,
   Calendar,
   CircleDot,
+  CheckCircle2,
+  UserCheck,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
@@ -38,14 +40,29 @@ const workerNavGroups: SidebarGroupConfig[] = [
     heading: "Gig Operations",
     items: [
       {
-        title: "Gigs & Jobs",
+        title: "Available Gigs",
         to: "/worker/jobs",
         icon: Briefcase,
+      },
+      {
+        title: "My Bookings",
+        to: "/worker/bookings",
+        icon: CheckCircle2,
       },
       {
         title: "Schedule",
         to: "/worker/schedule",
         icon: Calendar,
+      },
+    ],
+  },
+  {
+    heading: "Professional",
+    items: [
+      {
+        title: "Profile & Skills",
+        to: "/worker/profile",
+        icon: UserCheck,
       },
     ],
   },

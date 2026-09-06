@@ -27,7 +27,9 @@ export async function getCategories(req: Request, res: Response) {
   const sortDirection = order === "desc" ? -1 : 1;
   const sortField = typeof sortBy === "string" ? sortBy : "name";
 
-  const categories = await Category.find(filter).sort({ [sortField]: sortDirection });
+  const categories = await Category.find(filter)
+    .sort({ [sortField]: sortDirection })
+    .lean();
 
   return ok(res, categories, "Categories retrieved successfully");
 }
@@ -42,7 +44,7 @@ export async function getCategory(req: Request, res: Response) {
   let category = null;
 
   if (mongoose.Types.ObjectId.isValid(identifier)) {
-    category = await Category.findById(identifier);
+    category = await Category.findById(identifier).lean();
   }
 
   if (!category) {
@@ -52,7 +54,7 @@ export async function getCategory(req: Request, res: Response) {
         { slug: identifier.toLowerCase().trim() },
         { name: { $regex: new RegExp(`^${identifier.trim()}$`, "i") } },
       ],
-    });
+    }).lean();
   }
 
   if (!category) {

@@ -36,7 +36,8 @@ export async function getServices(req: Request, res: Response) {
 
   const services = await Service.find(filter)
     .populate("category", "name slug icon isActive")
-    .sort({ [sortField]: sortDirection });
+    .sort({ [sortField]: sortDirection })
+    .lean();
 
   return ok(res, services, "Services retrieved successfully");
 }
@@ -48,7 +49,9 @@ export async function getServiceById(req: Request, res: Response) {
     return fail(res, "Invalid service ID", null, 400);
   }
 
-  const service = await Service.findById(id).populate("category", "name slug icon isActive");
+  const service = await Service.findById(id)
+    .populate("category", "name slug icon isActive")
+    .lean();
 
   if (!service) {
     return fail(res, "Service not found", null, 404);

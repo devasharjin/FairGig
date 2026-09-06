@@ -57,7 +57,15 @@ export async function uploadToCloudinary(
     folder: options.folder || "worker_verification_docs",
     resource_type: options.resource_type || "auto",
     public_id: options.public_id,
-    transformation: options.transformation,
+    transformation: options.transformation || [
+      {
+        width: 1600,
+        height: 1600,
+        crop: "limit",
+        quality: "auto:good",
+        fetch_format: "auto",
+      },
+    ],
   };
 
   // If file is a string (URL or base64 data URI)
@@ -81,9 +89,14 @@ export async function uploadToCloudinary(
   }
 
   return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      reject(new Error("Cloudinary upload timed out after 20 seconds."));
+    }, 20000);
+
     const uploadStream = cloudinary.uploader.upload_stream(
       uploadOptions,
       (error, result: UploadApiResponse | undefined) => {
+        clearTimeout(timeout);
         if (error || !result) {
           return reject(error || new Error("Cloudinary upload failed with empty result."));
         }

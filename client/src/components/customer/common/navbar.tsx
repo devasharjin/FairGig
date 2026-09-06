@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Handshake, LogIn, Menu, Home, Grid, UserPlus } from "lucide-react";
+import { Handshake, LogIn, Menu, Home, Grid, UserPlus, Briefcase } from "lucide-react";
 import { useAuthStore } from "@/features/auth/store";
 import { Button } from "@/components/ui/button";
 import {
@@ -46,6 +46,12 @@ export const CustomerNavbar = () => {
             <NavbarNavLink to="/services">
               Services
             </NavbarNavLink>
+
+            {user && (
+              <NavbarNavLink to="/bookings">
+                My Bookings
+              </NavbarNavLink>
+            )}
           </nav>
         </div>
 
@@ -133,6 +139,17 @@ export const CustomerNavbar = () => {
               <Grid className="size-4 text-muted-foreground" />
               <span>Services</span>
             </Link>
+
+            {user && (
+              <Link
+                to="/bookings"
+                onClick={() => setIsMobileOpen(false)}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-foreground hover:bg-muted transition-colors"
+              >
+                <Briefcase className="size-4 text-muted-foreground" />
+                <span>My Bookings</span>
+              </Link>
+            )}
           </div>
 
           {/* Bottom Auth Section in Mobile Sheet */}

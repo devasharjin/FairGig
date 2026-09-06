@@ -16,6 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { CooperativeRegisterStepper } from "./CooperativeRegisterStepper";
 import { CooperativeDetailsStep } from "./CooperativeDetailsStep";
 import { CooperativeDocumentsStep } from "./CooperativeDocumentsStep";
+import { compressImageFile, formatBytes } from "@/lib/imageCompressor";
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 const ALLOWED_LOGO_TYPES = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
@@ -109,7 +110,7 @@ export default function CooperativeRegisterForm() {
   };
 
   // Logo file selection
-  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -127,8 +128,16 @@ export default function CooperativeRegisterForm() {
       URL.revokeObjectURL(logoPreview);
     }
 
-    setLogoFile(file);
-    setLogoPreview(URL.createObjectURL(file));
+    const toastId = toast.loading("Compressing logo image...");
+    const result = await compressImageFile(file, { maxWidth: 800, maxHeight: 800, quality: 0.85 });
+    toast.dismiss(toastId);
+
+    if (result.wasCompressed) {
+      toast.success(`Logo optimized: ${formatBytes(result.originalSize)} → ${formatBytes(result.compressedSize)} (-${result.percentSaved}%)`);
+    }
+
+    setLogoFile(result.file);
+    setLogoPreview(URL.createObjectURL(result.file));
   };
 
   const handleRemoveLogo = () => {
@@ -143,7 +152,7 @@ export default function CooperativeRegisterForm() {
   };
 
   // Certificate file selection
-  const handleCertificateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCertificateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -161,9 +170,17 @@ export default function CooperativeRegisterForm() {
       URL.revokeObjectURL(certificatePreview);
     }
 
-    setCertificateFile(file);
-    if (file.type.startsWith("image/")) {
-      setCertificatePreview(URL.createObjectURL(file));
+    const toastId = file.type.startsWith("image/") ? toast.loading("Compressing certificate...") : null;
+    const result = await compressImageFile(file, { maxWidth: 1600, maxHeight: 1600, quality: 0.8 });
+    if (toastId) toast.dismiss(toastId);
+
+    if (result.wasCompressed) {
+      toast.success(`Certificate optimized: ${formatBytes(result.originalSize)} → ${formatBytes(result.compressedSize)} (-${result.percentSaved}%)`);
+    }
+
+    setCertificateFile(result.file);
+    if (result.file.type.startsWith("image/")) {
+      setCertificatePreview(URL.createObjectURL(result.file));
     } else {
       setCertificatePreview(null);
     }
@@ -201,13 +218,19 @@ export default function CooperativeRegisterForm() {
     setIsLoading(true);
 
     try {
+      // Ensure both files are compressed before network upload
+      const [optLogo, optCert] = await Promise.all([
+        compressImageFile(logoFile, { maxWidth: 800, maxHeight: 800, quality: 0.85 }),
+        compressImageFile(certificateFile, { maxWidth: 1600, maxHeight: 1600, quality: 0.8 }),
+      ]);
+
       const formData = new FormData();
       formData.append("cooperativeName", cooperativeName.trim());
       formData.append("cooperativeEmail", cooperativeEmail.trim().toLowerCase());
       formData.append("cooperativePhone", cooperativePhone.trim());
       formData.append("cooperativeAddress", cooperativeAddress.trim());
-      formData.append("cooperativeLogo", logoFile);
-      formData.append("verificationCertificate", certificateFile);
+      formData.append("cooperativeLogo", optLogo.file);
+      formData.append("verificationCertificate", optCert.file);
 
       await cooperativeRegister(formData);
       toast.success("Cooperative registered! Your profile is submitted for verification.");

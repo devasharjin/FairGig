@@ -7,6 +7,7 @@ import {
   Store,
   ChevronDown,
   ShieldAlert,
+  Briefcase,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -132,7 +133,7 @@ export const NavbarUserDropdown = ({
         {/* Portal Switching & Registration Options */}
         <DropdownMenuGroup>
           {/* Customer View (shown if in worker, coop, or fed portal) */}
-          {currentPortal !== "customer" && (
+          {currentPortal !== "customer" ? (
             <DropdownMenuItem
               onClick={() => navigate("/")}
               className="cursor-pointer gap-2.5 py-2.5 px-3 rounded-xl transition-colors"
@@ -142,6 +143,19 @@ export const NavbarUserDropdown = ({
                 <span className="font-medium text-sm">Customer View</span>
                 <span className="text-[11px] text-muted-foreground">
                   Browse services and book gigs
+                </span>
+              </div>
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem
+              onClick={() => navigate("/bookings")}
+              className="cursor-pointer gap-2.5 py-2.5 px-3 rounded-xl transition-colors"
+            >
+              <Briefcase className="size-4 text-primary" />
+              <div className="flex flex-col">
+                <span className="font-medium text-sm">My Bookings</span>
+                <span className="text-[11px] text-muted-foreground">
+                  Track active & past service orders
                 </span>
               </div>
             </DropdownMenuItem>

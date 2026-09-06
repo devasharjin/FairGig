@@ -30,8 +30,6 @@ const ratingSchema = new Schema<IRating, IRatingModel>(
       ref: "Booking",
       required: [true, "Booking reference is required"],
       unique: true,
-      index: true,
-      alias: "bookingId",
     },
 
     customer: {
@@ -39,7 +37,6 @@ const ratingSchema = new Schema<IRating, IRatingModel>(
       ref: "User",
       required: [true, "Customer reference is required"],
       index: true,
-      alias: "customerId",
     },
 
     worker: {
@@ -47,21 +44,18 @@ const ratingSchema = new Schema<IRating, IRatingModel>(
       ref: "Worker",
       required: [true, "Worker reference is required"],
       index: true,
-      alias: "workerId",
     },
 
     service: {
       type: Schema.Types.ObjectId,
       ref: "Service",
       index: true,
-      alias: "serviceId",
     },
 
     cooperative: {
       type: Schema.Types.ObjectId,
       ref: "Cooperative",
       index: true,
-      alias: "cooperativeId",
     },
 
     rating: {
@@ -83,11 +77,9 @@ const ratingSchema = new Schema<IRating, IRatingModel>(
   }
 );
 
-// Indexes for fast retrieval
+// Compound indexes for fast retrieval
 ratingSchema.index({ worker: 1, rating: -1 });
 ratingSchema.index({ customer: 1, createdAt: -1 });
-ratingSchema.index({ service: 1 });
-ratingSchema.index({ cooperative: 1 });
 
 // Static method to calculate worker average rating
 ratingSchema.statics.calculateAverageRating = async function (
@@ -135,8 +127,44 @@ ratingSchema.post("save", async function () {
   }
 });
 
+// Virtual getters for compatibility
+ratingSchema.virtual("bookingId").get(function () {
+  return this.booking;
+});
+ratingSchema.virtual("customerId").get(function () {
+  return this.customer;
+});
+ratingSchema.virtual("workerId").get(function () {
+  return this.worker;
+});
+ratingSchema.virtual("serviceId").get(function () {
+  return this.service;
+});
+ratingSchema.virtual("cooperativeId").get(function () {
+  return this.cooperative;
+});
+
 const Rating: IRatingModel =
   (mongoose.models.Rating as IRatingModel) ||
   mongoose.model<IRating, IRatingModel>("Rating", ratingSchema);
+
+// Automatically drop stale bookingId_1 index that conflicts with booking field
+const dropStaleBookingIdIndex = async () => {
+  try {
+    const indexes = await Rating.collection.indexes();
+    const staleIndex = indexes.find((idx) => idx.name === "bookingId_1");
+    if (staleIndex) {
+      await Rating.collection.dropIndex("bookingId_1");
+      console.log("Successfully dropped stale bookingId_1 index from ratings collection");
+    }
+  } catch {
+    // Ignore if collection does not exist or index is already dropped
+  }
+};
+
+mongoose.connection.on("connected", dropStaleBookingIdIndex);
+if (mongoose.connection.readyState === 1) {
+  dropStaleBookingIdIndex();
+}
 
 export default Rating;

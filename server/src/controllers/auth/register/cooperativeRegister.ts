@@ -71,54 +71,51 @@ export const cooperativeRegister = async (
   let logoData: { url: string; publicId: string } | null = null;
   let certificateData: { url: string; publicId: string } | null = null;
 
-  // Upload logo if file is provided
-  if (logoFile) {
-    try {
-      const uploadRes = await uploadToCloudinary(logoFile, {
-        folder: "cooperatives/logos",
-      });
-      logoData = {
-        url: uploadRes.secure_url,
-        publicId: uploadRes.public_id,
-      };
-    } catch (err: any) {
-      return fail(
-        res,
-        `Cooperative logo upload failed: ${err?.message || "Cloud error"}`,
-        null,
-        500
-      );
-    }
-  } else if (req.body.cooperativeLogoUrl) {
-    logoData = {
-      url: req.body.cooperativeLogoUrl,
-      publicId: req.body.cooperativeLogoPublicId || `coop_logo_${Date.now()}`,
-    };
-  }
+  // Upload logo and certificate concurrently for maximum performance
+  try {
+    const [logoUploadRes, certUploadRes] = await Promise.all([
+      logoFile
+        ? uploadToCloudinary(logoFile, {
+            folder: "cooperatives/logos",
+          })
+        : null,
+      certificateFile
+        ? uploadToCloudinary(certificateFile, {
+            folder: "cooperatives/certificates",
+          })
+        : null,
+    ]);
 
-  // Upload certificate if file is provided
-  if (certificateFile) {
-    try {
-      const uploadRes = await uploadToCloudinary(certificateFile, {
-        folder: "cooperatives/certificates",
-      });
-      certificateData = {
-        url: uploadRes.secure_url,
-        publicId: uploadRes.public_id,
+    if (logoUploadRes) {
+      logoData = {
+        url: logoUploadRes.secure_url,
+        publicId: logoUploadRes.public_id,
       };
-    } catch (err: any) {
-      return fail(
-        res,
-        `Verification certificate upload failed: ${err?.message || "Cloud error"}`,
-        null,
-        500
-      );
+    } else if (req.body.cooperativeLogoUrl) {
+      logoData = {
+        url: req.body.cooperativeLogoUrl,
+        publicId: req.body.cooperativeLogoPublicId || `coop_logo_${Date.now()}`,
+      };
     }
-  } else if (req.body.verificationCertificateUrl) {
-    certificateData = {
-      url: req.body.verificationCertificateUrl,
-      publicId: req.body.verificationCertificatePublicId || `coop_cert_${Date.now()}`,
-    };
+
+    if (certUploadRes) {
+      certificateData = {
+        url: certUploadRes.secure_url,
+        publicId: certUploadRes.public_id,
+      };
+    } else if (req.body.verificationCertificateUrl) {
+      certificateData = {
+        url: req.body.verificationCertificateUrl,
+        publicId: req.body.verificationCertificatePublicId || `coop_cert_${Date.now()}`,
+      };
+    }
+  } catch (err: any) {
+    return fail(
+      res,
+      `Document upload failed: ${err?.message || "Cloud error"}`,
+      null,
+      500
+    );
   }
 
   // Ensure both verification documents are present

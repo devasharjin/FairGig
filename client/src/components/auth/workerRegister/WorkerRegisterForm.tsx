@@ -14,6 +14,7 @@ import { SkillsStep } from "./SkillsStep";
 import { LocationStep } from "./LocationStep";
 import { DocumentsStep } from "./DocumentsStep";
 import type { ServiceOption } from "./ServiceSelector";
+import { compressImageFile, formatBytes } from "@/lib/imageCompressor";
 
 const DEFAULT_SERVICES: ServiceOption[] = [
   { _id: "65f0a1b2c3d4e5f6a7b8c101", name: "Electrician", category: "Electrical" },
@@ -142,12 +143,12 @@ export default function WorkerRegisterForm() {
   };
 
   // Document File Handlers
-  const handleIdentityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleIdentityChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error("File size cannot exceed 10MB.");
+    if (file.size > 15 * 1024 * 1024) {
+      toast.error("File size cannot exceed 15MB.");
       return;
     }
 
@@ -157,8 +158,18 @@ export default function WorkerRegisterForm() {
       return;
     }
 
-    setIdentityFile(file);
-    setIdentityPreview(file.type.startsWith("image/") ? URL.createObjectURL(file) : null);
+    const toastId = file.type.startsWith("image/") ? toast.loading("Compressing document...") : null;
+    const result = await compressImageFile(file);
+    if (toastId) toast.dismiss(toastId);
+
+    if (result.wasCompressed) {
+      toast.success(
+        `Optimized for instant upload: ${formatBytes(result.originalSize)} → ${formatBytes(result.compressedSize)} (-${result.percentSaved}%)`
+      );
+    }
+
+    setIdentityFile(result.file);
+    setIdentityPreview(result.file.type.startsWith("image/") ? URL.createObjectURL(result.file) : null);
   };
 
   const handleRemoveIdentity = () => {
@@ -168,12 +179,12 @@ export default function WorkerRegisterForm() {
     if (identityInputRef.current) identityInputRef.current.value = "";
   };
 
-  const handleCertificateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCertificateChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error("File size cannot exceed 10MB.");
+    if (file.size > 15 * 1024 * 1024) {
+      toast.error("File size cannot exceed 15MB.");
       return;
     }
 
@@ -183,8 +194,18 @@ export default function WorkerRegisterForm() {
       return;
     }
 
-    setCertificateFile(file);
-    setCertificatePreview(file.type.startsWith("image/") ? URL.createObjectURL(file) : null);
+    const toastId = file.type.startsWith("image/") ? toast.loading("Compressing certificate...") : null;
+    const result = await compressImageFile(file);
+    if (toastId) toast.dismiss(toastId);
+
+    if (result.wasCompressed) {
+      toast.success(
+        `Optimized for instant upload: ${formatBytes(result.originalSize)} → ${formatBytes(result.compressedSize)} (-${result.percentSaved}%)`
+      );
+    }
+
+    setCertificateFile(result.file);
+    setCertificatePreview(result.file.type.startsWith("image/") ? URL.createObjectURL(result.file) : null);
   };
 
   const handleRemoveCertificate = () => {
@@ -285,8 +306,14 @@ export default function WorkerRegisterForm() {
         })
       );
 
-      formData.append("identity", identityFile);
-      formData.append("certificate", certificateFile);
+      // Ensure files are compressed before network upload
+      const [optIdentity, optCert] = await Promise.all([
+        compressImageFile(identityFile),
+        compressImageFile(certificateFile),
+      ]);
+
+      formData.append("identity", optIdentity.file);
+      formData.append("certificate", optCert.file);
 
       await workerRegister(formData);
 

@@ -184,38 +184,34 @@ export const workerRegister = async (
   let identityUrl: string = req.body.identityUrl || "";
   let certificateUrl: string = req.body.certificateUrl || "";
 
-  // Upload identity document if file provided
-  if (identityFile) {
-    try {
-      const uploadRes = await uploadToCloudinary(identityFile, {
-        folder: "workers/identity",
-      });
-      identityUrl = uploadRes.secure_url;
-    } catch (err: any) {
-      return fail(
-        res,
-        `Identity document upload failed: ${err?.message || "Cloud error"}`,
-        null,
-        500
-      );
-    }
-  }
+  // Upload verification documents concurrently for maximum performance
+  try {
+    const [identityUploadRes, certUploadRes] = await Promise.all([
+      identityFile
+        ? uploadToCloudinary(identityFile, {
+            folder: "workers/identity",
+          })
+        : null,
+      certificateFile
+        ? uploadToCloudinary(certificateFile, {
+            folder: "workers/certificates",
+          })
+        : null,
+    ]);
 
-  // Upload certificate document if file provided
-  if (certificateFile) {
-    try {
-      const uploadRes = await uploadToCloudinary(certificateFile, {
-        folder: "workers/certificates",
-      });
-      certificateUrl = uploadRes.secure_url;
-    } catch (err: any) {
-      return fail(
-        res,
-        `Certificate upload failed: ${err?.message || "Cloud error"}`,
-        null,
-        500
-      );
+    if (identityUploadRes) {
+      identityUrl = identityUploadRes.secure_url;
     }
+    if (certUploadRes) {
+      certificateUrl = certUploadRes.secure_url;
+    }
+  } catch (err: any) {
+    return fail(
+      res,
+      `Verification document upload failed: ${err?.message || "Cloud error"}`,
+      null,
+      500
+    );
   }
 
   // Ensure both verification documents are present

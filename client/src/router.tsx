@@ -28,6 +28,13 @@ import SuperAdminHome from "./pages/superAdmin/Home";
 import AdminServices from "./pages/superAdmin/Services";
 import AdminVerifications from "./pages/superAdmin/Verifications";
 import CustomerServices from "./pages/customer/Services";
+import CustomerBookings from "./pages/customer/Bookings";
+import CustomerBookingDetails from "./pages/customer/BookingDetails";
+import WorkerJobs from "./pages/worker/Jobs";
+import WorkerMyBookings from "./pages/worker/MyBookings";
+import WorkerBookingDetails from "./pages/worker/BookingDetails";
+import WorkerSchedule from "./pages/worker/Schedule";
+import WorkerProfile from "./pages/worker/Profile";
 
 function DashboardRedirect() {
   const user = useAuthStore((state) => state.user);
@@ -93,6 +100,22 @@ export const router = createBrowserRouter([
             path: "services",
             element: <CustomerServices />,
           },
+          {
+            path: "bookings",
+            element: <CustomerBookings />,
+          },
+          {
+            path: "bookings/:id",
+            element: <CustomerBookingDetails />,
+          },
+          {
+            path: "mybookings",
+            element: <CustomerBookings />,
+          },
+          {
+            path: "mybookings/:id",
+            element: <CustomerBookingDetails />,
+          },
         ],
       },
 
@@ -116,11 +139,23 @@ export const router = createBrowserRouter([
                   },
                   {
                     path: "jobs",
-                    element: <WorkerHome />,
+                    element: <WorkerJobs />,
+                  },
+                  {
+                    path: "bookings",
+                    element: <WorkerMyBookings />,
+                  },
+                  {
+                    path: "bookings/:id",
+                    element: <WorkerBookingDetails />,
                   },
                   {
                     path: "schedule",
-                    element: <WorkerHome />,
+                    element: <WorkerSchedule />,
+                  },
+                  {
+                    path: "profile",
+                    element: <WorkerProfile />,
                   },
                 ],
               },
