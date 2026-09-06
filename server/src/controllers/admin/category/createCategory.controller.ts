@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Category from "../../../models/service/category.model";
+import Category from "../../../models/category.model";
 import { fail, ok } from "../../../shared/envelope";
 
 export async function createCategory(req: Request, res: Response) {

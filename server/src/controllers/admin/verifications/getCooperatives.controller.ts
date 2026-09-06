@@ -24,16 +24,19 @@ export async function getAdminCooperatives(req: Request, res: Response) {
 
   // Search by cooperative name, email, phone, address, or applicant name
   if (search && typeof search === "string" && search.trim()) {
-    const searchRegex = new RegExp(search.trim(), "i");
+    const escaped = search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const searchRegex = new RegExp(escaped, "i");
 
-    // Also match associated user names/emails
+    // Match associated user names/emails
     const matchingUsers = await User.find({
       $or: [
         { name: { $regex: searchRegex } },
         { email: { $regex: searchRegex } },
         { phone: { $regex: searchRegex } },
       ],
-    }).select("_id");
+    })
+      .select("_id")
+      .lean();
 
     const matchingUserIds = matchingUsers.map((u) => u._id);
 
@@ -46,34 +49,57 @@ export async function getAdminCooperatives(req: Request, res: Response) {
     ];
   }
 
-  // Count statistics for tabs
-  const [totalCount, pendingCount, approvedCount, rejectedCount] =
-    await Promise.all([
-      Cooperative.countDocuments({}),
-      Cooperative.countDocuments({
-        verificationStatus: VerificationStatus.PENDING,
-      }),
-      Cooperative.countDocuments({
-        verificationStatus: VerificationStatus.APPROVED,
-      }),
-      Cooperative.countDocuments({
-        verificationStatus: VerificationStatus.REJECTED,
-      }),
-    ]);
-
   const pageNum = Math.max(1, Number(page) || 1);
   const limitNum = Math.max(1, Math.min(100, Number(limit) || 20));
   const skip = (pageNum - 1) * limitNum;
 
-  // Fetch cooperatives populated with applicant user details
-  const cooperatives = await Cooperative.find(query)
-    .populate("userId", "name email phone profilePicture accountStatus createdAt")
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limitNum);
+  // Run status count aggregation and query fetch in parallel (1 batch to Atlas instead of 6 sequential queries)
+  const [statusAggregation, cooperatives, searchFilteredCount] =
+    await Promise.all([
+      Cooperative.aggregate([
+        {
+          $group: {
+            _id: "$verificationStatus",
+            count: { $sum: 1 },
+          },
+        },
+      ]),
+      Cooperative.find(query)
+        .populate(
+          "userId",
+          "name email phone profilePicture accountStatus createdAt"
+        )
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limitNum)
+        .lean(),
+      search ? Cooperative.countDocuments(query) : Promise.resolve(null),
+    ]);
 
-  const filteredTotal = await Cooperative.countDocuments(query);
-  const totalPages = Math.ceil(filteredTotal / limitNum);
+  let totalCount = 0;
+  let pendingCount = 0;
+  let approvedCount = 0;
+  let rejectedCount = 0;
+
+  for (const item of statusAggregation) {
+    totalCount += item.count;
+    if (item._id === VerificationStatus.PENDING) pendingCount = item.count;
+    else if (item._id === VerificationStatus.APPROVED) approvedCount = item.count;
+    else if (item._id === VerificationStatus.REJECTED) rejectedCount = item.count;
+  }
+
+  let filteredTotal = totalCount;
+  if (search) {
+    filteredTotal = searchFilteredCount ?? 0;
+  } else if (query.verificationStatus === VerificationStatus.PENDING) {
+    filteredTotal = pendingCount;
+  } else if (query.verificationStatus === VerificationStatus.APPROVED) {
+    filteredTotal = approvedCount;
+  } else if (query.verificationStatus === VerificationStatus.REJECTED) {
+    filteredTotal = rejectedCount;
+  }
+
+  const totalPages = Math.ceil(filteredTotal / limitNum) || 1;
 
   return ok(
     res,

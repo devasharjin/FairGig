@@ -1,0 +1,302 @@
+import mongoose, { Document, Model, Schema, Types } from "mongoose";
+
+export enum BookingStatus {
+  PENDING = "PENDING",
+  ASSIGNED = "ASSIGNED",
+  CONFIRMED = "CONFIRMED",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+  REJECTED = "REJECTED",
+}
+
+export enum PaymentStatus {
+  PENDING = "PENDING",
+  PAID = "PAID",
+  FAILED = "FAILED",
+  REFUNDED = "REFUNDED",
+}
+
+
+export enum CancelledByRole {
+  CUSTOMER = "CUSTOMER",
+  WORKER = "WORKER",
+  COOPERATIVE = "COOPERATIVE",
+  SUPERADMIN = "SUPERADMIN",
+}
+
+export type BookingPriceType = "hourly" | "meters";
+
+export interface IBookingAddress {
+  street: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  landmark?: string;
+  location?: {
+    type: "Point";
+    coordinates: [number, number]; // [longitude, latitude]
+  };
+}
+
+
+export interface IBookingPaymentDetails {
+  transactionId?: string;
+  paidAt?: Date;
+}
+
+export interface IBooking extends Document {
+  bookingNumber: string;
+  customer: Types.ObjectId;
+  customerId?: Types.ObjectId;
+  service: Types.ObjectId;
+  serviceId?: Types.ObjectId;
+  category?: Types.ObjectId;
+  categoryId?: Types.ObjectId;
+  cooperative?: Types.ObjectId;
+  cooperativeId?: Types.ObjectId;
+  worker?: Types.ObjectId;
+  workerId?: Types.ObjectId;
+
+  // Service Location & Timing
+  address: IBookingAddress;
+  scheduledDate: Date;
+  customerNotes?: string;
+
+  // Pricing & Payment
+  priceType: BookingPriceType;
+  rate: number;
+  units: number;
+  totalAmount: number;
+  paymentStatus: PaymentStatus;
+  paymentDetails?: IBookingPaymentDetails;
+
+  // Lifecycle & Tracking
+  status: BookingStatus;
+  assignedAt?: Date;
+  startedAt?: Date;
+  completedAt?: Date;
+  cancelledAt?: Date;
+  cancellationReason?: string;
+  cancelledBy?: CancelledByRole;
+
+  // Rating Reference
+  rating?: Types.ObjectId;
+  ratingId?: Types.ObjectId;
+  isRated: boolean;
+
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const generateBookingNumber = (): string => {
+  const randomSuffix = Math.random().toString(36).substring(2, 7).toUpperCase();
+  const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  return `BKG-${dateStr}-${randomSuffix}`;
+};
+
+const bookingSchema = new Schema<IBooking>(
+  {
+    bookingNumber: {
+      type: String,
+      unique: true,
+      required: true,
+      trim: true,
+      default: generateBookingNumber,
+      index: true,
+    },
+
+    customer: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "Customer reference is required"],
+      index: true,
+      alias: "customerId",
+    },
+
+    service: {
+      type: Schema.Types.ObjectId,
+      ref: "Service",
+      required: [true, "Service reference is required"],
+      index: true,
+      alias: "serviceId",
+    },
+
+    category: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+      index: true,
+      alias: "categoryId",
+    },
+
+    cooperative: {
+      type: Schema.Types.ObjectId,
+      ref: "Cooperative",
+      index: true,
+      alias: "cooperativeId",
+    },
+
+    worker: {
+      type: Schema.Types.ObjectId,
+      ref: "Worker",
+      index: true,
+      alias: "workerId",
+    },
+
+    address: {
+      street: {
+        type: String,
+        required: [true, "Street / address is required"],
+        trim: true,
+      },
+      city: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+      state: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+      pincode: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+      landmark: {
+        type: String,
+        trim: true,
+        default: "",
+      },
+      location: {
+        type: {
+          type: String,
+          enum: ["Point"],
+          default: "Point",
+        },
+        coordinates: {
+          type: [Number],
+          default: [0, 0],
+        },
+      },
+    },
+
+    scheduledDate: {
+      type: Date,
+      required: [true, "Scheduled date and time is required"],
+      index: true,
+    },
+
+    customerNotes: {
+      type: String,
+      trim: true,
+      maxlength: [1000, "Notes cannot exceed 1000 characters"],
+      default: "",
+    },
+
+    priceType: {
+      type: String,
+      enum: {
+        values: ["hourly", "meters"],
+        message: "Price type must be either hourly or meters",
+      },
+      required: [true, "Price type is required"],
+    },
+
+    rate: {
+      type: Number,
+      required: [true, "Service rate is required"],
+      min: [0, "Rate cannot be negative"],
+    },
+
+    units: {
+      type: Number,
+      default: 1,
+      min: [0.1, "Units must be at least 0.1"],
+    },
+
+    totalAmount: {
+      type: Number,
+      required: [true, "Total amount is required"],
+      min: [0, "Total amount cannot be negative"],
+    },
+
+    paymentStatus: {
+      type: String,
+      enum: Object.values(PaymentStatus),
+      default: PaymentStatus.PENDING,
+      index: true,
+    },
+    paymentDetails: {
+      transactionId: {
+        type: String,
+        trim: true,
+      },
+      paidAt: {
+        type: Date,
+      },
+    },
+
+    status: {
+      type: String,
+      enum: Object.values(BookingStatus),
+      default: BookingStatus.PENDING,
+      index: true,
+    },
+
+    assignedAt: {
+      type: Date,
+    },
+
+    startedAt: {
+      type: Date,
+    },
+
+    completedAt: {
+      type: Date,
+    },
+
+    cancelledAt: {
+      type: Date,
+    },
+
+    cancellationReason: {
+      type: String,
+      trim: true,
+      maxlength: [500, "Cancellation reason cannot exceed 500 characters"],
+    },
+
+    cancelledBy: {
+      type: String,
+      enum: Object.values(CancelledByRole),
+    },
+
+    rating: {
+      type: Schema.Types.ObjectId,
+      ref: "Rating",
+      alias: "ratingId",
+    },
+
+    isRated: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+// Compound indexes for optimal performance across dashboard queries
+bookingSchema.index({ customer: 1, status: 1 });
+bookingSchema.index({ worker: 1, status: 1 });
+bookingSchema.index({ cooperative: 1, status: 1 });
+bookingSchema.index({ status: 1, scheduledDate: 1 });
+bookingSchema.index({ createdAt: -1 });
+
+const Booking: Model<IBooking> =
+  mongoose.models.Booking || mongoose.model<IBooking>("Booking", bookingSchema);
+
+export default Booking;

@@ -34,7 +34,6 @@ export const cooperativeRegister = async (
     cooperativeAddress,
     cooperativePhone,
     cooperativeEmail,
-    members,
   } = req.body;
 
   // 3. Validate required text fields
@@ -60,24 +59,6 @@ export const cooperativeRegister = async (
     return fail(res, "Invalid cooperative email format", null, 400);
   }
 
-  // Validate members array if provided
-  let parsedMembers = members;
-  if (typeof members === "string") {
-    try {
-      parsedMembers = JSON.parse(members);
-    } catch {
-      parsedMembers = [];
-    }
-  }
-
-  if (parsedMembers !== undefined && Array.isArray(parsedMembers)) {
-    const hasInvalidMember = parsedMembers.some(
-      (id: string) => !mongoose.Types.ObjectId.isValid(id)
-    );
-    if (hasInvalidMember) {
-      return fail(res, "One or more member IDs are invalid", null, 400);
-    }
-  }
 
   // 4. Handle file uploads (cooperativeLogo & verificationCertificate)
   const files = req.files as

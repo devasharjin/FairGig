@@ -224,11 +224,6 @@ export async function verifyWorker(req: Request, res: Response) {
       }
     }
 
-    // Add worker to cooperative members
-    await Cooperative.findByIdAndUpdate(cooperative._id, {
-      $addToSet: { members: worker._id },
-    });
-
     await worker.save();
 
     const populatedWorker = await Worker.findById(worker._id)
@@ -257,11 +252,6 @@ export async function verifyWorker(req: Request, res: Response) {
         worker.verificationDocuments.certificate.rejectionReason = reason;
       }
     }
-
-    // Remove worker from cooperative members if previously added
-    await Cooperative.findByIdAndUpdate(cooperative._id, {
-      $pull: { members: worker._id },
-    });
 
     await worker.save();
 

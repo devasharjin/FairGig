@@ -13,10 +13,12 @@ export async function getAdminCooperativeById(req: Request, res: Response) {
     return fail(res, "Invalid cooperative ID", null, 400);
   }
 
-  const cooperative = await Cooperative.findById(id).populate(
-    "userId",
-    "name email phone profilePicture accountStatus createdAt"
-  );
+  const cooperative = await Cooperative.findById(id)
+    .populate(
+      "userId",
+      "name email phone profilePicture accountStatus createdAt"
+    )
+    .lean();
 
   if (!cooperative) {
     return fail(res, "Cooperative not found", null, 404);

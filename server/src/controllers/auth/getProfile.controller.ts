@@ -29,7 +29,7 @@ export async function getProfile(req: Request, res: Response) {
   }
 
   if (user.role.includes(UserRole.COOPERATIVE)) {
-    cooperative = await Cooperative.findOne({ userId }).populate("members");
+    cooperative = await Cooperative.findOne({ userId });
   }
 
   const profile = worker || cooperative || null;

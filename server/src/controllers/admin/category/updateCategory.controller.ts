@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-import Category from "../../../models/service/category.model";
+import Category from "../../../models/category.model";
 import { fail, ok } from "../../../shared/envelope";
 
 export async function updateCategory(req: Request, res: Response) {

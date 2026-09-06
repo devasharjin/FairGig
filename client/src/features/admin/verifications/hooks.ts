@@ -36,6 +36,8 @@ export function useAdminCooperatives(params?: GetAdminCooperativesParams) {
   return useQuery<AdminCooperativesResponse, Error>({
     queryKey: adminVerificationKeys.list(params),
     queryFn: () => getAdminCooperatives(params),
+    placeholderData: (previousData) => previousData,
+    staleTime: 30 * 1000,
   });
 }
 

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-import Service from "../../../models/service/service.model";
+import Service from "../../../models/service.model";
 import { fail, ok } from "../../../shared/envelope";
 
 export async function getServices(req: Request, res: Response) {

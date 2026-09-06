@@ -113,7 +113,6 @@ export interface CooperativeRegisterPayload {
     url: string;
     publicId: string;
   };
-  members?: string[];
 }
 
 /**
@@ -172,7 +171,6 @@ export interface CooperativeProfile {
     url: string;
     publicId: string;
   };
-  members?: string[] | WorkerProfile[];
   verificationStatus: VerificationStatus;
   rejectedReason?: string;
   createdAt?: string;
