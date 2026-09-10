@@ -147,18 +147,33 @@ export const NavbarUserDropdown = ({
               </div>
             </DropdownMenuItem>
           ) : (
-            <DropdownMenuItem
-              onClick={() => navigate("/bookings")}
-              className="cursor-pointer gap-2.5 py-2.5 px-3 rounded-xl transition-colors"
-            >
-              <Briefcase className="size-4 text-primary" />
-              <div className="flex flex-col">
-                <span className="font-medium text-sm">My Bookings</span>
-                <span className="text-[11px] text-muted-foreground">
-                  Track active & past service orders
-                </span>
-              </div>
-            </DropdownMenuItem>
+            <>
+              <DropdownMenuItem
+                onClick={() => navigate("/profile")}
+                className="cursor-pointer gap-2.5 py-2.5 px-3 rounded-xl transition-colors"
+              >
+                <User className="size-4 text-primary" />
+                <div className="flex flex-col">
+                  <span className="font-medium text-sm">My Profile</span>
+                  <span className="text-[11px] text-muted-foreground">
+                    Personal details & saved addresses
+                  </span>
+                </div>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={() => navigate("/bookings")}
+                className="cursor-pointer gap-2.5 py-2.5 px-3 rounded-xl transition-colors"
+              >
+                <Briefcase className="size-4 text-primary" />
+                <div className="flex flex-col">
+                  <span className="font-medium text-sm">My Bookings</span>
+                  <span className="text-[11px] text-muted-foreground">
+                    Track active & past service orders
+                  </span>
+                </div>
+              </DropdownMenuItem>
+            </>
           )}
 
           {/* Worker Option */}

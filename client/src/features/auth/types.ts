@@ -46,6 +46,7 @@ export interface UserAddress {
   state?: string;
   zip?: string;
   country?: string;
+  landmark?: string;
 }
 
 export interface AuthTokens {

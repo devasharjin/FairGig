@@ -3,10 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   Search,
   ArrowRight,
-  ShieldCheck,
   Star,
-  Users,
-  Handshake,
   Clock,
   Sparkles,
 } from "lucide-react";

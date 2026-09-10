@@ -8,7 +8,6 @@ import {
   AlertCircle,
   RefreshCw,
   X,
-  Search,
 } from "lucide-react";
 import { useCustomerCategories } from "@/features/customer/categories/hooks";
 import { useCustomerServices } from "@/features/customer/services/hooks";

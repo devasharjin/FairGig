@@ -1,5 +1,5 @@
 import React from "react";
-import { Check, Clock, PlayCircle, ShieldCheck, XCircle } from "lucide-react";
+import { Check, Clock, PlayCircle, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CustomerBooking } from "@/features/customer/bookings/types";
 

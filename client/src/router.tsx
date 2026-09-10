@@ -30,6 +30,8 @@ import AdminVerifications from "./pages/superAdmin/Verifications";
 import CustomerServices from "./pages/customer/Services";
 import CustomerBookings from "./pages/customer/Bookings";
 import CustomerBookingDetails from "./pages/customer/BookingDetails";
+import CustomerProfile from "./pages/customer/Profile";
+import CustomerContact from "./pages/customer/Contact";
 import WorkerJobs from "./pages/worker/Jobs";
 import WorkerMyBookings from "./pages/worker/MyBookings";
 import WorkerBookingDetails from "./pages/worker/BookingDetails";
@@ -115,6 +117,14 @@ export const router = createBrowserRouter([
           {
             path: "mybookings/:id",
             element: <CustomerBookingDetails />,
+          },
+          {
+            path: "profile",
+            element: <CustomerProfile />,
+          },
+          {
+            path: "contact",
+            element: <CustomerContact />,
           },
         ],
       },

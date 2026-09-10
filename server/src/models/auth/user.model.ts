@@ -1,4 +1,5 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose, { Document, Model, Schema, Types } from "mongoose";
+import bcrypt from "bcryptjs";
 
 export enum UserRole {
   WORKER = "WORKER",
@@ -11,6 +12,34 @@ export enum AccountStatus {
   SUSPEND = "SUSPEND",
   ACTIVE = "ACTIVE",
   INACTIVE = "INACTIVE",
+}
+
+export interface IAddress {
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  landmark?: string;
+}
+
+export interface ISavedAddress {
+  _id?: Types.ObjectId | string;
+  title: string;
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  landmark?: string;
+  isDefault: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface ILocation {
+  type: "Point";
+  coordinates: [number, number]; // [longitude, latitude]
 }
 
 export interface IUser extends Document {
@@ -32,21 +61,11 @@ export interface IUser extends Document {
   passwordResetToken?: string;
   passwordResetExpires?: Date;
 
-  address?: {
-    street: string;
-    city: string;
-    state: string;
-    zip: string;
-    country: string;
-  };
-
-  location?: {
-    type: string;
-    coordinates: [number, number];
-  };
+  address: IAddress;
+  savedAddresses: ISavedAddress[];
+  location: ILocation;
 
   accountStatus: AccountStatus;
-
   lastLoginAt?: Date;
 
   createdAt: Date;
@@ -54,6 +73,51 @@ export interface IUser extends Document {
 
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
+
+const addressSchema = new Schema<IAddress>(
+  {
+    street: { type: String, default: "", trim: true },
+    city: { type: String, default: "", trim: true },
+    state: { type: String, default: "", trim: true },
+    zip: { type: String, default: "", trim: true },
+    country: { type: String, default: "India", trim: true },
+    landmark: { type: String, default: "", trim: true },
+  },
+  { _id: false }
+);
+
+const savedAddressSchema = new Schema<ISavedAddress>(
+  {
+    title: { type: String, default: "Home", trim: true },
+    street: {
+      type: String,
+      required: [true, "Street address is required"],
+      trim: true,
+    },
+    city: { type: String, default: "", trim: true },
+    state: { type: String, default: "", trim: true },
+    zip: { type: String, default: "", trim: true },
+    country: { type: String, default: "India", trim: true },
+    landmark: { type: String, default: "", trim: true },
+    isDefault: { type: Boolean, default: false },
+  },
+  { timestamps: true }
+);
+
+const locationSchema = new Schema<ILocation>(
+  {
+    type: {
+      type: String,
+      enum: ["Point"],
+      default: "Point",
+    },
+    coordinates: {
+      type: [Number],
+      default: [0, 0],
+    },
+  },
+  { _id: false }
+);
 
 const userSchema = new Schema<IUser>(
   {
@@ -102,6 +166,7 @@ const userSchema = new Schema<IUser>(
 
     profilePicture: {
       type: String,
+      default: "",
       trim: true,
     },
 
@@ -138,29 +203,35 @@ const userSchema = new Schema<IUser>(
     },
 
     address: {
-      street: { type: String, default: "" },
-      city: { type: String, default: "" },
-      state: { type: String, default: "" },
-      zip: { type: String, default: "" },
-      country: { type: String, default: "" },
+      type: addressSchema,
+      default: () => ({
+        street: "",
+        city: "",
+        state: "",
+        zip: "",
+        country: "India",
+        landmark: "",
+      }),
+    },
+
+    savedAddresses: {
+      type: [savedAddressSchema],
+      default: [],
     },
 
     location: {
-      type: {
-        type: String,
-        enum: ["Point"],
-        default: "Point",
-      },
-      coordinates: {
-        type: [Number],
-        default: [0, 0],
-      },
+      type: locationSchema,
+      default: () => ({
+        type: "Point",
+        coordinates: [0, 0],
+      }),
     },
 
     accountStatus: {
       type: String,
       enum: Object.values(AccountStatus),
       default: AccountStatus.ACTIVE,
+      index: true,
     },
 
     lastLoginAt: {
@@ -172,6 +243,13 @@ const userSchema = new Schema<IUser>(
     versionKey: false,
   }
 );
+
+userSchema.methods.comparePassword = async function (
+  candidatePassword: string
+): Promise<boolean> {
+  if (!this.password) return false;
+  return await bcrypt.compare(candidatePassword, this.password);
+};
 
 const User: Model<IUser> =
   mongoose.models.User || mongoose.model<IUser>("User", userSchema);

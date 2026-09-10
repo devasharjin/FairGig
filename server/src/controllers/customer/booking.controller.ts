@@ -52,12 +52,12 @@ export async function createBooking(req: Request, res: Response) {
     typeof address === "string"
       ? { street: address.trim() }
       : {
-          street: address.street?.trim() || "",
-          city: address.city?.trim() || "",
-          state: address.state?.trim() || "",
-          pincode: address.pincode?.trim() || "",
-          landmark: address.landmark?.trim() || "",
-        };
+        street: address.street?.trim() || "",
+        city: address.city?.trim() || "",
+        state: address.state?.trim() || "",
+        pincode: address.pincode?.trim() || "",
+        landmark: address.landmark?.trim() || "",
+      };
 
   if (!formattedAddress.street) {
     return fail(res, "Street address is required", null, 400);
@@ -258,7 +258,7 @@ export async function rateBooking(req: Request, res: Response) {
         err?.code === 11000 &&
         (err?.keyPattern?.bookingId || err?.message?.includes("bookingId_1"))
       ) {
-        await Rating.collection.dropIndex("bookingId_1").catch(() => {});
+        await Rating.collection.dropIndex("bookingId_1").catch(() => { });
         ratingDoc = await Rating.create({
           booking: booking._id,
           customer: customerId,

@@ -1,4 +1,8 @@
 import React, { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
+import { LogIn, Grid, Briefcase } from "lucide-react";
+import { useAuthStore } from "@/features/auth/store";
+import { Button } from "@/components/ui/button";
 import {
   useCustomerBookings,
   useCancelBooking,
@@ -118,6 +122,44 @@ export const CustomerBookings: React.FC = () => {
       // Error handled by mutation toast
     }
   };
+
+  const user = useAuthStore((state) => state.user);
+  const isBootstrapped = useAuthStore((state) => state.isBootstrapped);
+
+  // If user is not authenticated, show friendly sign-in prompt
+  if (isBootstrapped && !user) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">
+        <div className="max-w-md w-full text-center space-y-6 p-8 rounded-3xl border border-border/80 bg-card shadow-xs">
+          <div className="size-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto">
+            <Briefcase className="size-8" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold text-foreground">
+              Sign In to View Your Bookings
+            </h2>
+            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              Track real-time gig service statuses, contact assigned cooperative specialists, and manage your service orders.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <Link to="/login" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto rounded-xl px-5 gap-2 text-xs font-semibold shadow-xs bg-primary text-primary-foreground">
+                <LogIn className="size-3.5" />
+                <span>Log In</span>
+              </Button>
+            </Link>
+            <Link to="/services" className="w-full sm:w-auto">
+              <Button variant="outline" className="w-full sm:w-auto rounded-xl px-5 gap-2 text-xs font-semibold">
+                <Grid className="size-3.5" />
+                <span>Browse Services</span>
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background/50 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">

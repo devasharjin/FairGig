@@ -1,8 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Layers, Briefcase, ChevronRight } from "lucide-react";
+import { Layers, Briefcase, ChevronRight, ArrowRight } from "lucide-react";
 import { useCustomerCategories } from "@/features/customer/categories/hooks";
-import { Badge } from "@/components/ui/badge";
 
 export const CategoryShowcase: React.FC = () => {
   const { data: categories = [], isLoading } = useCustomerCategories({

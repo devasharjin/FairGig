@@ -237,11 +237,11 @@ export async function getWorkerStats(req: Request, res: Response) {
     $or: [{ worker: null }, { worker: { $exists: false } }],
     ...(worker.skills && worker.skills.length > 0
       ? {
-          $or: [
-            { service: { $in: worker.skills } },
-            ...(worker.cooperativeId ? [{ cooperative: worker.cooperativeId }] : []),
-          ],
-        }
+        $or: [
+          { service: { $in: worker.skills } },
+          ...(worker.cooperativeId ? [{ cooperative: worker.cooperativeId }] : []),
+        ],
+      }
       : {}),
   };
 

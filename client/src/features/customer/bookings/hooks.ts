@@ -7,6 +7,7 @@ import {
   cancelCustomerBooking,
   rateCustomerBooking,
 } from "./api";
+import { useAuthStore } from "@/features/auth/store";
 import type {
   CreateBookingPayload,
   CustomerBookingFilterParams,
@@ -23,9 +24,11 @@ export const customerBookingKeys = {
 };
 
 export function useCustomerBookings(filters?: CustomerBookingFilterParams) {
+  const user = useAuthStore((state) => state.user);
   return useQuery({
     queryKey: customerBookingKeys.list(filters),
     queryFn: () => getCustomerBookings(filters),
+    enabled: Boolean(user),
   });
 }
 

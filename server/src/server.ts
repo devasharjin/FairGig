@@ -11,6 +11,8 @@ import adminCategoryRoutes from './routes/admin/category.routes';
 import adminServiceRoutes from './routes/admin/service.routes';
 import customerCategoryRoutes from './routes/customer/category.routes';
 import customerBookingRoutes from './routes/customer/booking.routes';
+import customerProfileRoutes from './routes/customer/profile.routes';
+import customerContactRoutes from './routes/customer/contact.routes';
 import workerGigRoutes from './routes/worker/gig.routes';
 import cooperativeRoutes from './routes/cooperative/workerVerification.routes';
 import adminVerificationRoutes from './routes/admin/verification.routes';
@@ -51,6 +53,8 @@ app.use('/api/admin/services', adminServiceRoutes);
 app.use('/api/admin/verifications', adminVerificationRoutes);
 app.use('/api/customer', customerCategoryRoutes);
 app.use('/api/customer/bookings', customerBookingRoutes);
+app.use('/api/customer/profile', customerProfileRoutes);
+app.use('/api/customer/contact', customerContactRoutes);
 app.use('/api/worker/gigs', workerGigRoutes);
 app.use('/api/cooperative', cooperativeRoutes);
 

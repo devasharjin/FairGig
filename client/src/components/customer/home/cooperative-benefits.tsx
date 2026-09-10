@@ -6,10 +6,7 @@ import {
   Users2,
   HeartHandshake,
   CheckCircle2,
-  ArrowRight,
 } from "lucide-react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 
 export const CooperativeBenefits: React.FC = () => {
   const benefits = [

@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
-  Clock,
-  Ruler,
   ShieldCheck,
   MapPin,
   Calendar,
   CheckCircle2,
   FileText,
   Briefcase,
+  Home,
+  Building,
 } from "lucide-react";
 import {
   Dialog,
@@ -24,6 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import type { CustomerService } from "@/features/customer/services/types";
 import { useCreateBooking } from "@/features/customer/bookings/hooks";
+import { useCustomerProfile } from "@/features/customer/profile/hooks";
 import { useAuthStore } from "@/features/auth/store";
 
 interface ServiceBookingDialogProps {
@@ -40,10 +41,43 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const createBooking = useCreateBooking();
+  const { data: profileData } = useCustomerProfile();
 
   const [address, setAddress] = useState("");
   const [preferredDate, setPreferredDate] = useState("");
   const [notes, setNotes] = useState("");
+
+  // Pre-fill primary address if available when opening dialog
+  useEffect(() => {
+    if (open) {
+      if (!address) {
+        if (profileData?.address?.street) {
+          const formatted = [
+            profileData.address.street,
+            profileData.address.city,
+            profileData.address.state,
+            profileData.address.zip,
+          ]
+            .filter(Boolean)
+            .join(", ");
+          setAddress(formatted);
+        } else if (profileData?.savedAddresses && profileData.savedAddresses.length > 0) {
+          const defaultAddr =
+            profileData.savedAddresses.find((a) => a.isDefault) ||
+            profileData.savedAddresses[0];
+          const formatted = [
+            defaultAddr.street,
+            defaultAddr.city,
+            defaultAddr.state,
+            defaultAddr.zip,
+          ]
+            .filter(Boolean)
+            .join(", ");
+          setAddress(formatted);
+        }
+      }
+    }
+  }, [open, profileData]);
 
   if (!service) return null;
 
@@ -75,7 +109,9 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
       await createBooking.mutateAsync({
         serviceId: service._id,
         address: address.trim(),
-        scheduledDate: preferredDate ? new Date(preferredDate).toISOString() : new Date().toISOString(),
+        scheduledDate: preferredDate
+          ? new Date(preferredDate).toISOString()
+          : new Date().toISOString(),
         customerNotes: notes.trim(),
       });
 
@@ -88,6 +124,8 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
       // Error handled by mutation toast
     }
   };
+
+  const savedAddresses = profileData?.savedAddresses || [];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -140,17 +178,49 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4 pt-2">
           {/* Address / Location */}
           <div className="space-y-1.5">
-            <Label htmlFor="req-address" className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-              <MapPin className="size-3.5 text-primary" />
-              Service Address / Location <span className="text-destructive">*</span>
-            </Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="req-address" className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                <MapPin className="size-3.5 text-primary" />
+                Service Address / Location <span className="text-destructive">*</span>
+              </Label>
+            </div>
+
+            {/* Quick-select chips from saved addresses if available */}
+            {savedAddresses.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 pt-0.5 pb-1">
+                {savedAddresses.map((addr) => {
+                  const addrFull = [addr.street, addr.city, addr.state, addr.zip]
+                    .filter(Boolean)
+                    .join(", ");
+                  const isSelected = address === addrFull;
+                  const Icon =
+                    addr.title?.toLowerCase() === "work" ? Building : Home;
+                  return (
+                    <button
+                      type="button"
+                      key={addr._id}
+                      onClick={() => setAddress(addrFull)}
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-all cursor-pointer ${
+                        isSelected
+                          ? "bg-primary/15 text-primary border-primary/40"
+                          : "bg-muted/40 text-muted-foreground border-border/60 hover:text-foreground hover:bg-muted"
+                      }`}
+                    >
+                      <Icon className="size-3" />
+                      <span>{addr.title || "Address"}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
             <Input
               id="req-address"
               placeholder="e.g. Flat 302, Green Valley Apartments, Main Street"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               disabled={createBooking.isPending}
-              className="h-10 text-sm"
+              className="h-10 text-sm rounded-xl"
               required
             />
           </div>
@@ -167,7 +237,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
               value={preferredDate}
               onChange={(e) => setPreferredDate(e.target.value)}
               disabled={createBooking.isPending}
-              className="h-10 text-xs sm:text-sm"
+              className="h-10 text-xs sm:text-sm rounded-xl"
             />
           </div>
 
@@ -202,7 +272,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
             <Button
               type="submit"
               disabled={createBooking.isPending}
-              className="h-10 px-5 rounded-xl text-xs sm:text-sm font-semibold cursor-pointer shadow-sm"
+              className="h-10 px-5 rounded-xl text-xs sm:text-sm font-semibold cursor-pointer shadow-sm bg-primary text-primary-foreground"
             >
               {createBooking.isPending ? "Dispatching..." : "Confirm & Dispatch"}
             </Button>
@@ -212,3 +282,5 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
     </Dialog>
   );
 };
+
+export default ServiceBookingDialog;

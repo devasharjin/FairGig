@@ -123,6 +123,11 @@ export const Footer = () => {
                             </Link>
                         </li>
                         <li>
+                            <Link to="/contact" className="hover:text-foreground hover:underline transition-colors flex items-center gap-1">
+                                Help & Contact Us
+                            </Link>
+                        </li>
+                        <li>
                             <Link to="/admin" className="hover:text-foreground hover:underline transition-colors flex items-center gap-1">
                                 Administration Console
                             </Link>
