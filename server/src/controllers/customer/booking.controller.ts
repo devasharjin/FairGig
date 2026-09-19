@@ -222,6 +222,15 @@ export async function rateBooking(req: Request, res: Response) {
     return fail(res, "You can only rate completed bookings", null, 400);
   }
 
+  if (booking.paymentStatus !== PaymentStatus.PAID) {
+    return fail(
+      res,
+      "Payment must be completed before submitting a rating and review",
+      null,
+      400
+    );
+  }
+
   if (!booking.worker) {
     return fail(res, "No worker was associated with this booking to rate", null, 400);
   }

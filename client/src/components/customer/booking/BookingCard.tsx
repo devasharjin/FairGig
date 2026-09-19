@@ -7,6 +7,7 @@ import {
   Phone,
   FileText,
   Clock,
+  CreditCard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +21,7 @@ export interface BookingCardProps {
   onViewDetails?: (booking: CustomerBooking) => void;
   onCancel: (booking: CustomerBooking) => void;
   onRate: (booking: CustomerBooking) => void;
+  onPay?: (booking: CustomerBooking) => void;
   className?: string;
 }
 
@@ -28,6 +30,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
   onViewDetails,
   onCancel,
   onRate,
+  onPay,
   className,
 }) => {
   const isPendingOrConfirmed =
@@ -35,7 +38,11 @@ export const BookingCard: React.FC<BookingCardProps> = ({
     booking.status === "CONFIRMED" ||
     booking.status === "ASSIGNED";
 
-  const canRate = booking.status === "COMPLETED" && !booking.isRated;
+  const isCompleted = booking.status === "COMPLETED";
+  const isPaid = booking.paymentStatus === "PAID";
+  const needsPayment = isCompleted && !isPaid;
+  // Ratings and reviews are unlocked only after the booking is completed and paid
+  const canRate = isCompleted && isPaid && !booking.isRated;
 
   let formattedDate = "Immediate Dispatch";
   try {
@@ -90,6 +97,20 @@ export const BookingCard: React.FC<BookingCardProps> = ({
           >
             {booking.category?.name || "Trade Service"}
           </Badge>
+
+          {isCompleted && (
+            <Badge
+              variant="outline"
+              className={cn(
+                "rounded-lg text-[11px] font-semibold py-0.5 px-2",
+                isPaid
+                  ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                  : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30"
+              )}
+            >
+              {isPaid ? "✓ Paid & Settled" : "Payment Due"}
+            </Badge>
+          )}
 
           <div className="flex items-baseline gap-1 text-xs text-foreground font-semibold bg-muted/50 px-2.5 py-1 rounded-lg border border-border/50">
             <span>Rate:</span>
@@ -213,6 +234,17 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             className="rounded-xl h-9 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive cursor-pointer"
           >
             Cancel Request
+          </Button>
+        )}
+
+        {needsPayment && onPay && (
+          <Button
+            size="sm"
+            onClick={() => onPay(booking)}
+            className="rounded-xl h-9 px-4 text-xs font-bold gap-1.5 cursor-pointer shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+          >
+            <CreditCard className="size-3.5" />
+            <span>Pay ₹{booking.totalAmount}</span>
           </Button>
         )}
 

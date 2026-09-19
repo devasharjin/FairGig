@@ -1,6 +1,11 @@
 import type { Category } from "@/features/customer/categories/types";
 import type { CustomerService } from "@/features/customer/services/types";
-import type { BookingAddress, BookingRatingInfo, BookingStatus } from "@/features/customer/bookings/types";
+import type {
+  BookingAddress,
+  BookingRatingInfo,
+  BookingStatus,
+  PaymentStatus,
+} from "@/features/customer/bookings/types";
 
 export interface WorkerJobCustomer {
   _id: string;
@@ -29,6 +34,11 @@ export interface WorkerJob {
   rate: number;
   units: number;
   totalAmount: number;
+  paymentStatus: PaymentStatus;
+  paymentDetails?: {
+    transactionId?: string;
+    paidAt?: string;
+  };
   status: BookingStatus;
   isRated: boolean;
   rating?: BookingRatingInfo;

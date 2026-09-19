@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { WorkerJob } from "@/features/worker/gigs/types";
-import { getStatusBadge } from "./BookingCard";
+import { getStatusBadge, getPaymentStatusBadge } from "./BookingCard";
 import { WorkerBookingTimelineStepper } from "./WorkerBookingTimelineStepper";
 import { WorkerCustomerInfoCard } from "./WorkerCustomerInfoCard";
 import { WorkerEarningsReceiptCard } from "./WorkerEarningsReceiptCard";
@@ -90,6 +90,7 @@ export const WorkerBookingDetailsView: React.FC<WorkerBookingDetailsViewProps> =
                 )}
               </button>
               {getStatusBadge(job.status)}
+              {getPaymentStatusBadge(job.paymentStatus)}
               <Badge variant="secondary" className="rounded-lg text-xs font-semibold">
                 {job.category?.name || "Trade Service"}
               </Badge>
@@ -142,6 +143,64 @@ export const WorkerBookingDetailsView: React.FC<WorkerBookingDetailsViewProps> =
 
       {/* 2. Dispatch Milestones Stepper */}
       <WorkerBookingTimelineStepper job={job} />
+
+      {/* Payment Status Notification Banner for Completed Gigs */}
+      {job.status === "COMPLETED" && (
+        <div
+          className={cn(
+            "p-4 rounded-3xl border flex items-start gap-3.5 text-xs transition-all shadow-xs",
+            job.paymentStatus === "PAID"
+              ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-950 dark:text-emerald-200"
+              : "bg-amber-500/10 border-amber-500/30 text-amber-950 dark:text-amber-200"
+          )}
+        >
+          {job.paymentStatus === "PAID" ? (
+            <CheckCircle2 className="size-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+          ) : (
+            <Clock className="size-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+          )}
+
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-bold text-sm">
+                {job.paymentStatus === "PAID"
+                  ? "Customer Payment Settled & Verified"
+                  : "Customer Payment Pending"}
+              </span>
+              <Badge
+                variant="outline"
+                className={cn(
+                  "rounded-md text-[10px] font-semibold uppercase",
+                  job.paymentStatus === "PAID"
+                    ? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/40"
+                    : "bg-amber-500/20 text-amber-700 dark:text-amber-300 border-amber-500/40"
+                )}
+              >
+                {job.paymentStatus === "PAID" ? "Settled via Razorpay" : "Awaiting Checkout"}
+              </Badge>
+            </div>
+
+            <p className="leading-relaxed opacity-90">
+              {job.paymentStatus === "PAID" ? (
+                <>
+                  The customer has paid the total amount of <strong>₹{job.totalAmount}</strong> for this completed gig.
+                  {job.paymentDetails?.transactionId && (
+                    <span className="block mt-0.5 font-mono text-[11px] opacity-80">
+                      Razorpay Payment ID: {job.paymentDetails.transactionId}
+                      {job.paymentDetails?.paidAt &&
+                        ` • Settled on ${new Date(job.paymentDetails.paidAt).toLocaleString()}`}
+                    </span>
+                  )}
+                </>
+              ) : (
+                <>
+                  You have completed the work. The customer has been prompted to complete the payment of <strong>₹{job.totalAmount}</strong> via Razorpay before they can submit their rating and review.
+                </>
+              )}
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* 3. Main 2-Column Responsive Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

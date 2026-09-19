@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Phone, Star, ExternalLink } from "lucide-react";
+import { Phone, Star, ExternalLink, CreditCard } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +19,7 @@ export interface BookingDetailsDialogProps {
   onOpenChange: (open: boolean) => void;
   onCancelBooking?: (booking: CustomerBooking) => void;
   onRateBooking?: (booking: CustomerBooking) => void;
+  onPayBooking?: (booking: CustomerBooking) => void;
 }
 
 export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
@@ -27,12 +28,18 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
   onOpenChange,
   onCancelBooking,
   onRateBooking,
+  onPayBooking,
 }) => {
   if (!booking) return null;
 
   const canCancel =
     booking.status === "PENDING" || booking.status === "CONFIRMED";
-  const canRate = booking.status === "COMPLETED" && !booking.isRated;
+
+  const isCompleted = booking.status === "COMPLETED";
+  const isPaid = booking.paymentStatus === "PAID";
+  const needsPayment = isCompleted && !isPaid;
+  // Ratings and reviews are unlocked only after booking is completed and paid
+  const canRate = isCompleted && isPaid && !booking.isRated;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -235,6 +242,20 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
                 className="rounded-xl h-9 px-4 text-xs font-semibold"
               >
                 Cancel Booking
+              </Button>
+            )}
+
+            {needsPayment && onPayBooking && (
+              <Button
+                size="sm"
+                onClick={() => {
+                  onOpenChange(false);
+                  onPayBooking(booking);
+                }}
+                className="rounded-xl h-9 px-4 text-xs font-bold gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs cursor-pointer"
+              >
+                <CreditCard className="size-3.5" />
+                <span>Pay ₹{booking.totalAmount}</span>
               </Button>
             )}
 

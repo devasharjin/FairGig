@@ -11,6 +11,7 @@ import {
   CancelBookingDialog,
   RateBookingDialog,
 } from "@/components/customer/booking";
+import { RazorpayPaymentModal } from "@/components/customer/payment";
 import { Button } from "@/components/ui/button";
 
 export const CustomerBookingDetails: React.FC = () => {
@@ -19,6 +20,7 @@ export const CustomerBookingDetails: React.FC = () => {
 
   const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
   const [isRateDialogOpen, setIsRateDialogOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
   const {
     data: booking,
@@ -141,6 +143,7 @@ export const CustomerBookingDetails: React.FC = () => {
         booking={booking}
         onCancel={() => setIsCancelDialogOpen(true)}
         onRate={() => setIsRateDialogOpen(true)}
+        onPay={() => setIsPaymentModalOpen(true)}
       />
 
       {/* Cancel Dialog */}
@@ -158,7 +161,20 @@ export const CustomerBookingDetails: React.FC = () => {
         open={isRateDialogOpen}
         onOpenChange={setIsRateDialogOpen}
         onSubmitRating={handleSubmitRating}
+        onRequestPay={() => setIsPaymentModalOpen(true)}
         isPending={rateMutation.isPending}
+      />
+
+      {/* Razorpay Payment Modal */}
+      <RazorpayPaymentModal
+        booking={booking}
+        open={isPaymentModalOpen}
+        onOpenChange={setIsPaymentModalOpen}
+        onPaymentSuccess={() => {
+          setIsPaymentModalOpen(false);
+          // Auto-prompt rating dialog once invoice is settled
+          setIsRateDialogOpen(true);
+        }}
       />
     </div>
   );

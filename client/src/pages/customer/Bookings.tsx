@@ -20,6 +20,7 @@ import {
   BookingsEmptyState,
   type FilterTab,
 } from "@/components/customer/booking";
+import { RazorpayPaymentModal } from "@/components/customer/payment";
 
 export const CustomerBookings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<FilterTab>("ALL");
@@ -32,6 +33,9 @@ export const CustomerBookings: React.FC = () => {
     useState<CustomerBooking | null>(null);
   const [ratingBooking, setRatingBooking] =
     useState<CustomerBooking | null>(null);
+  const [payingBooking, setPayingBooking] =
+    useState<CustomerBooking | null>(null);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
   // Queries & Mutations
   const {
@@ -201,6 +205,10 @@ export const CustomerBookings: React.FC = () => {
               onViewDetails={(b) => setSelectedBooking(b)}
               onCancel={(b) => setCancellingBooking(b)}
               onRate={(b) => setRatingBooking(b)}
+              onPay={(b) => {
+                setPayingBooking(b);
+                setIsPaymentModalOpen(true);
+              }}
             />
           ))}
         </div>
@@ -213,6 +221,11 @@ export const CustomerBookings: React.FC = () => {
         onOpenChange={(open) => !open && setSelectedBooking(null)}
         onCancelBooking={(b) => setCancellingBooking(b)}
         onRateBooking={(b) => setRatingBooking(b)}
+        onPayBooking={(b) => {
+          setSelectedBooking(null);
+          setPayingBooking(b);
+          setIsPaymentModalOpen(true);
+        }}
       />
 
       <CancelBookingDialog
@@ -228,7 +241,25 @@ export const CustomerBookings: React.FC = () => {
         open={Boolean(ratingBooking)}
         onOpenChange={(open) => !open && setRatingBooking(null)}
         onSubmitRating={handleSubmitRating}
+        onRequestPay={(b) => {
+          setRatingBooking(null);
+          setPayingBooking(b);
+          setIsPaymentModalOpen(true);
+        }}
         isPending={rateMutation.isPending}
+      />
+
+      {/* Razorpay Payment Modal */}
+      <RazorpayPaymentModal
+        booking={payingBooking}
+        open={isPaymentModalOpen}
+        onOpenChange={setIsPaymentModalOpen}
+        onPaymentSuccess={(updatedBooking) => {
+          setIsPaymentModalOpen(false);
+          setPayingBooking(null);
+          // Unlocked! Automatically prompt rating and review after successful payment
+          setRatingBooking(updatedBooking);
+        }}
       />
     </div>
   );

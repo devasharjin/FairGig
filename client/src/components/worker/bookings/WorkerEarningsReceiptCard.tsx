@@ -1,5 +1,5 @@
 import React from "react";
-import { Coins, CheckCircle2, ShieldCheck, Wallet } from "lucide-react";
+import { Coins, CheckCircle2, ShieldCheck, Wallet, Clock, CreditCard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { WorkerJob } from "@/features/worker/gigs/types";
@@ -15,7 +15,7 @@ export const WorkerEarningsReceiptCard: React.FC<WorkerEarningsReceiptCardProps>
 }) => {
   const unitLabel = job.priceType === "hourly" ? "hr" : "meter";
   const unitPlural = job.priceType === "hourly" ? "hours" : "meters";
-  const isCompleted = job.status === "COMPLETED";
+  const isPaid = job.paymentStatus === "PAID";
 
   return (
     <div
@@ -31,20 +31,21 @@ export const WorkerEarningsReceiptCard: React.FC<WorkerEarningsReceiptCardProps>
             Worker Payout & Compensation
           </h3>
         </div>
-        {isCompleted ? (
+        {isPaid ? (
           <Badge
             variant="outline"
-            className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 gap-1 text-[10px] font-semibold"
+            className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 gap-1 text-[11px] font-semibold"
           >
-            <CheckCircle2 className="size-3 text-emerald-500" />
-            Settled to Wallet
+            <CheckCircle2 className="size-3.5 text-emerald-500" />
+            Paid via Razorpay
           </Badge>
         ) : (
           <Badge
             variant="outline"
-            className="bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30 gap-1 text-[10px] font-semibold"
+            className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 gap-1 text-[11px] font-semibold"
           >
-            Cooperative Escrow Protected
+            <Clock className="size-3.5 text-amber-500" />
+            Payment Pending
           </Badge>
         )}
       </div>
@@ -56,6 +57,30 @@ export const WorkerEarningsReceiptCard: React.FC<WorkerEarningsReceiptCardProps>
             {job.service?.name}
           </span>
         </div>
+
+        {/* Customer Payment Status Row */}
+        <div className="flex justify-between items-center py-1">
+          <span className="text-muted-foreground">Customer Invoice Status</span>
+          <span
+            className={cn(
+              "font-bold",
+              isPaid
+                ? "text-emerald-600 dark:text-emerald-400"
+                : "text-amber-600 dark:text-amber-400"
+            )}
+          >
+            {isPaid ? "✓ Paid in Full" : "Awaiting Customer Checkout"}
+          </span>
+        </div>
+
+        {job.paymentDetails?.transactionId && (
+          <div className="flex justify-between items-center py-1">
+            <span className="text-muted-foreground">Razorpay Transaction ID</span>
+            <span className="font-mono text-[11px] text-foreground">
+              {job.paymentDetails.transactionId}
+            </span>
+          </div>
+        )}
 
         <div className="flex justify-between items-center py-1">
           <span className="text-muted-foreground">Agreed Trade Rate</span>

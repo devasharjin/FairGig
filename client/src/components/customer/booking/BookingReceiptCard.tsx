@@ -1,16 +1,19 @@
 import React from "react";
-import { Receipt, CheckCircle2, Clock, AlertCircle } from "lucide-react";
+import { Receipt, CheckCircle2, Clock, AlertCircle, CreditCard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { CustomerBooking, PaymentStatus } from "@/features/customer/bookings/types";
 
 export interface BookingReceiptCardProps {
   booking: CustomerBooking;
+  onPay?: () => void;
   className?: string;
 }
 
 export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
   booking,
+  onPay,
   className,
 }) => {
   const getPaymentBadge = (status: PaymentStatus) => {
@@ -120,6 +123,19 @@ export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
             ₹{booking.totalAmount}
           </span>
         </div>
+
+        {booking.status === "COMPLETED" && booking.paymentStatus !== "PAID" && onPay && (
+          <div className="pt-2">
+            <Button
+              type="button"
+              onClick={onPay}
+              className="w-full rounded-xl h-10 text-xs font-bold gap-2 cursor-pointer shadow-sm bg-emerald-600 hover:bg-emerald-700 text-white"
+            >
+              <CreditCard className="size-3.5" />
+              <span>Pay ₹{booking.totalAmount} with Razorpay</span>
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/60 text-[11px] text-muted-foreground leading-relaxed">

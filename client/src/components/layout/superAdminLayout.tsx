@@ -5,6 +5,7 @@ import {
   Users,
   CircleDot,
   BaggageClaim,
+  CreditCard,
 } from "lucide-react";
 import {
   DashboardLayout,
@@ -29,6 +30,11 @@ const superAdminNavGroups: SidebarGroupConfig[] = [
         to: "/admin",
         icon: Layers,
         end: true,
+      },
+      {
+        title: "Payments & Revenue",
+        to: "/admin/payments",
+        icon: CreditCard,
       },
     ],
   },

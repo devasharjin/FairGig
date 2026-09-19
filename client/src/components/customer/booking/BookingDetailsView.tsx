@@ -12,6 +12,7 @@ import {
   Shield,
   HelpCircle,
   Clock,
+  CreditCard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +28,7 @@ export interface BookingDetailsViewProps {
   booking: CustomerBooking;
   onCancel?: () => void;
   onRate?: () => void;
+  onPay?: () => void;
   className?: string;
 }
 
@@ -34,6 +36,7 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
   booking,
   onCancel,
   onRate,
+  onPay,
   className,
 }) => {
   const [copied, setCopied] = useState(false);
@@ -43,7 +46,11 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
     booking.status === "CONFIRMED" ||
     booking.status === "ASSIGNED";
 
-  const canRate = booking.status === "COMPLETED" && !booking.isRated;
+  const isCompleted = booking.status === "COMPLETED";
+  const isPaid = booking.paymentStatus === "PAID";
+  const needsPayment = isCompleted && !isPaid;
+  // Ratings and reviews are unlocked only after booking is completed and payment is settled
+  const canRate = isCompleted && isPaid && !booking.isRated;
 
   const handleCopyBookingNumber = () => {
     navigator.clipboard.writeText(booking.bookingNumber);
@@ -122,6 +129,17 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
                 className="rounded-xl h-10 px-4 text-xs font-semibold text-destructive hover:bg-destructive/10 hover:text-destructive cursor-pointer border-destructive/30"
               >
                 Cancel Booking
+              </Button>
+            )}
+
+            {needsPayment && onPay && (
+              <Button
+                size="sm"
+                onClick={onPay}
+                className="rounded-xl h-10 px-5 text-xs font-bold gap-2 cursor-pointer shadow-md bg-emerald-600 hover:bg-emerald-700 text-white"
+              >
+                <CreditCard className="size-4" />
+                <span>Pay ₹{booking.totalAmount} (Razorpay)</span>
               </Button>
             )}
 
@@ -258,7 +276,28 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
         {/* Right Column: Invoice, Rating & Support */}
         <div className="lg:col-span-5 space-y-6">
           {/* Invoice / Pricing Breakdown */}
-          <BookingReceiptCard booking={booking} />
+          <BookingReceiptCard booking={booking} onPay={onPay} />
+
+          {/* Payment CTA Card (if completed but unpaid) */}
+          {needsPayment && onPay && (
+            <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/5 p-5 sm:p-6 shadow-xs space-y-3">
+              <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
+                <CreditCard className="size-4 text-emerald-600 dark:text-emerald-400" />
+                <h3 className="text-sm font-bold">Service Completed • Payment Due</h3>
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                The gig service has been completed by your assigned worker. Please settle the invoice of <strong>₹{booking.totalAmount}</strong> via Razorpay to unlock your worker rating and review.
+              </p>
+              <Button
+                size="sm"
+                onClick={onPay}
+                className="w-full rounded-xl h-10 text-xs font-bold gap-2 cursor-pointer shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+              >
+                <CreditCard className="size-3.5" />
+                <span>Pay ₹{booking.totalAmount} with Razorpay</span>
+              </Button>
+            </div>
+          )}
 
           {/* Customer Rating Card (if rated) */}
           {booking.isRated && booking.rating && (

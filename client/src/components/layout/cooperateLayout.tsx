@@ -4,6 +4,7 @@ import {
   Users,
   Briefcase,
   UserCheck,
+  Wallet,
 } from "lucide-react";
 import {
   DashboardLayout,
@@ -28,6 +29,11 @@ const cooperativeNavGroups: SidebarGroupConfig[] = [
         to: "/cooperative",
         icon: Layers,
         end: true,
+      },
+      {
+        title: "Payments & Payouts",
+        to: "/cooperative/payments",
+        icon: Wallet,
       },
     ],
   },

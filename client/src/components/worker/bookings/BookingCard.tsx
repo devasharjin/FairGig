@@ -15,7 +15,53 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { WorkerJob } from "@/features/worker/gigs/types";
-import type { BookingStatus } from "@/features/customer/bookings/types";
+import type { BookingStatus, PaymentStatus } from "@/features/customer/bookings/types";
+import { Clock } from "lucide-react";
+
+export const getPaymentStatusBadge = (status?: PaymentStatus) => {
+  switch (status) {
+    case "PAID":
+      return (
+        <Badge
+          variant="outline"
+          className="gap-1.5 py-1 px-2.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 font-semibold text-xs"
+        >
+          <CheckCircle2 className="size-3.5 text-emerald-500" />
+          <span>Payment: Paid & Settled</span>
+        </Badge>
+      );
+    case "FAILED":
+      return (
+        <Badge
+          variant="outline"
+          className="gap-1.5 py-1 px-2.5 bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30 font-semibold text-xs"
+        >
+          <AlertCircle className="size-3.5 text-rose-500" />
+          <span>Payment: Failed</span>
+        </Badge>
+      );
+    case "REFUNDED":
+      return (
+        <Badge
+          variant="outline"
+          className="gap-1.5 py-1 px-2.5 bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30 font-semibold text-xs"
+        >
+          <span>Payment: Refunded</span>
+        </Badge>
+      );
+    case "PENDING":
+    default:
+      return (
+        <Badge
+          variant="outline"
+          className="gap-1.5 py-1 px-2.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 font-semibold text-xs"
+        >
+          <Clock className="size-3.5 text-amber-500" />
+          <span>Payment: Pending</span>
+        </Badge>
+      );
+  }
+};
 
 export const getStatusBadge = (status: BookingStatus) => {
   switch (status) {

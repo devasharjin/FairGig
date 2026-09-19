@@ -27,6 +27,8 @@ import WorkerVerifications from "./pages/cooperative/WorkerVerifications";
 import SuperAdminHome from "./pages/superAdmin/Home";
 import AdminServices from "./pages/superAdmin/Services";
 import AdminVerifications from "./pages/superAdmin/Verifications";
+import AdminPayments from "./pages/superAdmin/Payments";
+import CooperativePayments from "./pages/cooperative/Payments";
 import CustomerServices from "./pages/customer/Services";
 import CustomerBookings from "./pages/customer/Bookings";
 import CustomerBookingDetails from "./pages/customer/BookingDetails";
@@ -189,6 +191,10 @@ export const router = createBrowserRouter([
                     element: <WorkerVerifications />,
                   },
                   {
+                    path: "payments",
+                    element: <CooperativePayments />,
+                  },
+                  {
                     path: "members",
                     element: <CooperativeHome />,
                   },
@@ -213,6 +219,10 @@ export const router = createBrowserRouter([
                   {
                     index: true,
                     element: <SuperAdminHome />,
+                  },
+                  {
+                    path: "payments",
+                    element: <AdminPayments />,
                   },
                   {
                     path: "verifications",
