@@ -292,6 +292,20 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
               </span>
             </div>
           </div>
+
+          {/* Worker Welfare & Insurance Guarantee Badge */}
+          <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between gap-2.5 text-xs">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="size-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <div>
+                <span className="font-bold text-foreground block">Worker Welfare & Insurance Guarantee</span>
+                <span className="text-[11px] text-muted-foreground">5% of service fee directly supports worker accident, disability, and medical insurance.</span>
+              </div>
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 shrink-0">
+              Fair Trade
+            </span>
+          </div>
         </div>
 
         <div className="flex items-center justify-between gap-2.5 pt-3 border-t border-border/80">

@@ -19,6 +19,9 @@ import cooperativeRoutes from './routes/cooperative/workerVerification.routes';
 import adminVerificationRoutes from './routes/admin/verification.routes';
 import adminPaymentRoutes from './routes/admin/payment.routes';
 import cooperativePaymentRoutes from './routes/cooperative/payment.routes';
+import workerWelfareRoutes from './routes/worker/welfare.routes';
+import cooperativeWelfareRoutes from './routes/cooperative/welfare.routes';
+import adminWelfareRoutes from './routes/admin/welfare.routes';
 import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
 
@@ -55,14 +58,17 @@ app.use('/api/admin/categories', adminCategoryRoutes);
 app.use('/api/admin/services', adminServiceRoutes);
 app.use('/api/admin/verifications', adminVerificationRoutes);
 app.use('/api/admin/payments', adminPaymentRoutes);
+app.use('/api/admin/welfare', adminWelfareRoutes);
 app.use('/api/customer', customerCategoryRoutes);
 app.use('/api/customer/bookings', customerBookingRoutes);
 app.use('/api/customer/payments', customerPaymentRoutes);
 app.use('/api/customer/profile', customerProfileRoutes);
 app.use('/api/customer/contact', customerContactRoutes);
 app.use('/api/worker/gigs', workerGigRoutes);
+app.use('/api/worker/welfare', workerWelfareRoutes);
 app.use('/api/cooperative', cooperativeRoutes);
 app.use('/api/cooperative/payments', cooperativePaymentRoutes);
+app.use('/api/cooperative/welfare', cooperativeWelfareRoutes);
 
 // Error Middlewares (must be registered after routes)
 app.use(notFound);

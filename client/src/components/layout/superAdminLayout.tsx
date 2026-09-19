@@ -1,5 +1,6 @@
 import {
   ShieldAlert,
+  ShieldCheck,
   Layers,
   CheckCircle2,
   Users,
@@ -30,6 +31,11 @@ const superAdminNavGroups: SidebarGroupConfig[] = [
         to: "/admin",
         icon: Layers,
         end: true,
+      },
+      {
+        title: "Welfare & Insurance",
+        to: "/admin/welfare",
+        icon: ShieldCheck,
       },
       {
         title: "Payments & Revenue",

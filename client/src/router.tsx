@@ -39,6 +39,9 @@ import WorkerMyBookings from "./pages/worker/MyBookings";
 import WorkerBookingDetails from "./pages/worker/BookingDetails";
 import WorkerSchedule from "./pages/worker/Schedule";
 import WorkerProfile from "./pages/worker/Profile";
+import WorkerWelfare from "./pages/worker/Welfare";
+import CooperativeWelfare from "./pages/cooperative/Welfare";
+import SuperAdminWelfare from "./pages/superAdmin/Welfare";
 
 function DashboardRedirect() {
   const user = useAuthStore((state) => state.user);
@@ -49,6 +52,28 @@ function DashboardRedirect() {
 
   const role = user.role || (user as any).user?.role;
   return <Navigate to={getRoleDashboardPath(role)} replace />;
+}
+
+function WelfareRedirect() {
+  const user = useAuthStore((state) => state.user);
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  const role = user.role || (user as any).user?.role;
+  const roleList = Array.isArray(role) ? role : [role];
+
+  if (roleList.includes("WORKER")) {
+    return <Navigate to="/worker/welfare" replace />;
+  }
+  if (roleList.includes("COOPERATIVE")) {
+    return <Navigate to="/cooperative/welfare" replace />;
+  }
+  if (roleList.includes("SUPERADMIN")) {
+    return <Navigate to="/admin/welfare" replace />;
+  }
+  return <Navigate to="/services" replace />;
 }
 
 export const router = createBrowserRouter([
@@ -169,6 +194,10 @@ export const router = createBrowserRouter([
                     path: "profile",
                     element: <WorkerProfile />,
                   },
+                  {
+                    path: "welfare",
+                    element: <WorkerWelfare />,
+                  },
                 ],
               },
             ],
@@ -193,6 +222,10 @@ export const router = createBrowserRouter([
                   {
                     path: "payments",
                     element: <CooperativePayments />,
+                  },
+                  {
+                    path: "welfare",
+                    element: <CooperativeWelfare />,
                   },
                   {
                     path: "members",
@@ -235,6 +268,10 @@ export const router = createBrowserRouter([
                   {
                     path : "services",
                     element : <AdminServices />
+                  },
+                  {
+                    path: "welfare",
+                    element: <SuperAdminWelfare />
                   }
                 ],
               },
@@ -245,6 +282,10 @@ export const router = createBrowserRouter([
           {
             path: "dashboard",
             element: <DashboardRedirect />,
+          },
+          {
+            path: "welfare",
+            element: <WelfareRedirect />,
           },
           {
             path: "dashboard/customer",

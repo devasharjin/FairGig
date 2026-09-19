@@ -7,6 +7,7 @@ import {
   CircleDot,
   CheckCircle2,
   UserCheck,
+  ShieldCheck,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
@@ -59,6 +60,11 @@ const workerNavGroups: SidebarGroupConfig[] = [
   {
     heading: "Professional",
     items: [
+      {
+        title: "Welfare & Insurance",
+        to: "/worker/welfare",
+        icon: ShieldCheck,
+      },
       {
         title: "Profile & Skills",
         to: "/worker/profile",

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Clock, ArrowRight, ShieldCheck, CheckCircle2, Truck, Info } from "lucide-react";
+import { Clock, ArrowRight, ShieldCheck, CheckCircle2, Truck, Info, HeartHandshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { CustomerService } from "@/features/customer/services/types";
@@ -20,23 +20,24 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
   const transportFee = service.transportFee ?? 30;
   const estimatedInitialTotal = firstHourRate + transportFee;
 
-  const isLongDescription = (service.description || "").length > 130;
-  const displayDescription = isExpanded || !isLongDescription
-    ? service.description
-    : `${service.description.slice(0, 130)}...`;
+  // Truncate logic
+  const description = service.description || "";
+  const isLongDescription = description.length > 110;
+  const displayDescription =
+    isExpanded || !isLongDescription
+      ? description
+      : `${description.slice(0, 110)}...`;
 
   return (
-    <div className="group relative flex flex-col justify-between rounded-3xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs hover:shadow-xl hover:border-primary/40 transition-all duration-300 hover:-translate-y-1">
-      {/* Top section */}
+    <div className="group relative flex flex-col justify-between p-5 sm:p-6 rounded-3xl bg-card border border-border/80 hover:border-primary/50 hover:shadow-lg transition-all duration-200">
       <div>
-        {/* Price & Metric Badge */}
-        <div className="flex items-start justify-between gap-3 mb-3.5">
+        {/* Top: Category & Price Highlight */}
+        <div className="flex items-start justify-between gap-3 mb-3">
           <Badge
-            variant="outline"
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-primary/10 border-primary/20 text-primary"
+            variant="secondary"
+            className="text-[11px] font-semibold bg-muted/80 text-foreground px-2.5 py-1 rounded-full border border-border/60"
           >
-            <Clock className="size-3.5 shrink-0" />
-            <span>Hourly Ceiling Billing</span>
+            {typeof service.category === "object" ? service.category.name : "Cooperative Service"}
           </Badge>
 
           {/* Pricing Highlight */}
@@ -112,6 +113,10 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
           <span className="inline-flex items-center gap-1">
             <ShieldCheck className="size-3 text-primary" />
             Transparent Pricing
+          </span>
+          <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
+            <HeartHandshake className="size-3 text-emerald-500" />
+            Worker Insured (₹5L)
           </span>
         </div>
       </div>

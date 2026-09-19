@@ -1,5 +1,5 @@
 import React from "react";
-import { Building2 } from "lucide-react";
+import { Building2, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface CooperativeInfo {
@@ -73,6 +73,26 @@ export const CooperativeCard: React.FC<CooperativeCardProps> = ({
           Associated with the Central Cooperative Federation network. Standard rates and insurance apply to all dispatches.
         </div>
       )}
+
+      {/* Insurance & Welfare Guarantee Bar */}
+      <div className="rounded-2xl bg-emerald-500/10 p-3.5 border border-emerald-500/20 flex items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2.5">
+          <div className="size-8 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+            <ShieldCheck className="size-4" />
+          </div>
+          <div>
+            <div className="font-bold text-foreground">Cooperative Insurance Protection</div>
+            <div className="text-[11px] text-muted-foreground">Covered up to ₹5,00,000 for on-duty accidental & medical safety</div>
+          </div>
+        </div>
+        <a
+          href="/worker/welfare"
+          className="inline-flex items-center gap-1 font-bold text-primary hover:underline text-xs shrink-0"
+        >
+          <span>Policy & Claims</span>
+          <span>&rarr;</span>
+        </a>
+      </div>
     </div>
   );
 };
