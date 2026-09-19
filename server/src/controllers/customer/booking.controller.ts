@@ -8,6 +8,7 @@ import Booking, {
 import Rating from "../../models/rating.model";
 import Service from "../../models/service.model";
 import { fail, ok } from "../../shared/envelope";
+import { FIXED_TRANSPORT_FEE, BillingService } from "../../services/billing.service";
 
 export async function createBooking(req: Request, res: Response) {
   const customerId = (req.user as any)?.userId || (req.user as any)?._id;
@@ -40,13 +41,21 @@ export async function createBooking(req: Request, res: Response) {
     return fail(res, "This service is currently unavailable for booking", null, 400);
   }
 
-  const rate =
-    service.priceType === "hourly"
-      ? service.hourlyPrice ?? 0
-      : service.metersPrice ?? 0;
+  // Extract service benchmark rates
+  const firstHourRate = service.firstHourRate ?? service.hourlyPrice ?? 0;
+  const additionalHourRate = service.additionalHourRate ?? service.firstHourRate ?? service.hourlyPrice ?? 0;
+  const transportFee = FIXED_TRANSPORT_FEE;
+  const cooperativePercentage = service.cooperativeShare ?? 10;
+  const insurancePercentage = service.insuranceShare ?? 5;
 
-  const validUnits = Math.max(0.1, Number(units) || 1);
-  const totalAmount = Math.round(rate * validUnits);
+  // Initial estimate calculation for first billable hour
+  const initialCalc = BillingService.calculateBillingAndDistribution(60, {
+    firstHourRate,
+    additionalHourRate,
+    cooperativePercentage,
+    insurancePercentage,
+    transportFee,
+  });
 
   const formattedAddress =
     typeof address === "string"
@@ -70,16 +79,33 @@ export async function createBooking(req: Request, res: Response) {
     address: formattedAddress,
     scheduledDate: scheduledDate ? new Date(scheduledDate) : new Date(),
     customerNotes: typeof customerNotes === "string" ? customerNotes.trim() : "",
-    priceType: service.priceType,
-    rate,
-    units: validUnits,
-    totalAmount,
+    priceType: service.priceType || "hourly",
+    rate: firstHourRate,
+    units: 1,
+    totalAmount: initialCalc.customerTotal,
+    pricing: {
+      firstHourRate,
+      additionalHourRate,
+      transportFee,
+      cooperativePercentage,
+      insurancePercentage,
+      actualDurationMinutes: 0,
+      billableHours: 1,
+      firstHourCharge: initialCalc.firstHourCharge,
+      additionalHoursCharge: 0,
+      serviceAmount: initialCalc.serviceAmount,
+      cooperativeShareAmount: initialCalc.cooperativeAdminShare,
+      insuranceShareAmount: initialCalc.insuranceShare,
+      workerNetEarnings: initialCalc.workerNetEarnings,
+      customerTotalAmount: initialCalc.customerTotal,
+      isFinalized: false,
+    },
     status: BookingStatus.PENDING,
     paymentStatus: PaymentStatus.PENDING,
   });
 
   const populated = await Booking.findById(booking._id)
-    .populate("service", "name description priceType hourlyPrice metersPrice")
+    .populate("service", "name description priceType firstHourRate additionalHourRate transportFee cooperativeShare insuranceShare hourlyPrice metersPrice")
     .populate("category", "name icon");
 
   return ok(res, populated, "Booking requested successfully");
@@ -99,7 +125,7 @@ export async function getCustomerBookings(req: Request, res: Response) {
   }
 
   const bookings = await Booking.find(filter)
-    .populate("service", "name description priceType hourlyPrice metersPrice")
+    .populate("service", "name description priceType firstHourRate additionalHourRate transportFee cooperativeShare insuranceShare hourlyPrice metersPrice")
     .populate("category", "name icon slug")
     .populate({
       path: "worker",
@@ -125,7 +151,7 @@ export async function getBookingById(req: Request, res: Response) {
   }
 
   const booking = await Booking.findById(id)
-    .populate("service", "name description priceType hourlyPrice metersPrice")
+    .populate("service", "name description priceType firstHourRate additionalHourRate transportFee cooperativeShare insuranceShare hourlyPrice metersPrice")
     .populate("category", "name icon slug")
     .populate({
       path: "worker",
@@ -189,7 +215,7 @@ export async function cancelBooking(req: Request, res: Response) {
   await booking.save();
 
   const updated = await Booking.findById(booking._id)
-    .populate("service", "name description priceType hourlyPrice metersPrice")
+    .populate("service", "name description priceType firstHourRate additionalHourRate transportFee cooperativeShare insuranceShare hourlyPrice metersPrice")
     .populate("category", "name icon");
 
   return ok(res, updated, "Booking cancelled successfully");

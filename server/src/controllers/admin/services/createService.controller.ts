@@ -3,9 +3,22 @@ import mongoose from "mongoose";
 import Service from "../../../models/service.model";
 import Category from "../../../models/category.model";
 import { fail, ok } from "../../../shared/envelope";
+import { FIXED_TRANSPORT_FEE } from "../../../services/billing.service";
 
 export async function createService(req: Request, res: Response) {
-  const { name, description, category, priceType, hourlyPrice, metersPrice, isActive } = req.body;
+  const {
+    name,
+    description,
+    category,
+    priceType = "hourly",
+    firstHourRate,
+    additionalHourRate,
+    cooperativeShare = 10,
+    insuranceShare = 5,
+    hourlyPrice,
+    metersPrice,
+    isActive,
+  } = req.body;
 
   if (!name || typeof name !== "string" || !name.trim()) {
     return fail(res, "Service name is required", null, 400);
@@ -33,19 +46,66 @@ export async function createService(req: Request, res: Response) {
     return fail(res, "Price type must be either 'hourly' or 'meters'", null, 400);
   }
 
-  const parsedHourlyPrice = hourlyPrice !== undefined && hourlyPrice !== null ? Number(hourlyPrice) : undefined;
-  const parsedMetersPrice = metersPrice !== undefined && metersPrice !== null ? Number(metersPrice) : undefined;
+  // Resolve firstHourRate and additionalHourRate
+  let resolvedFirstHourRate: number | undefined;
+  let resolvedAdditionalHourRate: number | undefined;
 
-  if (priceType === "hourly") {
-    if (parsedHourlyPrice === undefined || isNaN(parsedHourlyPrice) || parsedHourlyPrice < 0) {
-      return fail(res, "A valid non-negative hourly price is required", null, 400);
+  if (firstHourRate !== undefined && firstHourRate !== null) {
+    const parsed = Number(firstHourRate);
+    if (isNaN(parsed) || parsed < 0) {
+      return fail(res, "First hour rate must be a non-negative number", null, 400);
     }
+    resolvedFirstHourRate = parsed;
+  } else if (hourlyPrice !== undefined && hourlyPrice !== null) {
+    const parsed = Number(hourlyPrice);
+    if (isNaN(parsed) || parsed < 0) {
+      return fail(res, "Hourly price must be a non-negative number", null, 400);
+    }
+    resolvedFirstHourRate = parsed;
   }
 
+  if (additionalHourRate !== undefined && additionalHourRate !== null) {
+    const parsed = Number(additionalHourRate);
+    if (isNaN(parsed) || parsed < 0) {
+      return fail(res, "Additional hour rate must be a non-negative number", null, 400);
+    }
+    resolvedAdditionalHourRate = parsed;
+  } else {
+    // Default additional hour rate to first hour rate if not explicitly specified
+    resolvedAdditionalHourRate = resolvedFirstHourRate ?? 0;
+  }
+
+  if (priceType === "hourly" && resolvedFirstHourRate === undefined) {
+    return fail(res, "First hour rate is required for hourly gig services", null, 400);
+  }
+
+  const parsedMetersPrice =
+    metersPrice !== undefined && metersPrice !== null ? Number(metersPrice) : undefined;
   if (priceType === "meters") {
     if (parsedMetersPrice === undefined || isNaN(parsedMetersPrice) || parsedMetersPrice < 0) {
       return fail(res, "A valid non-negative meters price is required", null, 400);
     }
+  }
+
+  // Cooperative and Insurance Share validation
+  const parsedCoopShare = Number(cooperativeShare ?? 10);
+  const parsedInsShare = Number(insuranceShare ?? 5);
+
+  if (isNaN(parsedCoopShare) || parsedCoopShare < 0 || parsedCoopShare > 100) {
+    return fail(res, "Cooperative admin share must be between 0% and 100%", null, 400);
+  }
+
+  if (isNaN(parsedInsShare) || parsedInsShare < 0 || parsedInsShare > 100) {
+    return fail(res, "Insurance share must be between 0% and 100%", null, 400);
+  }
+
+  if (parsedCoopShare + parsedInsShare > 100) {
+    return fail(
+      res,
+      `Combined cooperative (${parsedCoopShare}%) and insurance (${parsedInsShare}%) share cannot exceed 100%`,
+      null,
+      400
+    );
   }
 
   // Verify category exists
@@ -71,7 +131,12 @@ export async function createService(req: Request, res: Response) {
       description: description.trim(),
       category,
       priceType,
-      hourlyPrice: priceType === "hourly" ? parsedHourlyPrice : undefined,
+      firstHourRate: resolvedFirstHourRate ?? 0,
+      additionalHourRate: resolvedAdditionalHourRate ?? resolvedFirstHourRate ?? 0,
+      transportFee: FIXED_TRANSPORT_FEE,
+      cooperativeShare: parsedCoopShare,
+      insuranceShare: parsedInsShare,
+      hourlyPrice: resolvedFirstHourRate,
       metersPrice: priceType === "meters" ? parsedMetersPrice : undefined,
       isActive: typeof isActive === "boolean" ? isActive : true,
     });
@@ -92,3 +157,4 @@ export async function createService(req: Request, res: Response) {
     throw err;
   }
 }
+

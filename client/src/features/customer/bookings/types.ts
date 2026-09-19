@@ -40,6 +40,24 @@ export interface BookingRatingInfo {
   createdAt: string;
 }
 
+export interface BookingPricingSnapshot {
+  firstHourRate: number;
+  additionalHourRate: number;
+  transportFee: number;
+  cooperativePercentage: number;
+  insurancePercentage: number;
+  actualDurationMinutes: number;
+  billableHours: number;
+  firstHourCharge: number;
+  additionalHoursCharge: number;
+  serviceAmount: number;
+  cooperativeShareAmount: number;
+  insuranceShareAmount: number;
+  workerNetEarnings: number;
+  customerTotalAmount: number;
+  isFinalized: boolean;
+}
+
 export interface CustomerBooking {
   _id: string;
   bookingNumber: string;
@@ -54,7 +72,12 @@ export interface CustomerBooking {
   rate: number;
   units: number;
   totalAmount: number;
+  pricing?: BookingPricingSnapshot;
   paymentStatus: PaymentStatus;
+  paymentDetails?: {
+    transactionId?: string;
+    paidAt?: string;
+  };
   status: BookingStatus;
   isRated: boolean;
   rating?: BookingRatingInfo;

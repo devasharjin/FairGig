@@ -2,6 +2,7 @@ import type { Category } from "@/features/customer/categories/types";
 import type { CustomerService } from "@/features/customer/services/types";
 import type {
   BookingAddress,
+  BookingPricingSnapshot,
   BookingRatingInfo,
   BookingStatus,
   PaymentStatus,
@@ -34,6 +35,7 @@ export interface WorkerJob {
   rate: number;
   units: number;
   totalAmount: number;
+  pricing?: BookingPricingSnapshot;
   paymentStatus: PaymentStatus;
   paymentDetails?: {
     transactionId?: string;

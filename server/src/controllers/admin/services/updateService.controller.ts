@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import Service from "../../../models/service.model";
 import Category from "../../../models/category.model";
 import { fail, ok } from "../../../shared/envelope";
+import { FIXED_TRANSPORT_FEE } from "../../../services/billing.service";
 
 export async function updateService(req: Request, res: Response) {
   const id = req.params.id as string;
@@ -16,7 +17,19 @@ export async function updateService(req: Request, res: Response) {
     return fail(res, "Service not found", null, 404);
   }
 
-  const { name, description, category, priceType, hourlyPrice, metersPrice, isActive } = req.body;
+  const {
+    name,
+    description,
+    category,
+    priceType,
+    firstHourRate,
+    additionalHourRate,
+    cooperativeShare,
+    insuranceShare,
+    hourlyPrice,
+    metersPrice,
+    isActive,
+  } = req.body;
 
   const targetCategory = category ? category : service.category;
 
@@ -79,13 +92,64 @@ export async function updateService(req: Request, res: Response) {
     service.priceType = priceType;
   }
 
-  if (hourlyPrice !== undefined) {
-    const parsedHourlyPrice = Number(hourlyPrice);
-    if (isNaN(parsedHourlyPrice) || parsedHourlyPrice < 0) {
-      return fail(res, "A valid non-negative hourly price is required", null, 400);
+  // First hour rate
+  if (firstHourRate !== undefined && firstHourRate !== null) {
+    const parsed = Number(firstHourRate);
+    if (isNaN(parsed) || parsed < 0) {
+      return fail(res, "First hour rate must be a non-negative number", null, 400);
     }
-    service.hourlyPrice = parsedHourlyPrice;
+    service.firstHourRate = parsed;
+    service.hourlyPrice = parsed;
+  } else if (hourlyPrice !== undefined && hourlyPrice !== null) {
+    const parsed = Number(hourlyPrice);
+    if (isNaN(parsed) || parsed < 0) {
+      return fail(res, "Hourly price must be a non-negative number", null, 400);
+    }
+    service.firstHourRate = parsed;
+    service.hourlyPrice = parsed;
   }
+
+  // Additional hour rate
+  if (additionalHourRate !== undefined && additionalHourRate !== null) {
+    const parsed = Number(additionalHourRate);
+    if (isNaN(parsed) || parsed < 0) {
+      return fail(res, "Additional hour rate must be a non-negative number", null, 400);
+    }
+    service.additionalHourRate = parsed;
+  }
+
+  // Cooperative Share
+  if (cooperativeShare !== undefined && cooperativeShare !== null) {
+    const parsed = Number(cooperativeShare);
+    if (isNaN(parsed) || parsed < 0 || parsed > 100) {
+      return fail(res, "Cooperative admin share must be between 0% and 100%", null, 400);
+    }
+    service.cooperativeShare = parsed;
+  }
+
+  // Insurance Share
+  if (insuranceShare !== undefined && insuranceShare !== null) {
+    const parsed = Number(insuranceShare);
+    if (isNaN(parsed) || parsed < 0 || parsed > 100) {
+      return fail(res, "Insurance share must be between 0% and 100%", null, 400);
+    }
+    service.insuranceShare = parsed;
+  }
+
+  // Validate combined shares
+  const finalCoop = service.cooperativeShare ?? 10;
+  const finalIns = service.insuranceShare ?? 5;
+  if (finalCoop + finalIns > 100) {
+    return fail(
+      res,
+      `Combined cooperative (${finalCoop}%) and insurance (${finalIns}%) share cannot exceed 100%`,
+      null,
+      400
+    );
+  }
+
+  // Transport fee is centrally fixed at ₹30
+  service.transportFee = FIXED_TRANSPORT_FEE;
 
   if (metersPrice !== undefined) {
     const parsedMetersPrice = Number(metersPrice);
@@ -95,9 +159,8 @@ export async function updateService(req: Request, res: Response) {
     service.metersPrice = parsedMetersPrice;
   }
 
-  // Ensure required price field is populated according to effective priceType
-  if (effectivePriceType === "hourly" && (service.hourlyPrice === undefined || service.hourlyPrice === null)) {
-    return fail(res, "Hourly price is required when price type is hourly", null, 400);
+  if (effectivePriceType === "hourly" && (service.firstHourRate === undefined || service.firstHourRate === null)) {
+    return fail(res, "First hour rate is required when price type is hourly", null, 400);
   }
 
   if (effectivePriceType === "meters" && (service.metersPrice === undefined || service.metersPrice === null)) {
@@ -125,3 +188,4 @@ export async function updateService(req: Request, res: Response) {
     throw err;
   }
 }
+

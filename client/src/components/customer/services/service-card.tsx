@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Clock, Ruler, ArrowRight, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { Clock, ArrowRight, ShieldCheck, CheckCircle2, Truck, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { CustomerService } from "@/features/customer/services/types";
@@ -14,9 +14,11 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
   onBookService,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const isHourly = service.priceType === "hourly";
-  const price = isHourly ? service.hourlyPrice : service.metersPrice;
-  const unit = isHourly ? "/hr" : "/meter";
+
+  const firstHourRate = service.firstHourRate ?? service.hourlyPrice ?? 0;
+  const additionalHourRate = service.additionalHourRate ?? service.firstHourRate ?? service.hourlyPrice ?? 0;
+  const transportFee = service.transportFee ?? 30;
+  const estimatedInitialTotal = firstHourRate + transportFee;
 
   const isLongDescription = (service.description || "").length > 130;
   const displayDescription = isExpanded || !isLongDescription
@@ -33,17 +35,8 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
             variant="outline"
             className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-primary/10 border-primary/20 text-primary"
           >
-            {isHourly ? (
-              <>
-                <Clock className="size-3.5 shrink-0" />
-                <span>Hourly Service</span>
-              </>
-            ) : (
-              <>
-                <Ruler className="size-3.5 shrink-0" />
-                <span>Metered Service</span>
-              </>
-            )}
+            <Clock className="size-3.5 shrink-0" />
+            <span>Hourly Ceiling Billing</span>
           </Badge>
 
           {/* Pricing Highlight */}
@@ -51,12 +44,12 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
             <div className="flex items-baseline justify-end gap-1">
               <span className="text-xs font-bold text-muted-foreground">₹</span>
               <span className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
-                {price ?? 0}
+                {firstHourRate}
               </span>
-              <span className="text-xs font-medium text-muted-foreground">{unit}</span>
+              <span className="text-xs font-medium text-muted-foreground">/1st hr</span>
             </div>
             <span className="text-[10px] text-muted-foreground/80 block">
-              {isHourly ? "Billed per working hour" : "Standard distance/unit"}
+              +₹{additionalHourRate}/addl hr • +₹{transportFee} transport
             </span>
           </div>
         </div>
@@ -80,15 +73,45 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
           )}
         </p>
 
+        {/* Transparent Rates Grid */}
+        <div className="mt-4 p-3 rounded-2xl bg-muted/30 border border-border/60 space-y-1.5 text-xs">
+          <div className="flex justify-between items-center text-[11px]">
+            <span className="text-muted-foreground">First 60 mins:</span>
+            <span className="font-bold text-foreground">₹{firstHourRate}</span>
+          </div>
+          <div className="flex justify-between items-center text-[11px]">
+            <span className="text-muted-foreground">Additional hourly rate:</span>
+            <span className="font-medium text-foreground">₹{additionalHourRate} / hr</span>
+          </div>
+          <div className="flex justify-between items-center text-[11px]">
+            <span className="text-muted-foreground flex items-center gap-1">
+              <Truck className="size-3 text-primary" /> Fixed Transport Fee:
+            </span>
+            <span className="font-medium text-foreground">₹{transportFee}</span>
+          </div>
+          <div className="pt-1.5 border-t border-border/50 flex justify-between items-baseline">
+            <span className="font-semibold text-foreground text-[11px]">Estimated (1st Hour):</span>
+            <span className="font-extrabold text-primary text-xs">₹{estimatedInitialTotal}</span>
+          </div>
+        </div>
+
+        {/* Platform Transparency Notice */}
+        <div className="mt-2.5 flex items-start gap-1.5 text-[10px] text-muted-foreground leading-tight">
+          <Info className="size-3 text-muted-foreground shrink-0 mt-0.5" />
+          <span>
+            Ceiling rule applies: any partial hour rounds up. Cooperative admin & insurance shares are internal platform allocations from worker earnings, NOT added customer fees.
+          </span>
+        </div>
+
         {/* Value Highlights */}
-        <div className="mt-4 flex flex-wrap gap-2 pt-3 border-t border-border/50 text-[11px] text-muted-foreground">
+        <div className="mt-3 flex flex-wrap gap-2 pt-2.5 border-t border-border/50 text-[11px] text-muted-foreground">
           <span className="inline-flex items-center gap-1">
             <CheckCircle2 className="size-3 text-emerald-500" />
-            Vetted Gig Worker
+            Verified Worker
           </span>
           <span className="inline-flex items-center gap-1">
             <ShieldCheck className="size-3 text-primary" />
-            Standardized Pricing
+            Transparent Pricing
           </span>
         </div>
       </div>
@@ -99,10 +122,12 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
           onClick={() => onBookService(service)}
           className="w-full h-10 sm:h-11 rounded-2xl font-semibold flex items-center justify-center gap-2 group-hover:bg-primary group-hover:text-primary-foreground transition-all cursor-pointer shadow-sm"
         >
-          <span>Request Service</span>
-          <ArrowRight className="size-4 group-hover:translate-x-1 transition-transform" />
+          <span>Book Now</span>
+          <ArrowRight className="size-4" />
         </Button>
       </div>
     </div>
   );
 };
+
+export default ServiceCard;

@@ -242,37 +242,51 @@ export const ServicesRender: React.FC<ServicesRenderProps> = ({
                       </p>
                     </div>
 
-                    {/* Bottom: Pricing Badge & Actions */}
-                    <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-between">
-                      {/* Price Badge */}
-                      <div className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-primary/10 text-primary text-xs font-bold">
-                        <IndianRupee className="size-3.5" />
-                        <span>
-                          {service.priceType === "hourly"
-                            ? `${service.hourlyPrice ?? 0}/hr`
-                            : `${service.metersPrice ?? 0}/m`}
-                        </span>
-                        <span className="text-[10px] font-normal text-muted-foreground ml-0.5">
-                          {service.priceType === "hourly" ? (
-                            <Clock className="inline size-3 ml-0.5 text-muted-foreground" />
-                          ) : (
-                            <Ruler className="inline size-3 ml-0.5 text-muted-foreground" />
-                          )}
-                        </span>
+                    {/* Bottom: Pricing Breakdown & Actions */}
+                    <div className="mt-4 pt-3 border-t border-border/60 space-y-2">
+                      <div className="flex flex-wrap items-center justify-between gap-1.5 text-xs">
+                        {/* Price Badge */}
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-primary/10 text-primary font-extrabold text-xs">
+                            <IndianRupee className="size-3" />
+                            <span>1st hr: ₹{service.firstHourRate ?? service.hourlyPrice ?? 0}</span>
+                          </span>
+                          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-xl bg-muted text-muted-foreground font-semibold text-[11px]">
+                            <span>+₹{service.additionalHourRate ?? service.firstHourRate ?? service.hourlyPrice ?? 0}/addl hr</span>
+                          </span>
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-muted/60 text-muted-foreground font-mono text-[10px]">
+                            +₹30 flat transport
+                          </span>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex items-center gap-1 shrink-0 ml-auto">
+                          <button
+                            type="button"
+                            onClick={() => onEditService(service)}
+                            title="Edit Service"
+                            className="size-8 flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent transition cursor-pointer"
+                          >
+                            <Edit2 className="size-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setServiceToDelete(service)}
+                            title="Delete Service"
+                            className="size-8 flex items-center justify-center rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition cursor-pointer"
+                          >
+                            <Trash2 className="size-3.5" />
+                          </button>
+                        </div>
                       </div>
 
-                      {/* Action Buttons */}
-                      <div className="flex items-center gap-1">
-                        <button
-                          type="button"
-                          onClick={() => onEditService(service)}
-                          title="Edit Service"
-                          className="size-8 flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent transition cursor-pointer"
-                        >
-                          <Edit2 className="size-3.5" />
-                        </button>
-                        <button
-                          type="button"
+                      <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-0.5 border-t border-border/40">
+                        <span>Salary Allocations:</span>
+                        <span className="font-semibold text-foreground">
+                          Coop: <strong className="text-purple-600 dark:text-purple-400">{service.cooperativeShare ?? 10}%</strong> • Ins: <strong className="text-blue-600 dark:text-blue-400">{service.insuranceShare ?? 5}%</strong>
+                        </span>
+                      </div>
+                    </div>
                           onClick={() => setServiceToDelete(service)}
                           title="Delete Service"
                           className="size-8 flex items-center justify-center rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition cursor-pointer"

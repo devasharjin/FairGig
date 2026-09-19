@@ -45,6 +45,24 @@ export interface IBookingPaymentDetails {
   paidAt?: Date;
 }
 
+export interface IBookingPricingSnapshot {
+  firstHourRate: number;
+  additionalHourRate: number;
+  transportFee: number;
+  cooperativePercentage: number;
+  insurancePercentage: number;
+  actualDurationMinutes: number;
+  billableHours: number;
+  firstHourCharge: number;
+  additionalHoursCharge: number;
+  serviceAmount: number;
+  cooperativeShareAmount: number;
+  insuranceShareAmount: number;
+  workerNetEarnings: number;
+  customerTotalAmount: number;
+  isFinalized: boolean;
+}
+
 export interface IBooking extends Document {
   bookingNumber: string;
   customer: Types.ObjectId;
@@ -68,6 +86,7 @@ export interface IBooking extends Document {
   rate: number;
   units: number;
   totalAmount: number;
+  pricing?: IBookingPricingSnapshot;
   paymentStatus: PaymentStatus;
   paymentDetails?: IBookingPaymentDetails;
 
@@ -220,6 +239,24 @@ const bookingSchema = new Schema<IBooking>(
       type: Number,
       required: [true, "Total amount is required"],
       min: [0, "Total amount cannot be negative"],
+    },
+
+    pricing: {
+      firstHourRate: { type: Number, default: 0 },
+      additionalHourRate: { type: Number, default: 0 },
+      transportFee: { type: Number, default: 30 },
+      cooperativePercentage: { type: Number, default: 10 },
+      insurancePercentage: { type: Number, default: 5 },
+      actualDurationMinutes: { type: Number, default: 0 },
+      billableHours: { type: Number, default: 1 },
+      firstHourCharge: { type: Number, default: 0 },
+      additionalHoursCharge: { type: Number, default: 0 },
+      serviceAmount: { type: Number, default: 0 },
+      cooperativeShareAmount: { type: Number, default: 0 },
+      insuranceShareAmount: { type: Number, default: 0 },
+      workerNetEarnings: { type: Number, default: 0 },
+      customerTotalAmount: { type: Number, default: 0 },
+      isFinalized: { type: Boolean, default: false },
     },
 
     paymentStatus: {

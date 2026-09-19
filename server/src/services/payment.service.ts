@@ -242,7 +242,7 @@ export class PaymentService {
     await booking.save();
 
     const populatedBooking = await Booking.findById(booking._id)
-      .populate("service", "name description priceType hourlyPrice metersPrice")
+      .populate("service", "name description priceType firstHourRate additionalHourRate transportFee cooperativeShare insuranceShare hourlyPrice metersPrice")
       .populate("category", "name icon slug")
       .populate({
         path: "worker",

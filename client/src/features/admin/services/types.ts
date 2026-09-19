@@ -39,6 +39,11 @@ export interface Service {
   description: string;
   category: Category | string;
   priceType: ServicePriceType;
+  firstHourRate?: number;
+  additionalHourRate?: number;
+  transportFee?: number;
+  cooperativeShare?: number;
+  insuranceShare?: number;
   hourlyPrice?: number;
   metersPrice?: number;
   isActive: boolean;
@@ -50,7 +55,12 @@ export interface CreateServicePayload {
   name: string;
   description: string;
   category: string;
-  priceType: ServicePriceType;
+  priceType?: ServicePriceType;
+  firstHourRate: number;
+  additionalHourRate: number;
+  transportFee?: number;
+  cooperativeShare?: number;
+  insuranceShare?: number;
   hourlyPrice?: number;
   metersPrice?: number;
   isActive?: boolean;
@@ -61,6 +71,11 @@ export interface UpdateServicePayload {
   description?: string;
   category?: string;
   priceType?: ServicePriceType;
+  firstHourRate?: number;
+  additionalHourRate?: number;
+  transportFee?: number;
+  cooperativeShare?: number;
+  insuranceShare?: number;
   hourlyPrice?: number;
   metersPrice?: number;
   isActive?: boolean;

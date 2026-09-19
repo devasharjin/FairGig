@@ -8,6 +8,11 @@ export interface CustomerService {
   description: string;
   category: Category | string;
   priceType: ServicePriceType;
+  firstHourRate?: number;
+  additionalHourRate?: number;
+  transportFee?: number;
+  cooperativeShare?: number;
+  insuranceShare?: number;
   hourlyPrice?: number;
   metersPrice?: number;
   isActive: boolean;

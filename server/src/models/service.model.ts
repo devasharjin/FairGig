@@ -1,4 +1,5 @@
 import mongoose, { Document, Model, Schema, Types } from "mongoose";
+import { FIXED_TRANSPORT_FEE } from "../services/billing.service";
 
 export type ServicePriceType = "hourly" | "meters";
 
@@ -7,6 +8,11 @@ export interface IService extends Document {
   description: string;
   category: Types.ObjectId;
   priceType: ServicePriceType;
+  firstHourRate: number;
+  additionalHourRate: number;
+  transportFee: number;
+  cooperativeShare: number; // percentage 0-100
+  insuranceShare: number;   // percentage 0-100
   hourlyPrice?: number;
   metersPrice?: number;
   isActive: boolean;
@@ -44,23 +50,54 @@ const serviceSchema = new Schema<IService>(
         values: ["hourly", "meters"],
         message: "Price type must be either hourly or meters",
       },
+      default: "hourly",
       required: [true, "Price type is required"],
+    },
+
+    firstHourRate: {
+      type: Number,
+      min: [0, "First hour rate cannot be negative"],
+      default: function (this: IService) {
+        return this.hourlyPrice ?? 0;
+      },
+    },
+
+    additionalHourRate: {
+      type: Number,
+      min: [0, "Additional hour rate cannot be negative"],
+      default: function (this: IService) {
+        return this.firstHourRate ?? this.hourlyPrice ?? 0;
+      },
+    },
+
+    transportFee: {
+      type: Number,
+      default: FIXED_TRANSPORT_FEE,
+      immutable: true, // Fixed centrally at ₹30
+    },
+
+    cooperativeShare: {
+      type: Number,
+      min: [0, "Cooperative admin share cannot be negative"],
+      max: [100, "Cooperative admin share cannot exceed 100%"],
+      default: 10,
+    },
+
+    insuranceShare: {
+      type: Number,
+      min: [0, "Insurance share cannot be negative"],
+      max: [100, "Insurance share cannot exceed 100%"],
+      default: 5,
     },
 
     hourlyPrice: {
       type: Number,
       min: [0, "Hourly price cannot be negative"],
-      required: function (this: IService) {
-        return this.priceType === "hourly";
-      },
     },
 
     metersPrice: {
       type: Number,
       min: [0, "Meters price cannot be negative"],
-      required: function (this: IService) {
-        return this.priceType === "meters";
-      },
     },
 
     isActive: {
@@ -74,6 +111,15 @@ const serviceSchema = new Schema<IService>(
   }
 );
 
+// Validate combined cooperative and insurance share percentages
+serviceSchema.pre("validate", function () {
+  const coop = this.cooperativeShare ?? 0;
+  const ins = this.insuranceShare ?? 0;
+  if (coop + ins > 100) {
+    throw new Error("Combined cooperative and insurance share cannot exceed 100%");
+  }
+});
+
 // Prevent duplicate service names within the same category
 serviceSchema.index(
   { category: 1, name: 1 },
@@ -83,4 +129,4 @@ serviceSchema.index(
 const Service: Model<IService> =
   mongoose.models.Service || mongoose.model<IService>("Service", serviceSchema);
 
-export default Service;
+export default Service;

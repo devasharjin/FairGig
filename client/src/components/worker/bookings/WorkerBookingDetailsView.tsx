@@ -21,6 +21,7 @@ import { getStatusBadge, getPaymentStatusBadge } from "./BookingCard";
 import { WorkerBookingTimelineStepper } from "./WorkerBookingTimelineStepper";
 import { WorkerCustomerInfoCard } from "./WorkerCustomerInfoCard";
 import { WorkerEarningsReceiptCard } from "./WorkerEarningsReceiptCard";
+import { ActiveMissionHud } from "./ActiveMissionHud";
 
 export interface WorkerBookingDetailsViewProps {
   job: WorkerJob;
@@ -140,6 +141,14 @@ export const WorkerBookingDetailsView: React.FC<WorkerBookingDetailsViewProps> =
           </div>
         </div>
       </div>
+
+      {/* Live Mission HUD when job is in progress */}
+      {isInProgress && (
+        <ActiveMissionHud
+          mission={job}
+          onComplete={onCompleteJob}
+        />
+      )}
 
       {/* 2. Dispatch Milestones Stepper */}
       <WorkerBookingTimelineStepper job={job} />

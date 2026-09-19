@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { User, MapPin, Phone, Navigation, CheckCircle2 } from "lucide-react";
+import { User, MapPin, Phone, Navigation, CheckCircle2, Clock, Hourglass, Coins } from "lucide-react";
 import type { WorkerJob } from "@/features/worker/gigs/types";
 
 interface ActiveMissionHudProps {
@@ -13,11 +13,65 @@ export const ActiveMissionHud: React.FC<ActiveMissionHudProps> = ({
   mission,
   onComplete,
 }) => {
+  const [elapsedSeconds, setElapsedSeconds] = useState<number>(0);
+
+  // Live timer for elapsed duration since mission startedAt
+  useEffect(() => {
+    if (!mission.startedAt) return;
+
+    const calculateElapsed = () => {
+      const start = new Date(mission.startedAt!).getTime();
+      const now = Date.now();
+      const diffSec = Math.max(0, Math.floor((now - start) / 1000));
+      setElapsedSeconds(diffSec);
+    };
+
+    calculateElapsed();
+    const interval = setInterval(calculateElapsed, 1000);
+    return () => clearInterval(interval);
+  }, [mission.startedAt]);
+
+  const formatElapsed = (totalSec: number) => {
+    const hours = Math.floor(totalSec / 3600);
+    const minutes = Math.floor((totalSec % 3600) / 60);
+    const seconds = totalSec % 60;
+
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    if (hours > 0) {
+      return `${hours}h ${pad(minutes)}m ${pad(seconds)}s`;
+    }
+    return `${pad(minutes)}m ${pad(seconds)}s`;
+  };
+
+  const currentMinutes = Math.max(1, Math.ceil(elapsedSeconds / 60));
+  const currentBillableHours = Math.max(1, Math.ceil(currentMinutes / 60));
+
+  const firstHourRate =
+    mission.pricing?.firstHourRate ??
+    mission.service?.firstHourRate ??
+    mission.service?.hourlyPrice ??
+    mission.rate ??
+    0;
+
+  const additionalHourRate =
+    mission.pricing?.additionalHourRate ??
+    mission.service?.additionalHourRate ??
+    firstHourRate;
+
+  const formattedStartTime = mission.startedAt
+    ? new Date(mission.startedAt).toLocaleTimeString("en-IN", {
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      })
+    : "Just now";
+
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-purple-500/40 bg-gradient-to-r from-purple-500/10 via-card to-card p-6 shadow-md ring-1 ring-purple-500/20">
+    <div className="relative overflow-hidden rounded-3xl border border-purple-500/40 bg-gradient-to-r from-purple-500/10 via-card to-card p-6 shadow-md ring-1 ring-purple-500/20 space-y-4">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
         <div className="space-y-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="relative flex size-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75" />
               <span className="relative inline-flex rounded-full size-3 bg-purple-500" />
@@ -26,10 +80,10 @@ export const ActiveMissionHud: React.FC<ActiveMissionHudProps> = ({
               variant="outline"
               className="bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-500/30 text-xs font-extrabold uppercase tracking-wider"
             >
-              ⚡ Active Mission On-Site
+              ⚡ Live Fieldwork Active
             </Badge>
             <span className="text-xs font-mono text-muted-foreground">
-              {mission.bookingNumber}
+              #{mission.bookingNumber}
             </span>
           </div>
 
@@ -49,9 +103,6 @@ export const ActiveMissionHud: React.FC<ActiveMissionHudProps> = ({
               <span>
                 {mission.address?.street}, {mission.address?.city}
               </span>
-            </div>
-            <div className="flex items-center gap-1.5 font-bold text-foreground">
-              <span>Pay: ₹{mission.totalAmount}</span>
             </div>
           </div>
         </div>
@@ -90,6 +141,52 @@ export const ActiveMissionHud: React.FC<ActiveMissionHudProps> = ({
             <CheckCircle2 className="size-4" />
             <span>Finish & Complete Job</span>
           </Button>
+        </div>
+      </div>
+
+      {/* Live Timer & Applicable Rates HUD Banner */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-purple-500/20 text-xs">
+        {/* Work Start Time */}
+        <div className="p-3 rounded-2xl bg-card/80 border border-border/60 flex items-center gap-3">
+          <div className="size-9 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
+            <Clock className="size-4" />
+          </div>
+          <div>
+            <span className="text-muted-foreground block text-[11px]">Work Started At</span>
+            <span className="font-bold text-foreground text-sm">{formattedStartTime}</span>
+          </div>
+        </div>
+
+        {/* Live Elapsed Duration */}
+        <div className="p-3 rounded-2xl bg-card/80 border border-border/60 flex items-center gap-3">
+          <div className="size-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+            <Hourglass className="size-4 animate-spin" style={{ animationDuration: "6s" }} />
+          </div>
+          <div>
+            <span className="text-muted-foreground block text-[11px]">Live Working Duration</span>
+            <span className="font-mono font-black text-emerald-600 dark:text-emerald-400 text-sm">
+              {formatElapsed(elapsedSeconds)}
+            </span>
+            <span className="text-[10px] text-muted-foreground block font-medium">
+              Tier: {currentBillableHours} billable hr{currentBillableHours === 1 ? "" : "s"}
+            </span>
+          </div>
+        </div>
+
+        {/* Applicable Rates */}
+        <div className="p-3 rounded-2xl bg-card/80 border border-border/60 flex items-center gap-3">
+          <div className="size-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <Coins className="size-4" />
+          </div>
+          <div>
+            <span className="text-muted-foreground block text-[11px]">Applicable Rates</span>
+            <span className="font-bold text-foreground text-xs">
+              1st hr: ₹{firstHourRate} • Addl: ₹{additionalHourRate}/hr
+            </span>
+            <span className="text-[10px] text-muted-foreground block">
+              +₹30 flat transport (separate item)
+            </span>
+          </div>
         </div>
       </div>
     </div>

@@ -94,7 +94,7 @@ export async function getCooperativePayments(req: Request, res: Response) {
       .populate({
         path: "booking",
         populate: [
-          { path: "service", select: "name description priceType hourlyPrice metersPrice" },
+          { path: "service", select: "name description priceType firstHourRate additionalHourRate transportFee cooperativeShare insuranceShare hourlyPrice metersPrice" },
           { path: "category", select: "name icon slug" },
         ],
       })

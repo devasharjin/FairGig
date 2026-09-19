@@ -6,7 +6,9 @@ import Booking, {
 } from "../../models/booking.model";
 import Worker from "../../models/auth/worker.model";
 import User from "../../models/auth/user.model";
+import Service from "../../models/service.model";
 import { fail, ok } from "../../shared/envelope";
+import { FIXED_TRANSPORT_FEE, BillingService } from "../../services/billing.service";
 
 export async function getAvailableGigs(req: Request, res: Response) {
   const userId = (req.user as any)?.userId || (req.user as any)?._id;
@@ -34,7 +36,7 @@ export async function getAvailableGigs(req: Request, res: Response) {
   }
 
   const gigs = await Booking.find(query)
-    .populate("service", "name description priceType hourlyPrice metersPrice")
+    .populate("service", "name description priceType firstHourRate additionalHourRate transportFee cooperativeShare insuranceShare hourlyPrice metersPrice")
     .populate("category", "name icon slug")
     .populate("customer", "name phone profilePicture address")
     .sort({ scheduledDate: 1, createdAt: -1 })
@@ -73,7 +75,7 @@ export async function getMyJobs(req: Request, res: Response) {
   }
 
   const jobs = await Booking.find(filter)
-    .populate("service", "name description priceType hourlyPrice metersPrice")
+    .populate("service", "name description priceType firstHourRate additionalHourRate transportFee cooperativeShare insuranceShare hourlyPrice metersPrice")
     .populate("category", "name icon slug")
     .populate("customer", "name phone profilePicture address")
     .populate("rating")
@@ -97,7 +99,7 @@ export async function getWorkerJobById(req: Request, res: Response) {
   }
 
   const job = await Booking.findById(id)
-    .populate("service", "name description priceType hourlyPrice metersPrice")
+    .populate("service", "name description priceType firstHourRate additionalHourRate transportFee cooperativeShare insuranceShare hourlyPrice metersPrice")
     .populate("category", "name icon slug")
     .populate("customer", "name phone profilePicture address")
     .populate("rating")
@@ -149,7 +151,7 @@ export async function acceptGig(req: Request, res: Response) {
   await booking.save();
 
   const updated = await Booking.findById(booking._id)
-    .populate("service", "name description priceType hourlyPrice metersPrice")
+    .populate("service", "name description priceType firstHourRate additionalHourRate transportFee cooperativeShare insuranceShare hourlyPrice metersPrice")
     .populate("category", "name icon")
     .populate("customer", "name phone profilePicture address")
     .lean();
@@ -183,17 +185,94 @@ export async function updateJobStatus(req: Request, res: Response) {
   }
 
   if (status === BookingStatus.IN_PROGRESS) {
-    if (booking.status !== BookingStatus.CONFIRMED && booking.status !== BookingStatus.ASSIGNED) {
-      return fail(res, "Job must be confirmed before starting", null, 400);
+    if (booking.status === BookingStatus.COMPLETED) {
+      return fail(res, "Cannot start a job that has already been completed", null, 400);
     }
+    if (booking.status === BookingStatus.CANCELLED || booking.status === BookingStatus.REJECTED) {
+      return fail(res, "Cannot start a cancelled or rejected job", null, 400);
+    }
+    if (booking.startedAt || booking.status === BookingStatus.IN_PROGRESS) {
+      return fail(res, "Job has already been started and is currently in progress", null, 400);
+    }
+    if (booking.status !== BookingStatus.CONFIRMED && booking.status !== BookingStatus.ASSIGNED) {
+      return fail(res, "Job must be confirmed or assigned before starting", null, 400);
+    }
+
+    // Record exact start timestamp on backend
     booking.status = BookingStatus.IN_PROGRESS;
     booking.startedAt = new Date();
   } else if (status === BookingStatus.COMPLETED) {
-    if (booking.status !== BookingStatus.IN_PROGRESS && booking.status !== BookingStatus.CONFIRMED) {
-      return fail(res, "Only active or in-progress jobs can be completed", null, 400);
+    if (booking.status === BookingStatus.COMPLETED || booking.completedAt) {
+      return fail(res, "Job has already been completed and finalized", null, 400);
     }
+    if (booking.status === BookingStatus.CANCELLED || booking.status === BookingStatus.REJECTED) {
+      return fail(res, "Cannot complete a cancelled or rejected job", null, 400);
+    }
+    if (booking.status !== BookingStatus.IN_PROGRESS) {
+      return fail(res, "Job must be started (on-site in progress) before it can be completed", null, 400);
+    }
+
+    // Record exact completion timestamp on backend
+    const completedTimestamp = new Date();
+    const startTimestamp = booking.startedAt || booking.assignedAt || booking.createdAt || new Date();
+    booking.startedAt = startTimestamp;
+    booking.completedAt = completedTimestamp;
+
+    // Validate timestamps & calculate actual duration in minutes
+    let durationMinutes = 0;
+    try {
+      durationMinutes = BillingService.calculateWorkingDurationMinutes(
+        booking.startedAt,
+        booking.completedAt
+      );
+    } catch (err: any) {
+      return fail(res, err.message || "Invalid work duration timestamps", null, 400);
+    }
+
+    // Retrieve rates from historical booking pricing snapshot or fall back to service
+    let firstHourRate = booking.pricing?.firstHourRate;
+    let additionalHourRate = booking.pricing?.additionalHourRate;
+    let cooperativePercentage = booking.pricing?.cooperativePercentage;
+    let insurancePercentage = booking.pricing?.insurancePercentage;
+
+    if (!firstHourRate || firstHourRate <= 0) {
+      const serviceDoc = await Service.findById(booking.service);
+      firstHourRate = serviceDoc?.firstHourRate ?? serviceDoc?.hourlyPrice ?? booking.rate ?? 0;
+      additionalHourRate = serviceDoc?.additionalHourRate ?? serviceDoc?.firstHourRate ?? serviceDoc?.hourlyPrice ?? firstHourRate;
+      cooperativePercentage = serviceDoc?.cooperativeShare ?? 10;
+      insurancePercentage = serviceDoc?.insuranceShare ?? 5;
+    }
+
+    const calcResult = BillingService.calculateBillingAndDistribution(durationMinutes, {
+      firstHourRate: firstHourRate ?? 0,
+      additionalHourRate: additionalHourRate ?? firstHourRate ?? 0,
+      cooperativePercentage: cooperativePercentage ?? 10,
+      insurancePercentage: insurancePercentage ?? 5,
+      transportFee: FIXED_TRANSPORT_FEE,
+    });
+
+    booking.pricing = {
+      firstHourRate: calcResult.firstHourCharge,
+      additionalHourRate: additionalHourRate ?? calcResult.firstHourCharge,
+      transportFee: calcResult.transportFee,
+      cooperativePercentage: cooperativePercentage ?? 10,
+      insurancePercentage: insurancePercentage ?? 5,
+      actualDurationMinutes: calcResult.actualDurationMinutes,
+      billableHours: calcResult.billableHours,
+      firstHourCharge: calcResult.firstHourCharge,
+      additionalHoursCharge: calcResult.additionalHoursCharge,
+      serviceAmount: calcResult.serviceAmount,
+      cooperativeShareAmount: calcResult.cooperativeAdminShare,
+      insuranceShareAmount: calcResult.insuranceShare,
+      workerNetEarnings: calcResult.workerNetEarnings,
+      customerTotalAmount: calcResult.customerTotal,
+      isFinalized: true,
+    };
+
+    booking.rate = calcResult.firstHourCharge;
+    booking.units = calcResult.billableHours;
+    booking.totalAmount = calcResult.customerTotal;
     booking.status = BookingStatus.COMPLETED;
-    booking.completedAt = new Date();
 
     // Increment worker's completed jobs
     worker.totalJobsCompleted = (worker.totalJobsCompleted || 0) + 1;
@@ -213,7 +292,7 @@ export async function updateJobStatus(req: Request, res: Response) {
   await booking.save();
 
   const updated = await Booking.findById(booking._id)
-    .populate("service", "name description priceType hourlyPrice metersPrice")
+    .populate("service", "name description priceType firstHourRate additionalHourRate transportFee cooperativeShare insuranceShare hourlyPrice metersPrice")
     .populate("category", "name icon")
     .populate("customer", "name phone profilePicture address")
     .populate("rating")
@@ -273,7 +352,11 @@ export async function getWorkerStats(req: Request, res: Response) {
         {
           $group: {
             _id: null,
-            totalEarnings: { $sum: "$totalAmount" },
+            totalEarnings: {
+              $sum: {
+                $ifNull: ["$pricing.workerNetEarnings", "$totalAmount"],
+              },
+            },
           },
         },
       ]),

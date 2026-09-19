@@ -1,3 +1,5 @@
+import type { BookingPricingSnapshot } from "@/features/customer/bookings/types";
+
 export interface CooperativePaymentItem {
   _id: string;
   booking: {
@@ -5,9 +7,15 @@ export interface CooperativePaymentItem {
     bookingNumber: string;
     totalAmount: number;
     priceType?: string;
+    pricing?: BookingPricingSnapshot;
     service?: {
       name: string;
       description?: string;
+      firstHourRate?: number;
+      additionalHourRate?: number;
+      transportFee?: number;
+      cooperativeShare?: number;
+      insuranceShare?: number;
       hourlyPrice?: number;
       metersPrice?: number;
     };

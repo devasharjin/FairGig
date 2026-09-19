@@ -186,22 +186,48 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
 
           {/* Cost Breakdown & Receipt */}
           <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/60 space-y-1.5">
-            <h4 className="font-semibold text-foreground">Pricing & Bill</h4>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Rate:</span>
+            <div className="flex justify-between items-center">
+              <h4 className="font-semibold text-foreground">Pricing & Bill</h4>
+              <Badge variant="outline" className="text-[10px] py-0 px-2 font-bold">
+                {isCompleted ? "Final Settled Invoice" : "Estimated Benchmark"}
+              </Badge>
+            </div>
+
+            {isCompleted && booking.pricing?.actualDurationMinutes !== undefined && (
+              <div className="flex justify-between text-muted-foreground">
+                <span>Working Duration:</span>
+                <span className="font-medium text-foreground">
+                  {booking.pricing.actualDurationMinutes} mins ({booking.pricing.billableHours} billable hrs)
+                </span>
+              </div>
+            )}
+
+            <div className="flex justify-between text-muted-foreground">
+              <span>First Hour Rate:</span>
               <span className="font-medium text-foreground">
-                ₹{booking.rate} / {booking.priceType === "hourly" ? "hr" : "meter"}
+                ₹{booking.pricing?.firstHourRate ?? booking.rate}
               </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">
-                Units ({booking.priceType}):
+
+            <div className="flex justify-between text-muted-foreground">
+              <span>Additional Hour Rate:</span>
+              <span className="font-medium text-foreground">
+                ₹{booking.pricing?.additionalHourRate ?? booking.rate} / hr
               </span>
-              <span className="font-medium text-foreground">{booking.units}</span>
             </div>
-            <div className="flex justify-between pt-1 border-t border-border/50">
-              <span className="font-bold text-foreground">Total Bill:</span>
-              <span className="font-extrabold text-foreground text-sm">
+
+            <div className="flex justify-between text-muted-foreground">
+              <span>Fixed Transport Fee:</span>
+              <span className="font-medium text-foreground">
+                ₹{booking.pricing?.transportFee ?? 30}
+              </span>
+            </div>
+
+            <div className="flex justify-between pt-1 border-t border-border/50 items-baseline">
+              <span className="font-bold text-foreground">
+                {isCompleted ? "Final Payable Amount:" : "Estimated Initial Total:"}
+              </span>
+              <span className="font-extrabold text-primary text-base">
                 ₹{booking.totalAmount}
               </span>
             </div>

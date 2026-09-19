@@ -246,20 +246,33 @@ export const BookingCard: React.FC<BookingCardProps> = ({
           )}
         </div>
 
-        {/* Pricing Pill */}
-        <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-muted/20 border border-border/40 text-xs">
-          <span className="text-muted-foreground">
-            Rate:{" "}
-            <strong className="text-foreground">
-              ₹{job.rate}/{job.priceType === "hourly" ? "hr" : "meter"}
-            </strong>
-          </span>
-          <span className="text-muted-foreground">
-            Payout:{" "}
-            <strong className="text-foreground text-sm font-black">
-              ₹{job.totalAmount}
-            </strong>
-          </span>
+        {/* Pricing & Rate Breakdown */}
+        <div className="flex flex-col gap-1.5 px-3.5 py-2.5 rounded-xl bg-muted/20 border border-border/40 text-xs">
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">
+              Rates:{" "}
+              <strong className="text-foreground">
+                1st hr: ₹{job.pricing?.firstHourRate ?? job.service?.firstHourRate ?? job.rate} • Addl: ₹{job.pricing?.additionalHourRate ?? job.service?.additionalHourRate ?? (job.pricing?.firstHourRate ?? job.rate)}/hr
+              </strong>
+            </span>
+            <span className="text-muted-foreground">
+              {job.status === "COMPLETED" ? "Net Payout: " : "Est. Payout: "}
+              <strong className="text-emerald-600 dark:text-emerald-400 text-sm font-black">
+                ₹{job.pricing?.workerNetEarnings ?? job.totalAmount}
+              </strong>
+            </span>
+          </div>
+          {isInProgress && job.startedAt && (
+            <div className="flex items-center justify-between pt-1 border-t border-border/30 text-[11px] text-purple-600 dark:text-purple-400 font-medium">
+              <span className="flex items-center gap-1">
+                <span className="size-1.5 rounded-full bg-purple-500 animate-ping inline-block" />
+                Work in progress on-site
+              </span>
+              <span>
+                Started: {new Date(job.startedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Rating received if completed */}

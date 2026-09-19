@@ -81,9 +81,10 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
 
   if (!service) return null;
 
-  const isHourly = service.priceType === "hourly";
-  const price = isHourly ? service.hourlyPrice : service.metersPrice;
-  const unit = isHourly ? "/hr" : "/meter";
+  const firstHourRate = service.firstHourRate ?? service.hourlyPrice ?? 0;
+  const additionalHourRate = service.additionalHourRate ?? service.firstHourRate ?? service.hourlyPrice ?? 0;
+  const transportFee = service.transportFee ?? 30;
+  const estimatedInitialTotal = firstHourRate + transportFee;
 
   const categoryName =
     typeof service.category === "object" && service.category !== null
@@ -140,37 +141,68 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
                 Request {service.name}
               </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Category: <strong className="text-foreground">{categoryName}</strong> • Cooperative Gig Dispatch
+                Category: <strong className="text-foreground">{categoryName}</strong> • Fair Cooperative Dispatch
               </DialogDescription>
             </div>
           </div>
         </DialogHeader>
 
-        {/* Pricing & Guarantee Summary */}
-        <div className="mt-4 p-4 rounded-2xl bg-muted/40 border border-border/70 space-y-2">
+        {/* Pricing & Transparent Billing Summary */}
+        <div className="mt-4 p-4 rounded-2xl bg-muted/40 border border-border/70 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-muted-foreground">
-              Standardized Rate
+            <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+              <span>Standardized Hourly Ceiling Pricing</span>
             </span>
-            <div className="flex items-baseline gap-1">
-              <span className="text-xs font-bold text-primary">₹</span>
-              <span className="text-xl font-extrabold text-foreground">{price ?? 0}</span>
-              <span className="text-xs text-muted-foreground font-medium">{unit}</span>
+            <Badge variant="outline" className="text-[10px] py-0 px-2 rounded-lg bg-primary/10 text-primary border-primary/20 font-semibold">
+              Ceiling Billing
+            </Badge>
+          </div>
+
+          <div className="space-y-1.5 text-xs">
+            <div className="flex justify-between items-center text-muted-foreground">
+              <span>First Hour Rate (duration ≤ 60 mins):</span>
+              <strong className="text-foreground">₹{firstHourRate}</strong>
+            </div>
+            <div className="flex justify-between items-center text-muted-foreground">
+              <span>Additional Hourly Rate:</span>
+              <strong className="text-foreground">₹{additionalHourRate} / hr</strong>
+            </div>
+            <div className="flex justify-between items-center text-muted-foreground">
+              <span>Fixed Transport Fee:</span>
+              <strong className="text-foreground">₹{transportFee}</strong>
+            </div>
+            <div className="pt-2 border-t border-border/60 flex justify-between items-baseline">
+              <div>
+                <span className="text-xs font-bold text-foreground block">
+                  Estimated Initial Amount (1st Hour):
+                </span>
+                <span className="text-[10px] text-muted-foreground">
+                  ₹{firstHourRate} service + ₹{transportFee} transport
+                </span>
+              </div>
+              <span className="text-xl font-extrabold text-primary">₹{estimatedInitialTotal}</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 text-xs text-muted-foreground pt-2 border-t border-border/50">
+          {/* Billing Rules & Allocation Explanations */}
+          <div className="p-2.5 rounded-xl bg-card border border-border/60 space-y-1.5 text-[11px] text-muted-foreground leading-relaxed">
+            <p>
+              ⏱ <strong>Billing Rule:</strong> Work duration is recorded automatically by the backend upon worker start and completion. Billed hours round up using the ceiling rule (e.g. up to 60m = 1 hr, 61–120m = 2 hrs).
+            </p>
+            <p>
+              🛡 <strong>Cooperative Protection:</strong> Cooperative admin and worker insurance shares are platform-level allocations funded from service earnings, and are <em>not</em> added as extra customer charges.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 text-xs text-muted-foreground pt-1 border-t border-border/50">
             <span className="flex items-center gap-1">
               <ShieldCheck className="size-3.5 text-emerald-500" />
               Verified Worker
             </span>
             <span className="flex items-center gap-1">
               <CheckCircle2 className="size-3.5 text-primary" />
-              No Hidden Fees
+              No Hidden Charges
             </span>
-            <Badge variant="outline" className="text-[10px] ml-auto py-0 px-2 rounded-lg">
-              {isHourly ? "Hourly Bill" : "Per Meter"}
-            </Badge>
           </div>
         </div>
 
