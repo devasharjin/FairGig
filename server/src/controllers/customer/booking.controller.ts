@@ -2,8 +2,10 @@ import { Request, Response } from "express";
 import mongoose from "mongoose";
 import Booking, {
   BookingStatus,
+  BookingType,
   CancelledByRole,
   PaymentStatus,
+  UrgencyLevel,
 } from "../../models/booking.model";
 import Rating from "../../models/rating.model";
 import Service from "../../models/service.model";
@@ -22,6 +24,10 @@ export async function createBooking(req: Request, res: Response) {
     scheduledDate,
     customerNotes,
     units = 1,
+    bookingType = "SCHEDULED",
+    isEmergency = false,
+    urgencyLevel = "STANDARD",
+    emergencyDetails,
   } = req.body;
 
   if (!serviceId || !mongoose.Types.ObjectId.isValid(serviceId)) {
@@ -40,6 +46,33 @@ export async function createBooking(req: Request, res: Response) {
   if (!service.isActive) {
     return fail(res, "This service is currently unavailable for booking", null, 400);
   }
+
+  // Resolve booking classification & urgency
+  let finalBookingType = BookingType.SCHEDULED;
+  let finalIsEmergency = false;
+  let finalUrgency = UrgencyLevel.STANDARD;
+
+  const typeUpper = String(bookingType).toUpperCase();
+  if (isEmergency === true || isEmergency === "true" || typeUpper === "EMERGENCY") {
+    finalBookingType = BookingType.EMERGENCY;
+    finalIsEmergency = true;
+    finalUrgency =
+      urgencyLevel && urgencyLevel !== "STANDARD"
+        ? (urgencyLevel as UrgencyLevel)
+        : UrgencyLevel.CRITICAL;
+  } else if (typeUpper === "ON_DEMAND") {
+    finalBookingType = BookingType.ON_DEMAND;
+    finalIsEmergency = false;
+    finalUrgency = UrgencyLevel.HIGH;
+  }
+
+  // Set immediate scheduled date for on-demand & emergency dispatches
+  const finalScheduledDate =
+    finalBookingType === BookingType.ON_DEMAND || finalBookingType === BookingType.EMERGENCY
+      ? new Date()
+      : scheduledDate
+      ? new Date(scheduledDate)
+      : new Date();
 
   // Extract service benchmark rates
   const firstHourRate = service.firstHourRate ?? service.hourlyPrice ?? 0;
@@ -72,13 +105,37 @@ export async function createBooking(req: Request, res: Response) {
     return fail(res, "Street address is required", null, 400);
   }
 
+  const finalEmergencyDetails = {
+    hazardType:
+      typeof emergencyDetails?.hazardType === "string"
+        ? emergencyDetails.hazardType.trim()
+        : finalIsEmergency
+        ? "Urgent Emergency Callout"
+        : "",
+    severity: emergencyDetails?.severity || (finalIsEmergency ? "CRITICAL" : "MEDIUM"),
+    immediateContact:
+      typeof emergencyDetails?.immediateContact === "string"
+        ? emergencyDetails.immediateContact.trim()
+        : "",
+    notes:
+      typeof emergencyDetails?.notes === "string"
+        ? emergencyDetails.notes.trim()
+        : typeof customerNotes === "string"
+        ? customerNotes.trim()
+        : "",
+  };
+
   const booking = await Booking.create({
     customer: customerId,
     service: service._id,
     category: service.category,
     address: formattedAddress,
-    scheduledDate: scheduledDate ? new Date(scheduledDate) : new Date(),
+    scheduledDate: finalScheduledDate,
     customerNotes: typeof customerNotes === "string" ? customerNotes.trim() : "",
+    bookingType: finalBookingType,
+    isEmergency: finalIsEmergency,
+    urgencyLevel: finalUrgency,
+    emergencyDetails: finalEmergencyDetails,
     priceType: service.priceType || "hourly",
     rate: firstHourRate,
     units: 1,
@@ -105,10 +162,16 @@ export async function createBooking(req: Request, res: Response) {
   });
 
   const populated = await Booking.findById(booking._id)
-    .populate("service", "name description priceType firstHourRate additionalHourRate transportFee cooperativeShare insuranceShare hourlyPrice metersPrice")
+    .populate("service", "name description priceType firstHourRate additionalHourRate transportFee cooperativeShare insuranceShare hourlyPrice metersPrice emergencyAvailable emergencyFee")
     .populate("category", "name icon");
 
-  return ok(res, populated, "Booking requested successfully");
+  const successMessage = finalIsEmergency
+    ? "🚨 Emergency SOS request broadcast! Matching immediately with verified responders."
+    : finalBookingType === BookingType.ON_DEMAND
+    ? "⚡ On-Demand request submitted! Dispathing available worker ASAP."
+    : "Booking requested successfully";
+
+  return ok(res, populated, successMessage);
 }
 
 export async function getCustomerBookings(req: Request, res: Response) {
@@ -117,11 +180,17 @@ export async function getCustomerBookings(req: Request, res: Response) {
     return fail(res, "Unauthorized", null, 401);
   }
 
-  const { status } = req.query;
+  const { status, type, isEmergency } = req.query;
   const filter: Record<string, any> = { customer: customerId };
 
   if (status && typeof status === "string" && status !== "all") {
     filter.status = status.toUpperCase();
+  }
+  if (type && typeof type === "string" && type !== "all") {
+    filter.bookingType = type.toUpperCase();
+  }
+  if (isEmergency !== undefined) {
+    filter.isEmergency = String(isEmergency).toLowerCase() === "true";
   }
 
   const bookings = await Booking.find(filter)

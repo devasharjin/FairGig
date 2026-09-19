@@ -13,6 +13,12 @@ export async function getCustomerBookings(
   if (params?.status && params.status !== "all") {
     query.append("status", params.status);
   }
+  if (params?.type && params.type !== "all") {
+    query.append("type", params.type);
+  }
+  if (params?.isEmergency !== undefined) {
+    query.append("isEmergency", String(params.isEmergency));
+  }
   const queryString = query.toString();
   const url = queryString
     ? `/api/customer/bookings?${queryString}`

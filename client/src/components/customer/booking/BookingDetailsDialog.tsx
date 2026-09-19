@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Phone, Star, ExternalLink, CreditCard } from "lucide-react";
+import { Phone, Star, ExternalLink, CreditCard, AlertTriangle, Zap, ShieldAlert, PhoneCall } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -9,6 +9,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { CustomerBooking } from "@/features/customer/bookings/types";
 import { BookingStatusBadge } from "./BookingStatusBadge";
@@ -54,12 +55,71 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
           <DialogTitle className="text-lg font-bold text-foreground">
             {booking.service?.name || "Gig Service"}
           </DialogTitle>
-          <DialogDescription className="text-xs text-muted-foreground">
-            Trade Category: {booking.category?.name || "Gig Service"}
-          </DialogDescription>
+          <div className="flex items-center gap-2 pt-1 flex-wrap">
+            {booking.isEmergency && (
+              <Badge variant="destructive" className="text-[10px] uppercase font-black tracking-wider py-0.5 px-2 animate-pulse">
+                🚨 SOS Emergency Dispatch
+              </Badge>
+            )}
+            {booking.bookingType === "ON_DEMAND" && !booking.isEmergency && (
+              <Badge variant="outline" className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 text-[10px] font-bold py-0.5 px-2">
+                ⚡ On-Demand Dispatch
+              </Badge>
+            )}
+            <DialogDescription className="text-xs text-muted-foreground">
+              Trade Category: {booking.category?.name || "Gig Service"}
+            </DialogDescription>
+          </div>
         </DialogHeader>
 
         <div className="space-y-4 pt-3 text-xs">
+          {/* Emergency SOS High Priority Card */}
+          {booking.isEmergency && (
+            <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 space-y-2 text-rose-950 dark:text-rose-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 font-bold text-rose-600 dark:text-rose-400">
+                  <AlertTriangle className="size-4 animate-bounce shrink-0" />
+                  <span>Priority Emergency Callout Active</span>
+                </div>
+                <Badge variant="outline" className="bg-rose-500/20 text-rose-700 dark:text-rose-300 border-rose-500/40 text-[10px] font-black">
+                  {booking.urgencyLevel || "CRITICAL"}
+                </Badge>
+              </div>
+
+              {booking.emergencyDetails?.hazardType && (
+                <div className="text-xs">
+                  <span className="opacity-80">Reported Hazard: </span>
+                  <strong className="text-foreground">{booking.emergencyDetails.hazardType}</strong>
+                </div>
+              )}
+
+              {booking.emergencyDetails?.immediateContact && (
+                <div className="text-xs flex items-center gap-1.5">
+                  <Phone className="size-3 text-rose-500" />
+                  <span className="opacity-80">On-Site Emergency Contact: </span>
+                  <strong className="text-foreground">{booking.emergencyDetails.immediateContact}</strong>
+                </div>
+              )}
+
+              <p className="text-[11px] opacity-90 leading-relaxed pt-1 border-t border-rose-500/20">
+                {booking.worker
+                  ? "✓ Verified responder has been assigned and is navigating to your address."
+                  : "Broadcasting with top priority to online verified responders in your sector. Stand by."}
+              </p>
+
+              <div className="pt-2 flex items-center justify-between">
+                <span className="text-[10px] opacity-80">Need instant human assistance?</span>
+                <a
+                  href="tel:1800123456"
+                  className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-600 dark:text-rose-400 hover:underline"
+                >
+                  <PhoneCall className="size-3" />
+                  <span>Call Emergency Helpline</span>
+                </a>
+              </div>
+            </div>
+          )}
+
           {/* Visual Progress Stepper */}
           <div className="p-4 rounded-2xl bg-muted/30 border border-border/50 space-y-2">
             <h4 className="font-semibold text-foreground">Service Dispatch Timeline</h4>

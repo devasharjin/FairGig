@@ -154,10 +154,20 @@ export const BookingCard: React.FC<BookingCardProps> = ({
       <div className="space-y-3">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="text-[11px] font-mono font-medium text-muted-foreground uppercase">
                 {job.bookingNumber}
               </span>
+              {job.isEmergency && (
+                <Badge variant="destructive" className="rounded-md text-[10px] py-0 px-2 font-black uppercase bg-rose-600 text-white animate-pulse">
+                  🚨 Emergency SOS
+                </Badge>
+              )}
+              {job.bookingType === "ON_DEMAND" && !job.isEmergency && (
+                <Badge variant="outline" className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 rounded-md text-[10px] py-0 px-2 font-bold">
+                  ⚡ On-Demand
+                </Badge>
+              )}
               <Badge variant="secondary" className="rounded-md text-[10px] py-0 px-2">
                 {job.category?.name || "Service"}
               </Badge>

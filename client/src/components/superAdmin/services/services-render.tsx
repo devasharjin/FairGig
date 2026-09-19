@@ -287,14 +287,6 @@ export const ServicesRender: React.FC<ServicesRenderProps> = ({
                         </span>
                       </div>
                     </div>
-                          onClick={() => setServiceToDelete(service)}
-                          title="Delete Service"
-                          className="size-8 flex items-center justify-center rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition cursor-pointer"
-                        >
-                          <Trash2 className="size-3.5" />
-                        </button>
-                      </div>
-                    </div>
                   </div>
                 );
               })}

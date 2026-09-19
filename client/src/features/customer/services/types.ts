@@ -15,6 +15,8 @@ export interface CustomerService {
   insuranceShare?: number;
   hourlyPrice?: number;
   metersPrice?: number;
+  emergencyAvailable?: boolean;
+  emergencyFee?: number;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;

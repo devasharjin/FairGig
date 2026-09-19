@@ -92,6 +92,16 @@ export const WorkerBookingDetailsView: React.FC<WorkerBookingDetailsViewProps> =
               </button>
               {getStatusBadge(job.status)}
               {getPaymentStatusBadge(job.paymentStatus)}
+              {job.isEmergency && (
+                <Badge variant="destructive" className="rounded-lg text-xs font-black uppercase bg-rose-600 text-white animate-pulse">
+                  🚨 SOS Emergency Callout
+                </Badge>
+              )}
+              {job.bookingType === "ON_DEMAND" && !job.isEmergency && (
+                <Badge variant="outline" className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 rounded-lg text-xs font-bold">
+                  ⚡ On-Demand
+                </Badge>
+              )}
               <Badge variant="secondary" className="rounded-lg text-xs font-semibold">
                 {job.category?.name || "Trade Service"}
               </Badge>

@@ -15,6 +15,8 @@ export interface IService extends Document {
   insuranceShare: number;   // percentage 0-100
   hourlyPrice?: number;
   metersPrice?: number;
+  emergencyAvailable?: boolean;
+  emergencyFee?: number;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -98,6 +100,18 @@ const serviceSchema = new Schema<IService>(
     metersPrice: {
       type: Number,
       min: [0, "Meters price cannot be negative"],
+    },
+
+    emergencyAvailable: {
+      type: Boolean,
+      default: true,
+      index: true,
+    },
+
+    emergencyFee: {
+      type: Number,
+      min: [0, "Emergency fee cannot be negative"],
+      default: 0,
     },
 
     isActive: {

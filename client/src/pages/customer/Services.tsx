@@ -18,6 +18,8 @@ import { CategoryServiceGroup } from "@/components/customer/services/category-se
 import { ServicesEmptyState } from "@/components/customer/services/services-empty-state";
 import { ServicesSkeleton } from "@/components/customer/services/services-skeleton";
 import { ServiceBookingDialog } from "@/components/customer/services/service-booking-dialog";
+import { EmergencyBanner } from "@/components/customer/emergency/EmergencyBanner";
+import { EmergencySosModal } from "@/components/customer/emergency/EmergencySosModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -37,6 +39,7 @@ export const CustomerServices: React.FC = () => {
   // Booking Dialog State
   const [bookingService, setBookingService] = useState<CustomerService | null>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [isEmergencyOpen, setIsEmergencyOpen] = useState(false);
 
   // TanStack Query: Fetch active categories
   const {
@@ -290,6 +293,9 @@ export const CustomerServices: React.FC = () => {
 
       {/* Main Content Area */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
+        {/* Urgent Emergency SOS Callout Banner */}
+        <EmergencyBanner onTriggerEmergency={() => setIsEmergencyOpen(true)} />
+
         {/* Search & Filters Section */}
         <section className="sticky top-16 z-20 -mx-4 px-4 py-3 sm:mx-0 sm:px-0 sm:py-0 bg-background/80 backdrop-blur-md transition-all">
           <ServiceSearchFilter
@@ -406,6 +412,12 @@ export const CustomerServices: React.FC = () => {
         open={isBookingOpen}
         onOpenChange={setIsBookingOpen}
         service={bookingService}
+      />
+
+      {/* 1-Tap Emergency SOS Modal */}
+      <EmergencySosModal
+        open={isEmergencyOpen}
+        onOpenChange={setIsEmergencyOpen}
       />
     </div>
   );

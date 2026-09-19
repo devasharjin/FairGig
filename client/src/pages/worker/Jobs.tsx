@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Compass, RotateCcw, Briefcase, ArrowRight } from "lucide-react";
+import { Compass, RotateCcw, Briefcase, ArrowRight, AlertTriangle } from "lucide-react";
 import {
   useAvailableGigs,
   useAcceptGig,
@@ -28,9 +28,13 @@ export const WorkerJobs: React.FC = () => {
   const { data: stats } = useWorkerStats();
   const acceptGigMutation = useAcceptGig();
 
+  const emergencyCount = availableGigs.filter((g) => g.isEmergency).length;
+
   // Filter and search logic
   const filteredGigs = availableGigs.filter((gig) => {
     // Quick filter
+    if (quickFilter === "EMERGENCY" && !gig.isEmergency) return false;
+    if (quickFilter === "ON_DEMAND" && (gig.bookingType !== "ON_DEMAND" || gig.isEmergency)) return false;
     if (quickFilter === "HOURLY" && gig.priceType !== "hourly") return false;
     if (quickFilter === "METERS" && gig.priceType !== "meters") return false;
     if (quickFilter === "TODAY") {
@@ -90,6 +94,33 @@ export const WorkerJobs: React.FC = () => {
         onRefresh={() => refetch()}
       />
 
+      {/* Emergency SOS Radar Notification Banner */}
+      {emergencyCount > 0 && (
+        <div className="p-4 sm:p-5 rounded-3xl border border-rose-500/50 bg-gradient-to-r from-rose-500/20 via-rose-500/10 to-card flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-pulse shadow-lg shadow-rose-500/10">
+          <div className="flex items-start sm:items-center gap-3.5">
+            <div className="size-11 rounded-2xl bg-rose-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-rose-600/30">
+              <AlertTriangle className="size-6 animate-bounce" />
+            </div>
+            <div className="space-y-0.5">
+              <h4 className="text-sm sm:text-base font-black text-foreground flex items-center gap-2">
+                <span>🚨 {emergencyCount} Critical Emergency SOS Request{emergencyCount > 1 ? "s" : ""} in Radar!</span>
+              </h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Urgent hazard requires immediate response. Top-of-queue priority dispatch.
+              </p>
+            </div>
+          </div>
+
+          <Button
+            size="sm"
+            onClick={() => setQuickFilter("EMERGENCY")}
+            className="rounded-xl h-10 px-5 text-xs font-black bg-rose-600 hover:bg-rose-700 text-white shrink-0 cursor-pointer shadow-md shadow-rose-600/25 self-start sm:self-auto"
+          >
+            Review Emergency Gigs
+          </Button>
+        </div>
+      )}
+
       {/* Quick Navigation to Bookings */}
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">
@@ -116,6 +147,7 @@ export const WorkerJobs: React.FC = () => {
         activeFilter={quickFilter}
         onFilterChange={setQuickFilter}
         filteredCount={filteredGigs.length}
+        emergencyCount={emergencyCount}
       />
 
       {/* Loading Skeletons */}

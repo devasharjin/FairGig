@@ -25,6 +25,25 @@ export enum CancelledByRole {
   SUPERADMIN = "SUPERADMIN",
 }
 
+export enum BookingType {
+  SCHEDULED = "SCHEDULED",
+  ON_DEMAND = "ON_DEMAND",
+  EMERGENCY = "EMERGENCY",
+}
+
+export enum UrgencyLevel {
+  STANDARD = "STANDARD",
+  HIGH = "HIGH",
+  CRITICAL = "CRITICAL",
+}
+
+export interface IBookingEmergencyDetails {
+  hazardType?: string;
+  severity?: "CRITICAL" | "HIGH" | "MEDIUM";
+  immediateContact?: string;
+  notes?: string;
+}
+
 export type BookingPriceType = "hourly" | "meters";
 
 export interface IBookingAddress {
@@ -80,6 +99,12 @@ export interface IBooking extends Document {
   address: IBookingAddress;
   scheduledDate: Date;
   customerNotes?: string;
+
+  // Booking Classification & Urgency
+  bookingType: BookingType;
+  isEmergency: boolean;
+  urgencyLevel?: UrgencyLevel;
+  emergencyDetails?: IBookingEmergencyDetails;
 
   // Pricing & Payment
   priceType: BookingPriceType;
@@ -214,6 +239,36 @@ const bookingSchema = new Schema<IBooking>(
       default: "",
     },
 
+    bookingType: {
+      type: String,
+      enum: Object.values(BookingType),
+      default: BookingType.SCHEDULED,
+      index: true,
+    },
+
+    isEmergency: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+
+    urgencyLevel: {
+      type: String,
+      enum: Object.values(UrgencyLevel),
+      default: UrgencyLevel.STANDARD,
+    },
+
+    emergencyDetails: {
+      hazardType: { type: String, trim: true, default: "" },
+      severity: {
+        type: String,
+        enum: ["CRITICAL", "HIGH", "MEDIUM"],
+        default: "HIGH",
+      },
+      immediateContact: { type: String, trim: true, default: "" },
+      notes: { type: String, trim: true, default: "" },
+    },
+
     priceType: {
       type: String,
       enum: {
@@ -327,6 +382,8 @@ const bookingSchema = new Schema<IBooking>(
 );
 
 // Compound indexes for optimal performance across dashboard queries
+bookingSchema.index({ isEmergency: -1, status: 1, createdAt: -1 });
+bookingSchema.index({ bookingType: 1, status: 1 });
 bookingSchema.index({ customer: 1, status: 1 });
 bookingSchema.index({ worker: 1, status: 1 });
 bookingSchema.index({ cooperative: 1, status: 1 });

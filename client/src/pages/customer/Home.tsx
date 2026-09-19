@@ -7,11 +7,14 @@ import { HowItWorks } from "@/components/customer/home/how-it-works";
 import { TestimonialsSection } from "@/components/customer/home/testimonials-section";
 import { CtaBanner } from "@/components/customer/home/cta-banner";
 import { ServiceBookingDialog } from "@/components/customer/services/service-booking-dialog";
+import { EmergencyBanner } from "@/components/customer/emergency/EmergencyBanner";
+import { EmergencySosModal } from "@/components/customer/emergency/EmergencySosModal";
 import type { CustomerService } from "@/features/customer/services/types";
 
 export const Home: React.FC = () => {
   const [bookingService, setBookingService] = useState<CustomerService | null>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [isEmergencyOpen, setIsEmergencyOpen] = useState(false);
 
   const handleBookService = (service: CustomerService) => {
     setBookingService(service);
@@ -23,22 +26,27 @@ export const Home: React.FC = () => {
       {/* 1. Hero Section with Live Search & Trust Stats */}
       <HeroSection />
 
-      {/* 2. Category Showcase */}
+      {/* 2. Emergency SOS Immediate Dispatch Trigger Banner */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full -mt-6 mb-8 relative z-20">
+        <EmergencyBanner onTriggerEmergency={() => setIsEmergencyOpen(true)} />
+      </div>
+
+      {/* 3. Category Showcase */}
       <CategoryShowcase />
 
-      {/* 3. Featured & Popular Cooperative Services */}
+      {/* 4. Featured & Popular Cooperative Services */}
       <FeaturedServicesSection onBookService={handleBookService} />
 
-      {/* 4. The Cooperative Advantage */}
+      {/* 5. The Cooperative Advantage */}
       <CooperativeBenefits />
 
-      {/* 5. How FairGig Works (3-Step Walkthrough) */}
+      {/* 6. How FairGig Works (3-Step Walkthrough) */}
       <HowItWorks />
 
-      {/* 6. Community Testimonials */}
+      {/* 7. Community Testimonials */}
       <TestimonialsSection />
 
-      {/* 7. Action CTA Banner */}
+      {/* 8. Action CTA Banner */}
       <CtaBanner />
 
       {/* Interactive Service Booking Modal */}
@@ -46,6 +54,12 @@ export const Home: React.FC = () => {
         open={isBookingOpen}
         onOpenChange={setIsBookingOpen}
         service={bookingService}
+      />
+
+      {/* 1-Tap Emergency SOS Modal */}
+      <EmergencySosModal
+        open={isEmergencyOpen}
+        onOpenChange={setIsEmergencyOpen}
       />
     </div>
   );

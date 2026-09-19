@@ -22,11 +22,11 @@ export const workerGigKeys = {
   profile: () => [...workerGigKeys.all, "profile"] as const,
 };
 
-export function useAvailableGigs() {
+export function useAvailableGigs(params?: { type?: string }) {
   return useQuery({
-    queryKey: workerGigKeys.available(),
-    queryFn: getAvailableGigs,
-    refetchInterval: 30000, // Refresh every 30 seconds to catch new dispatch requests
+    queryKey: [...workerGigKeys.available(), params],
+    queryFn: () => getAvailableGigs(params),
+    refetchInterval: 15000, // Refresh every 15 seconds to catch live emergency & on-demand dispatch requests
   });
 }
 

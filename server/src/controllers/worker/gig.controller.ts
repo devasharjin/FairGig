@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import mongoose from "mongoose";
 import Booking, {
   BookingStatus,
+  BookingType,
   CancelledByRole,
 } from "../../models/booking.model";
 import Worker from "../../models/auth/worker.model";
@@ -20,26 +21,41 @@ export async function getAvailableGigs(req: Request, res: Response) {
     return fail(res, "Worker profile not found", null, 404);
   }
 
+  const { type } = req.query;
   const query: Record<string, any> = {
     status: BookingStatus.PENDING,
     $or: [{ worker: null }, { worker: { $exists: false } }],
   };
 
+  if (type && typeof type === "string") {
+    const t = type.toLowerCase();
+    if (t === "emergency") {
+      query.isEmergency = true;
+    } else if (t === "on_demand" || t === "ondemand") {
+      query.bookingType = BookingType.ON_DEMAND;
+    } else if (t === "scheduled") {
+      query.bookingType = BookingType.SCHEDULED;
+    }
+  }
+
   // If worker has registered skills or cooperative, filter relevant gigs
   if (worker.skills && worker.skills.length > 0) {
-    query.$or = [
+    const baseConditions: any[] = [
       { service: { $in: worker.skills } },
       ...(worker.cooperativeId ? [{ cooperative: worker.cooperativeId }] : []),
     ];
+
+    query.$or = baseConditions;
     query.status = BookingStatus.PENDING;
     query.worker = null;
   }
 
+  // Priority sorting: EMERGENCY gigs ranked FIRST, then imminent scheduled/on-demand dates
   const gigs = await Booking.find(query)
-    .populate("service", "name description priceType firstHourRate additionalHourRate transportFee cooperativeShare insuranceShare hourlyPrice metersPrice")
+    .populate("service", "name description priceType firstHourRate additionalHourRate transportFee cooperativeShare insuranceShare hourlyPrice metersPrice emergencyAvailable emergencyFee")
     .populate("category", "name icon slug")
     .populate("customer", "name phone profilePicture address")
-    .sort({ scheduledDate: 1, createdAt: -1 })
+    .sort({ isEmergency: -1, scheduledDate: 1, createdAt: -1 })
     .lean();
 
   return ok(res, gigs, "Available gigs retrieved successfully");
@@ -156,7 +172,11 @@ export async function acceptGig(req: Request, res: Response) {
     .populate("customer", "name phone profilePicture address")
     .lean();
 
-  return ok(res, updated, "Gig accepted successfully! It is now in your active jobs.");
+  const message = booking.isEmergency
+    ? "🚨 Emergency callout accepted! Proceed immediately to the customer location."
+    : "Gig accepted successfully! It is now in your active jobs.";
+
+  return ok(res, updated, message);
 }
 
 export async function updateJobStatus(req: Request, res: Response) {

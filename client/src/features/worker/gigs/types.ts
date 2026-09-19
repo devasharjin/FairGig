@@ -5,7 +5,10 @@ import type {
   BookingPricingSnapshot,
   BookingRatingInfo,
   BookingStatus,
+  BookingType,
+  EmergencyDetails,
   PaymentStatus,
+  UrgencyLevel,
 } from "@/features/customer/bookings/types";
 
 export interface WorkerJobCustomer {
@@ -31,6 +34,10 @@ export interface WorkerJob {
   address: BookingAddress;
   scheduledDate: string;
   customerNotes?: string;
+  bookingType?: BookingType;
+  isEmergency?: boolean;
+  urgencyLevel?: UrgencyLevel;
+  emergencyDetails?: EmergencyDetails;
   priceType: "hourly" | "meters";
   rate: number;
   units: number;

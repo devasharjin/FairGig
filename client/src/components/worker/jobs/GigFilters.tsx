@@ -1,9 +1,10 @@
 import React from "react";
-import { Search, Filter, Clock, SlidersHorizontal } from "lucide-react";
+import { Search, AlertTriangle, Zap, Clock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-export type QuickFilterType = "ALL" | "HOURLY" | "METERS" | "TODAY";
+export type QuickFilterType = "ALL" | "EMERGENCY" | "ON_DEMAND" | "HOURLY" | "METERS" | "TODAY";
 
 interface GigFiltersProps {
   searchQuery: string;
@@ -11,6 +12,7 @@ interface GigFiltersProps {
   activeFilter: QuickFilterType;
   onFilterChange: (filter: QuickFilterType) => void;
   filteredCount: number;
+  emergencyCount?: number;
 }
 
 export const GigFilters: React.FC<GigFiltersProps> = ({
@@ -19,6 +21,7 @@ export const GigFilters: React.FC<GigFiltersProps> = ({
   activeFilter,
   onFilterChange,
   filteredCount,
+  emergencyCount = 0,
 }) => {
   return (
     <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-card/60 p-2.5 sm:p-3 rounded-2xl border border-border/80 shadow-xs">
@@ -43,22 +46,59 @@ export const GigFilters: React.FC<GigFiltersProps> = ({
         >
           All Gigs ({filteredCount})
         </Button>
+
+        {/* Emergency Filter Tab */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onFilterChange("EMERGENCY")}
+          className={cn(
+            "rounded-xl h-9 px-3 text-xs font-bold shrink-0 gap-1.5 cursor-pointer transition-all",
+            activeFilter === "EMERGENCY"
+              ? "bg-rose-600 hover:bg-rose-700 text-white border-rose-600 shadow-sm"
+              : emergencyCount > 0
+              ? "border-rose-500/50 text-rose-600 dark:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 animate-pulse"
+              : "border-border/80 text-muted-foreground hover:text-foreground"
+          )}
+        >
+          <AlertTriangle className="size-3.5" />
+          <span>🚨 Emergency {emergencyCount > 0 ? `(${emergencyCount})` : ""}</span>
+        </Button>
+
+        {/* On-Demand Filter Tab */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onFilterChange("ON_DEMAND")}
+          className={cn(
+            "rounded-xl h-9 px-3 text-xs font-semibold shrink-0 gap-1.5 cursor-pointer transition-all",
+            activeFilter === "ON_DEMAND"
+              ? "bg-amber-600 hover:bg-amber-700 text-white border-amber-600 shadow-sm"
+              : "border-amber-500/40 text-amber-700 dark:text-amber-400 bg-amber-500/10 hover:bg-amber-500/20"
+          )}
+        >
+          <Zap className="size-3.5" />
+          <span>⚡ On-Demand</span>
+        </Button>
+
         <Button
           variant={activeFilter === "HOURLY" ? "default" : "outline"}
           size="sm"
           onClick={() => onFilterChange("HOURLY")}
           className="rounded-xl h-9 px-3 text-xs font-semibold shrink-0 cursor-pointer"
         >
-          Hourly Rate
+          Hourly
         </Button>
+
         <Button
           variant={activeFilter === "METERS" ? "default" : "outline"}
           size="sm"
           onClick={() => onFilterChange("METERS")}
           className="rounded-xl h-9 px-3 text-xs font-semibold shrink-0 cursor-pointer"
         >
-          Meter Based
+          Meters
         </Button>
+
         <Button
           variant={activeFilter === "TODAY" ? "default" : "outline"}
           size="sm"
@@ -66,7 +106,7 @@ export const GigFilters: React.FC<GigFiltersProps> = ({
           className="rounded-xl h-9 px-3 text-xs font-semibold shrink-0 gap-1.5 cursor-pointer"
         >
           <Clock className="size-3 text-amber-500" />
-          <span>Today Only</span>
+          <span>Today</span>
         </Button>
       </div>
     </div>

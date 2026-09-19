@@ -7,8 +7,14 @@ import type {
 } from "./types";
 import type { BookingStatus } from "@/features/customer/bookings/types";
 
-export async function getAvailableGigs(): Promise<WorkerJob[]> {
-  return apiGet<WorkerJob[]>("/api/worker/gigs/available");
+export async function getAvailableGigs(params?: { type?: string }): Promise<WorkerJob[]> {
+  const query = new URLSearchParams();
+  if (params?.type && params.type !== "all") {
+    query.append("type", params.type);
+  }
+  const queryString = query.toString();
+  const url = queryString ? `/api/worker/gigs/available?${queryString}` : "/api/worker/gigs/available";
+  return apiGet<WorkerJob[]>(url);
 }
 
 export async function getWorkerJobs(

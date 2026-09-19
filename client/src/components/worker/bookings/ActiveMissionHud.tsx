@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { User, MapPin, Phone, Navigation, CheckCircle2, Clock, Hourglass, Coins } from "lucide-react";
+import { User, MapPin, Phone, Navigation, CheckCircle2, Clock, Hourglass, Coins, AlertTriangle } from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { WorkerJob } from "@/features/worker/gigs/types";
 
 interface ActiveMissionHudProps {
@@ -67,21 +68,51 @@ export const ActiveMissionHud: React.FC<ActiveMissionHudProps> = ({
       })
     : "Just now";
 
+  const isEmergency = mission.isEmergency;
+
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-purple-500/40 bg-gradient-to-r from-purple-500/10 via-card to-card p-6 shadow-md ring-1 ring-purple-500/20 space-y-4">
+    <div
+      className={cn(
+        "relative overflow-hidden rounded-3xl border p-6 shadow-md ring-1 space-y-4",
+        isEmergency
+          ? "border-rose-500/50 bg-gradient-to-r from-rose-500/15 via-card to-card ring-rose-500/20 shadow-rose-500/10"
+          : "border-purple-500/40 bg-gradient-to-r from-purple-500/10 via-card to-card ring-purple-500/20"
+      )}
+    >
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
         <div className="space-y-2">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="relative flex size-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75" />
-              <span className="relative inline-flex rounded-full size-3 bg-purple-500" />
+              <span
+                className={cn(
+                  "animate-ping absolute inline-flex h-full w-full rounded-full opacity-75",
+                  isEmergency ? "bg-rose-400" : "bg-purple-400"
+                )}
+              />
+              <span
+                className={cn(
+                  "relative inline-flex rounded-full size-3",
+                  isEmergency ? "bg-rose-500" : "bg-purple-500"
+                )}
+              />
             </span>
-            <Badge
-              variant="outline"
-              className="bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-500/30 text-xs font-extrabold uppercase tracking-wider"
-            >
-              ⚡ Live Fieldwork Active
-            </Badge>
+
+            {isEmergency ? (
+              <Badge
+                variant="destructive"
+                className="bg-rose-600 text-white text-xs font-black uppercase tracking-wider py-0.5 px-2.5 animate-pulse shadow-xs"
+              >
+                🚨 EMERGENCY SOS CALLOUT MISSION
+              </Badge>
+            ) : (
+              <Badge
+                variant="outline"
+                className="bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-500/30 text-xs font-extrabold uppercase tracking-wider"
+              >
+                ⚡ Live Fieldwork Active
+              </Badge>
+            )}
+
             <span className="text-xs font-mono text-muted-foreground">
               #{mission.bookingNumber}
             </span>
@@ -90,6 +121,18 @@ export const ActiveMissionHud: React.FC<ActiveMissionHudProps> = ({
           <h2 className="text-xl sm:text-2xl font-black text-foreground">
             {mission.service?.name}
           </h2>
+
+          {isEmergency && mission.emergencyDetails && (
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-rose-500/15 border border-rose-500/30 text-xs font-bold text-rose-700 dark:text-rose-300">
+              <AlertTriangle className="size-3.5 shrink-0" />
+              <span>Reported Hazard: {mission.emergencyDetails.hazardType || "Critical Emergency"}</span>
+              {mission.emergencyDetails.immediateContact && (
+                <span className="font-normal opacity-90">
+                  • On-Site Phone: {mission.emergencyDetails.immediateContact}
+                </span>
+              )}
+            </div>
+          )}
 
           <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground pt-1">
             <div className="flex items-center gap-1.5 text-foreground font-medium">

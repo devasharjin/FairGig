@@ -12,6 +12,17 @@ export type BookingStatus =
 
 export type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "REFUNDED";
 
+export type BookingType = "SCHEDULED" | "ON_DEMAND" | "EMERGENCY";
+
+export type UrgencyLevel = "STANDARD" | "HIGH" | "CRITICAL";
+
+export interface EmergencyDetails {
+  hazardType?: string;
+  severity?: "CRITICAL" | "HIGH" | "MEDIUM";
+  immediateContact?: string;
+  notes?: string;
+}
+
 export interface BookingAddress {
   street: string;
   city?: string;
@@ -68,6 +79,10 @@ export interface CustomerBooking {
   address: BookingAddress;
   scheduledDate: string;
   customerNotes?: string;
+  bookingType?: BookingType;
+  isEmergency?: boolean;
+  urgencyLevel?: UrgencyLevel;
+  emergencyDetails?: EmergencyDetails;
   priceType: "hourly" | "meters";
   rate: number;
   units: number;
@@ -95,6 +110,10 @@ export interface CreateBookingPayload {
   address: string | BookingAddress;
   scheduledDate?: string;
   customerNotes?: string;
+  bookingType?: BookingType;
+  isEmergency?: boolean;
+  urgencyLevel?: UrgencyLevel;
+  emergencyDetails?: EmergencyDetails;
   units?: number;
 }
 
@@ -105,4 +124,6 @@ export interface RateBookingPayload {
 
 export interface CustomerBookingFilterParams {
   status?: string;
+  type?: string;
+  isEmergency?: boolean;
 }

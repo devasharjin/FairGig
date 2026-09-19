@@ -8,8 +8,10 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "watch": "tsc --watch",
-    "test": "tsx src/tests/billing.test.ts",
-    "test:billing": "tsx src/tests/billing.test.ts"
+    "test": "tsx src/tests/billing.test.ts && tsx src/tests/emergency-booking.test.ts",
+    "test:billing": "tsx src/tests/billing.test.ts",
+    "test:emergency": "tsx src/tests/emergency-booking.test.ts",
+    "test:all": "tsx src/tests/billing.test.ts && tsx src/tests/emergency-booking.test.ts"
   },
   "keywords": [
     "cooperative",
