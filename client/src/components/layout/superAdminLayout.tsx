@@ -7,6 +7,7 @@ import {
   CircleDot,
   BaggageClaim,
   CreditCard,
+  BrainCircuit,
 } from "lucide-react";
 import {
   DashboardLayout,
@@ -31,6 +32,11 @@ const superAdminNavGroups: SidebarGroupConfig[] = [
         to: "/admin",
         icon: Layers,
         end: true,
+      },
+      {
+        title: "AI Demand & Telemetry",
+        to: "/admin/forecasting",
+        icon: BrainCircuit,
       },
       {
         title: "Welfare & Insurance",

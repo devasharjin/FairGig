@@ -22,6 +22,9 @@ import cooperativePaymentRoutes from './routes/cooperative/payment.routes';
 import workerWelfareRoutes from './routes/worker/welfare.routes';
 import cooperativeWelfareRoutes from './routes/cooperative/welfare.routes';
 import adminWelfareRoutes from './routes/admin/welfare.routes';
+import cooperativeForecastingRoutes from './routes/cooperative/forecasting.routes';
+import adminForecastingRoutes from './routes/admin/forecasting.routes';
+import workerForecastingRoutes from './routes/worker/forecasting.routes';
 import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
 
@@ -59,6 +62,7 @@ app.use('/api/admin/services', adminServiceRoutes);
 app.use('/api/admin/verifications', adminVerificationRoutes);
 app.use('/api/admin/payments', adminPaymentRoutes);
 app.use('/api/admin/welfare', adminWelfareRoutes);
+app.use('/api/admin/forecasting', adminForecastingRoutes);
 app.use('/api/customer', customerCategoryRoutes);
 app.use('/api/customer/bookings', customerBookingRoutes);
 app.use('/api/customer/payments', customerPaymentRoutes);
@@ -66,9 +70,11 @@ app.use('/api/customer/profile', customerProfileRoutes);
 app.use('/api/customer/contact', customerContactRoutes);
 app.use('/api/worker/gigs', workerGigRoutes);
 app.use('/api/worker/welfare', workerWelfareRoutes);
+app.use('/api/worker/forecasting', workerForecastingRoutes);
 app.use('/api/cooperative', cooperativeRoutes);
 app.use('/api/cooperative/payments', cooperativePaymentRoutes);
 app.use('/api/cooperative/welfare', cooperativeWelfareRoutes);
+app.use('/api/cooperative/forecasting', cooperativeForecastingRoutes);
 
 // Error Middlewares (must be registered after routes)
 app.use(notFound);

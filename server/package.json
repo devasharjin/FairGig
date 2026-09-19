@@ -8,11 +8,12 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "watch": "tsc --watch",
-    "test": "tsx src/tests/billing.test.ts && tsx src/tests/emergency-booking.test.ts && tsx src/tests/welfare-insurance.test.ts",
+    "test": "tsx src/tests/billing.test.ts && tsx src/tests/emergency-booking.test.ts && tsx src/tests/welfare-insurance.test.ts && tsx src/tests/forecasting-allocation.test.ts",
     "test:billing": "tsx src/tests/billing.test.ts",
     "test:emergency": "tsx src/tests/emergency-booking.test.ts",
     "test:welfare": "tsx src/tests/welfare-insurance.test.ts",
-    "test:all": "tsx src/tests/billing.test.ts && tsx src/tests/emergency-booking.test.ts && tsx src/tests/welfare-insurance.test.ts"
+    "test:forecasting": "tsx src/tests/forecasting-allocation.test.ts",
+    "test:all": "tsx src/tests/billing.test.ts && tsx src/tests/emergency-booking.test.ts && tsx src/tests/welfare-insurance.test.ts && tsx src/tests/forecasting-allocation.test.ts"
   },
   "keywords": [
     "cooperative",

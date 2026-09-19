@@ -42,6 +42,8 @@ import WorkerProfile from "./pages/worker/Profile";
 import WorkerWelfare from "./pages/worker/Welfare";
 import CooperativeWelfare from "./pages/cooperative/Welfare";
 import SuperAdminWelfare from "./pages/superAdmin/Welfare";
+import CooperativeForecasting from "./pages/cooperative/Forecasting";
+import SuperAdminForecasting from "./pages/superAdmin/Forecasting";
 
 function DashboardRedirect() {
   const user = useAuthStore((state) => state.user);
@@ -72,6 +74,28 @@ function WelfareRedirect() {
   }
   if (roleList.includes("SUPERADMIN")) {
     return <Navigate to="/admin/welfare" replace />;
+  }
+  return <Navigate to="/services" replace />;
+}
+
+function ForecastingRedirect() {
+  const user = useAuthStore((state) => state.user);
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  const role = user.role || (user as any).user?.role;
+  const roleList = Array.isArray(role) ? role : [role];
+
+  if (roleList.includes("COOPERATIVE")) {
+    return <Navigate to="/cooperative/forecasting" replace />;
+  }
+  if (roleList.includes("SUPERADMIN")) {
+    return <Navigate to="/admin/forecasting" replace />;
+  }
+  if (roleList.includes("WORKER")) {
+    return <Navigate to="/worker/jobs" replace />;
   }
   return <Navigate to="/services" replace />;
 }
@@ -228,6 +252,10 @@ export const router = createBrowserRouter([
                     element: <CooperativeWelfare />,
                   },
                   {
+                    path: "forecasting",
+                    element: <CooperativeForecasting />,
+                  },
+                  {
                     path: "members",
                     element: <CooperativeHome />,
                   },
@@ -271,8 +299,12 @@ export const router = createBrowserRouter([
                   },
                   {
                     path: "welfare",
-                    element: <SuperAdminWelfare />
-                  }
+                    element: <SuperAdminWelfare />,
+                  },
+                  {
+                    path: "forecasting",
+                    element: <SuperAdminForecasting />,
+                  },
                 ],
               },
             ],
@@ -286,6 +318,10 @@ export const router = createBrowserRouter([
           {
             path: "welfare",
             element: <WelfareRedirect />,
+          },
+          {
+            path: "forecasting",
+            element: <ForecastingRedirect />,
           },
           {
             path: "dashboard/customer",

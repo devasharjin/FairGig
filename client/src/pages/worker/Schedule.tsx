@@ -18,6 +18,7 @@ import {
 } from "@/components/worker/schedule/DateStripCarousel";
 import { DailyWorkloadHud } from "@/components/worker/schedule/DailyWorkloadHud";
 import { ScheduleJobCard } from "@/components/worker/schedule/ScheduleJobCard";
+import { SmartShiftAdviceCard } from "@/components/worker/schedule/SmartShiftAdviceCard";
 
 // Helper: Format date to YYYY-MM-DD in local time
 function getLocalDateString(date: Date): string {
@@ -170,6 +171,9 @@ export const WorkerSchedule: React.FC = () => {
         onSelectUpcoming={() => setActiveFilterTab("upcoming")}
         upcomingCount={upcomingJobs.length}
       />
+
+      {/* AI Optimal Shift Advisor Card */}
+      <SmartShiftAdviceCard />
 
       {/* Date Selector Strip (Next 14 Days) */}
       <DateStripCarousel

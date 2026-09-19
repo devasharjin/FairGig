@@ -12,6 +12,7 @@ import { GigRadarHeader } from "@/components/worker/jobs/GigRadarHeader";
 import { GigFilters, type QuickFilterType } from "@/components/worker/jobs/GigFilters";
 import { GigCard } from "@/components/worker/jobs/GigCard";
 import { GigDetailsDialog } from "@/components/worker/jobs/GigDetailsDialog";
+import { AiDemandHotspotsWidget } from "@/components/worker/jobs/AiDemandHotspotsWidget";
 
 export const WorkerJobs: React.FC = () => {
   const [quickFilter, setQuickFilter] = useState<QuickFilterType>("ALL");
@@ -139,6 +140,9 @@ export const WorkerJobs: React.FC = () => {
           </Button>
         </Link>
       </div>
+
+      {/* AI Real-time Demand Hotspots & Surge Radar */}
+      <AiDemandHotspotsWidget />
 
       {/* Filter & Search Bar */}
       <GigFilters

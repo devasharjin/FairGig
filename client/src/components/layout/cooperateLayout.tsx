@@ -6,6 +6,7 @@ import {
   UserCheck,
   Wallet,
   ShieldCheck,
+  TrendingUp,
 } from "lucide-react";
 import {
   DashboardLayout,
@@ -30,6 +31,11 @@ const cooperativeNavGroups: SidebarGroupConfig[] = [
         to: "/cooperative",
         icon: Layers,
         end: true,
+      },
+      {
+        title: "AI Demand & Allocation",
+        to: "/cooperative/forecasting",
+        icon: TrendingUp,
       },
       {
         title: "Welfare & Insurance",
