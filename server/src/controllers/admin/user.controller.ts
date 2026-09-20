@@ -127,7 +127,11 @@ export async function getAdminUserById(req: Request, res: Response) {
     }
 
     const [workerProfile, cooperativeProfile, customerBookingsCount] = await Promise.all([
-      Worker.findOne({ userId: user._id }).populate("skills", "name").lean(),
+      Worker.findOne({ userId: user._id })
+        .populate("skills", "name")
+        .populate("category", "name icon slug description")
+        .populate("categories", "name icon slug description")
+        .lean(),
       Cooperative.findOne({ userId: user._id }).lean(),
       Booking.countDocuments({ customer: user._id }),
     ]);

@@ -397,7 +397,14 @@ export const CooperativeWelfare = () => {
                   {workers.map((w) => (
                     <tr key={w.workerId} className="hover:bg-muted/30 transition">
                       <td className="p-3.5 pl-5">
-                        <div className="font-bold text-foreground">{w.user?.name || "Worker"}</div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-foreground">{w.user?.name || "Worker"}</span>
+                          {w.category && (
+                            <Badge variant="outline" className="text-[10px] px-1.5 py-0 bg-primary/10 text-primary border-primary/20">
+                              {w.category}
+                            </Badge>
+                          )}
+                        </div>
                         <div className="text-[11px] text-muted-foreground">{w.user?.phone || w.user?.email || "—"}</div>
                       </td>
                       <td className="p-3.5 font-mono font-semibold text-foreground">

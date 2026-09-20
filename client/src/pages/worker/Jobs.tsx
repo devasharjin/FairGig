@@ -5,6 +5,7 @@ import {
   useAvailableGigs,
   useAcceptGig,
   useWorkerStats,
+  useWorkerProfile,
 } from "@/features/worker/gigs/hooks";
 import type { WorkerJob } from "@/features/worker/gigs/types";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,11 @@ export const WorkerJobs: React.FC = () => {
   } = useAvailableGigs();
 
   const { data: stats } = useWorkerStats();
+  const { data: profile } = useWorkerProfile();
   const acceptGigMutation = useAcceptGig();
+
+  const workerCategory = profile?.category || profile?.categories?.[0] || profile?.worker?.category;
+  const categoryName = typeof workerCategory === "object" ? workerCategory?.name : undefined;
 
   const emergencyCount = availableGigs.filter((g) => g.isEmergency).length;
 
@@ -93,6 +98,7 @@ export const WorkerJobs: React.FC = () => {
         totalAvailable={availableGigs.length}
         isRefetching={isRefetching}
         onRefresh={() => refetch()}
+        categoryName={categoryName}
       />
 
       {/* Emergency SOS Radar Notification Banner */}

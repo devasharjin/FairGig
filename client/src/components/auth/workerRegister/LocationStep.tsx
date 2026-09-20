@@ -58,7 +58,7 @@ export const LocationStep: React.FC<LocationStepProps> = ({
             <p className="text-[11px] text-muted-foreground">
               {latitude && longitude
                 ? `Lat: ${latitude}, Long: ${longitude}`
-                : "Lock your service center coordinates with one tap."}
+                : "Lock your operational base coordinates with one tap."}
             </p>
           </div>
         </div>

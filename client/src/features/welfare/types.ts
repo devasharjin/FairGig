@@ -135,6 +135,7 @@ export interface CooperativeWorkerWelfareItem {
     profilePicture?: string;
   };
   policyNumber: string;
+  category?: string;
   coverageStatus: string;
   experience?: number;
   rating?: number;

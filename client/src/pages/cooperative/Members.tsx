@@ -305,7 +305,7 @@ export default function CooperativeMembers() {
                 <thead className="bg-muted/40 text-muted-foreground border-b border-border/60">
                   <tr>
                     <th className="py-3.5 px-4 font-semibold">Worker Details</th>
-                    <th className="py-3.5 px-4 font-semibold">Verified Trades</th>
+                    <th className="py-3.5 px-4 font-semibold">Trade Category & Services</th>
                     <th className="py-3.5 px-4 font-semibold">Availability & Status</th>
                     <th className="py-3.5 px-4 font-semibold">Performance</th>
                     <th className="py-3.5 px-4 font-semibold">Dispatch Active</th>
@@ -345,26 +345,39 @@ export default function CooperativeMembers() {
                         </div>
                       </td>
 
-                      {/* Verified Trades */}
+                      {/* Trade Category & Services */}
                       <td className="py-4 px-4">
-                        <div className="flex flex-wrap gap-1 max-w-xs">
-                          {member.skills && member.skills.length > 0 ? (
-                            member.skills.slice(0, 2).map((s) => (
-                              <Badge
-                                key={s._id}
-                                variant="secondary"
-                                className="text-[10px] px-2 py-0.5 rounded-md font-medium"
-                              >
-                                {s.name}
-                              </Badge>
-                            ))
-                          ) : (
-                            <span className="text-muted-foreground text-[11px]">No skill tagged</span>
+                        <div className="flex flex-col gap-1 max-w-xs">
+                          {member.category ? (
+                            <Badge
+                              variant="default"
+                              className="w-fit text-[11px] px-2.5 py-0.5 rounded-lg font-semibold bg-primary/15 text-primary border border-primary/25"
+                            >
+                              {typeof member.category === "object" && member.category.name
+                                ? member.category.name
+                                : member.category}
+                            </Badge>
+                          ) : null}
+                          {member.skills && member.skills.length > 0 && (
+                            <div className="flex flex-wrap gap-1">
+                              {member.skills.slice(0, 2).map((s) => (
+                                <Badge
+                                  key={s._id}
+                                  variant="secondary"
+                                  className="text-[10px] px-2 py-0.5 rounded-md font-medium"
+                                >
+                                  {s.name}
+                                </Badge>
+                              ))}
+                              {member.skills.length > 2 && (
+                                <span className="text-[10px] text-muted-foreground">
+                                  +{member.skills.length - 2} more
+                                </span>
+                              )}
+                            </div>
                           )}
-                          {member.skills && member.skills.length > 2 && (
-                            <span className="text-[10px] text-muted-foreground">
-                              +{member.skills.length - 2} more
-                            </span>
+                          {!member.category && (!member.skills || member.skills.length === 0) && (
+                            <span className="text-muted-foreground text-[11px]">General Trades</span>
                           )}
                         </div>
                       </td>

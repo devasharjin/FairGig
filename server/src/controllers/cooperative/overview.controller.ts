@@ -5,7 +5,6 @@ import Worker, { VerificationStatus } from "../../models/auth/worker.model";
 import Booking, { BookingStatus } from "../../models/booking.model";
 import Payment, { PaymentRecordStatus } from "../../models/payment.model";
 import WelfareClaim, { WelfareClaimStatus } from "../../models/welfareClaim.model";
-import InstitutionalContract, { ContractStatus } from "../../models/contractBid.model";
 import { WelfareService } from "../../services/welfare.service";
 import { fail, ok } from "../../shared/envelope";
 
@@ -42,7 +41,6 @@ export async function getCooperativeOverview(req: Request, res: Response) {
     pendingBookings,
     emergencyBookings,
     pendingClaimsCount,
-    openTendersCount,
     recentBookings,
     welfareMetrics,
   ] = await Promise.all([
@@ -83,9 +81,6 @@ export async function getCooperativeOverview(req: Request, res: Response) {
       status: {
         $in: [WelfareClaimStatus.SUBMITTED, WelfareClaimStatus.UNDER_REVIEW],
       },
-    }),
-    InstitutionalContract.countDocuments({
-      status: ContractStatus.OPEN,
     }),
     Booking.find({ cooperative: coopId })
       .sort({ createdAt: -1 })
@@ -140,10 +135,17 @@ export async function getCooperativeOverview(req: Request, res: Response) {
     paidTransactionsCount: 0,
   };
 
-  // 4. Trade breakdown of member workforce
+  // 4. Trade breakdown of member workforce (by Category, fallback to Service)
   const tradeDistribution = await Worker.aggregate([
     { $match: { cooperativeId: coopId } },
-    { $unwind: { path: "$skills", preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: "categories",
+        localField: "category",
+        foreignField: "_id",
+        as: "categoryDetails",
+      },
+    },
     {
       $lookup: {
         from: "services",
@@ -152,10 +154,20 @@ export async function getCooperativeOverview(req: Request, res: Response) {
         as: "serviceDetails",
       },
     },
-    { $unwind: { path: "$serviceDetails", preserveNullAndEmptyArrays: true } },
+    {
+      $project: {
+        tradeName: {
+          $ifNull: [
+            { $arrayElemAt: ["$categoryDetails.name", 0] },
+            { $arrayElemAt: ["$serviceDetails.name", 0] },
+            "General Trades",
+          ],
+        },
+      },
+    },
     {
       $group: {
-        _id: "$serviceDetails.name",
+        _id: "$tradeName",
         count: { $sum: 1 },
       },
     },
@@ -205,7 +217,6 @@ export async function getCooperativeOverview(req: Request, res: Response) {
       pendingActions: {
         pendingWorkersCount: pendingWorkers,
         pendingClaimsCount,
-        openTendersCount,
         activeEmergencyGigs: emergencyBookings,
       },
       recentBookings,

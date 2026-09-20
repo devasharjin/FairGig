@@ -18,10 +18,6 @@ import Booking, {
   PaymentStatus,
   UrgencyLevel,
 } from '../models/booking.model';
-import InstitutionalContract, {
-  ContractStatus,
-  BidStatus,
-} from '../models/contractBid.model';
 
 export const REAL_ZONES = [
   "Kanyakumari Town - Central Zone",
@@ -191,6 +187,7 @@ async function seed() {
         email: "murugan.electrician@gmail.com",
         phone: "9842109876",
         skill: wiringService._id,
+        category: wiringService.category,
         address: "Kanyakumari Coastal Road",
         city: "kanyakumari",
         rating: 4.8,
@@ -201,6 +198,7 @@ async function seed() {
         email: "anand.carpenter@gmail.com",
         phone: "9789012345",
         skill: furnitureService._id,
+        category: furnitureService.category,
         address: "Nagercoil Central Market",
         city: "kanyakumari",
         rating: 4.6,
@@ -226,6 +224,8 @@ async function seed() {
         await Worker.create({
           userId: u._id,
           cooperativeId: mainCoop._id,
+          category: nw.category,
+          categories: nw.category ? [nw.category] : [],
           skills: [nw.skill],
           availability: AvailabilityStatus.FULL_TIME,
           verificationStatus: VerificationStatus.APPROVED,
@@ -439,102 +439,6 @@ async function seed() {
     console.log(`Inserting ${newBookingsToInsert.length} realistic bookings into database...`);
     await Booking.insertMany(newBookingsToInsert);
     console.log("Realistic bookings inserted successfully!");
-  }
-
-  // 7. Seed Institutional Tenders and Contracts
-  const existingContractsCount = await InstitutionalContract.countDocuments();
-  if (existingContractsCount === 0 && mainCoop) {
-    const deadline1 = new Date();
-    deadline1.setDate(deadline1.getDate() + 14);
-
-    const deadline2 = new Date();
-    deadline2.setDate(deadline2.getDate() + 21);
-
-    const deadline3 = new Date();
-    deadline3.setDate(deadline3.getDate() + 7);
-
-    const pastDate = new Date();
-    pastDate.setDate(pastDate.getDate() - 3);
-
-    const sampleContracts = [
-      {
-        contractNumber: "TND-2026-KK01",
-        title: "Cape Greenfield Gated Community - Annual Electrical & Pump Maintenance",
-        clientName: "Cape Greenfield Residents Welfare Association",
-        clientType: "Residential Society" as const,
-        description: "Comprehensive annual maintenance contract covering 120 residential villas, community club lighting, water pump automation, and emergency fuse-call service.",
-        scopeOfWork: [
-          "Bi-weekly preventative electrical inspection of common feeders",
-          "Automated submersible water pump panel overhaul",
-          "24/7 dedicated on-call response for power outages",
-          "Clubhouse and street illumination maintenance",
-        ],
-        location: "Kanyakumari Town - Central Zone",
-        budget: 185000,
-        requiredWorkers: 4,
-        tradeRequired: "Electrical Services",
-        durationDays: 365,
-        deadlineDate: deadline1,
-        status: ContractStatus.OPEN,
-        bids: [],
-        allocatedWorkers: [],
-      },
-      {
-        contractNumber: "TND-2026-NG02",
-        title: "Nagercoil Municipal Market Complex - Bulk Plumbing & Drainage Overhaul",
-        clientName: "Nagercoil City Municipal Corporation",
-        clientType: "Government / Municipal" as const,
-        description: "Revamping primary wastewater drainage pipelines, grease traps, high-pressure tap fittings, and water storage sumps across 45 vendor stalls in the retail sector.",
-        scopeOfWork: [
-          "Replacement of cracked PVC main drainage pipes",
-          "High-pressure jet hydro-cleaning of blocked sewer traps",
-          "Installation of 60 water-saving brass quarter-turn valves",
-          "Sanitary hygiene certification audit upon handover",
-        ],
-        location: "Nagercoil - Commercial & Retail Hub",
-        budget: 240000,
-        requiredWorkers: 6,
-        tradeRequired: "Plumbing Services",
-        durationDays: 30,
-        deadlineDate: deadline2,
-        status: ContractStatus.OPEN,
-        bids: [],
-        allocatedWorkers: [],
-      },
-      {
-        contractNumber: "TND-2026-IT03",
-        title: "Kanyakumari Marine Tech Park - Ergonomic Workstation Carpentry Retrofit",
-        clientName: "Marine Bay Tech Incubator Ltd.",
-        clientType: "Corporate / Commercial" as const,
-        description: "Fabrication, assembly, and alignment of 85 ergonomic wooden standing desks, acoustic partition panels, and conference credenzas for newly leased IT wing.",
-        scopeOfWork: [
-          "Assembly of precision engineered modular plywood workstations",
-          "Hardware fitting with soft-close hinges and cable conduit channels",
-          "Lamination polish and bevel edge finishing",
-        ],
-        location: "Coastal & Beachfront Tourism Corridor",
-        budget: 145000,
-        requiredWorkers: 5,
-        tradeRequired: "Carpentry Services",
-        durationDays: 14,
-        deadlineDate: deadline3,
-        status: ContractStatus.BID_SUBMITTED,
-        bids: [
-          {
-            cooperative: mainCoop._id,
-            proposedAmount: 138000,
-            proposedWorkersCount: 4,
-            proposalNotes: "Our society carpenters possess extensive commercial modular woodwork certifications with rapid 10-day turnaround capability.",
-            status: BidStatus.PENDING,
-            submittedAt: pastDate,
-          },
-        ],
-        allocatedWorkers: [],
-      },
-    ];
-
-    await InstitutionalContract.insertMany(sampleContracts);
-    console.log(`Seeded ${sampleContracts.length} institutional contracts successfully!`);
   }
 
   const finalBookingCount = await Booking.countDocuments();

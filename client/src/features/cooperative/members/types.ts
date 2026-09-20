@@ -17,9 +17,19 @@ export interface MemberUser {
   createdAt?: string;
 }
 
+export interface MemberCategory {
+  _id: string;
+  name: string;
+  slug?: string;
+  icon?: string;
+  description?: string;
+}
+
 export interface CooperativeMember {
   _id: string;
   userId: MemberUser;
+  category?: MemberCategory | string;
+  categories?: (MemberCategory | string)[];
   skills: MemberSkill[];
   availability: "Full-Time" | "Part-Time";
   verificationStatus: "Pending" | "Approved" | "Rejected";

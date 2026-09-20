@@ -552,6 +552,7 @@ export const CooperativeForecasting: React.FC = () => {
                 <thead>
                   <tr className="border-b border-border/70 text-muted-foreground font-bold uppercase">
                     <th className="py-2.5 px-3">Member Worker</th>
+                    <th className="py-2.5 px-3">Trade Category</th>
                     <th className="py-2.5 px-3">Recent Gigs Completed</th>
                     <th className="py-2.5 px-3">AI Dispatch Priority</th>
                     <th className="py-2.5 px-3">Fair Share Equity</th>
@@ -561,6 +562,11 @@ export const CooperativeForecasting: React.FC = () => {
                   {rotationMetrics?.rotationRoster?.map((worker) => (
                     <tr key={worker.workerId} className="hover:bg-muted/30">
                       <td className="py-3 px-3 font-semibold text-foreground">{worker.name}</td>
+                      <td className="py-3 px-3">
+                        <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/20 font-medium">
+                          {worker.category || "General Trade"}
+                        </Badge>
+                      </td>
                       <td className="py-3 px-3 text-muted-foreground">
                         <strong>{worker.recentGigsCount}</strong> gigs
                       </td>

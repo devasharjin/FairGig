@@ -124,7 +124,7 @@ export const EmergencyGrantDialog = ({
               <SelectContent>
                 {workers.map((w) => (
                   <SelectItem key={w.workerId} value={w.workerId}>
-                    {w.user?.name || "Worker"} ({w.policyNumber})
+                    {w.user?.name || "Worker"}{w.category ? ` • ${w.category}` : ""} ({w.policyNumber})
                   </SelectItem>
                 ))}
               </SelectContent>

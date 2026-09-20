@@ -54,6 +54,13 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
   const isApproved = worker.verificationStatus === "Approved";
   const isRejected = worker.verificationStatus === "Rejected";
 
+  const categoryName =
+    typeof worker.category === "object" && (worker.category as any)?.name
+      ? (worker.category as any).name
+      : typeof worker.category === "string"
+      ? worker.category
+      : null;
+
   const handleApprove = async () => {
     setIsProcessing(true);
     try {
@@ -182,22 +189,34 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
                 </div>
               </div>
 
-              {/* Skills & Experience */}
-              <div className="p-4 rounded-2xl bg-muted/20 border border-border/60 space-y-2.5">
-                <p className="text-xs font-bold uppercase tracking-wider text-foreground">
-                  Trade Skills & Experience
-                </p>
-
-                <div className="flex flex-wrap gap-1.5">
-                  {worker.skills?.map((skill) => (
-                    <span
-                      key={skill._id}
-                      className="px-2.5 py-1 rounded-xl text-xs font-medium bg-primary/10 text-primary border border-primary/20"
-                    >
-                      {skill.name}
-                    </span>
-                  ))}
+              {/* Category, Skills & Experience */}
+              <div className="p-4 rounded-2xl bg-muted/20 border border-border/60 space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-bold uppercase tracking-wider text-foreground">
+                    Trade Category & Qualifications
+                  </p>
+                  {categoryName && (
+                    <Badge variant="default" className="bg-primary text-primary-foreground text-xs font-semibold shadow-xs">
+                      {categoryName}
+                    </Badge>
+                  )}
                 </div>
+
+                {worker.skills && worker.skills.length > 0 && (
+                  <div className="space-y-1.5">
+                    <p className="text-[11px] text-muted-foreground">Enabled Platform Services:</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {worker.skills.map((skill) => (
+                        <span
+                          key={skill._id}
+                          className="px-2.5 py-1 rounded-xl text-xs font-medium bg-primary/10 text-primary border border-primary/20"
+                        >
+                          {skill.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/40 text-xs text-foreground">
                   <div className="flex items-center gap-2">

@@ -3,28 +3,25 @@ import { Navigate, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import { workerRegister, getMe, getCooperatives } from "@/features/auth/api";
-import { getCustomerServices } from "@/features/customer/services/api";
-import type { CustomerService } from "@/features/customer/services/types";
+import { getCustomerCategories } from "@/features/customer/categories/api";
+import type { Category } from "@/features/customer/categories/types";
 import { useAuthStore } from "@/features/auth/store";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import type { CooperativeOption } from "@/features/auth/types";
 
 import { WorkerRegisterStepper } from "./WorkerRegisterStepper";
-import { SkillsStep } from "./SkillsStep";
+import { CategoryStep } from "./CategoryStep";
 import { LocationStep } from "./LocationStep";
 import { DocumentsStep } from "./DocumentsStep";
-import type { ServiceOption } from "./ServiceSelector";
 import { compressImageFile, formatBytes } from "@/lib/imageCompressor";
 
-const DEFAULT_SERVICES: ServiceOption[] = [
-  { _id: "65f0a1b2c3d4e5f6a7b8c101", name: "Electrician", category: "Electrical" },
-  { _id: "65f0a1b2c3d4e5f6a7b8c102", name: "Plumber", category: "Plumbing" },
-  { _id: "65f0a1b2c3d4e5f6a7b8c103", name: "Carpenter", category: "Carpentry" },
-  { _id: "65f0a1b2c3d4e5f6a7b8c104", name: "AC Technician", category: "HVAC & Cooling" },
-  { _id: "65f0a1b2c3d4e5f6a7b8c105", name: "House Painter", category: "Painting & Renovation" },
-  { _id: "65f0a1b2c3d4e5f6a7b8c106", name: "Appliance Repair", category: "Appliances" },
-  { _id: "65f0a1b2c3d4e5f6a7b8c107", name: "Masonry & Tiling", category: "Construction" },
-  { _id: "65f0a1b2c3d4e5f6a7b8c108", name: "Deep Home Cleaning", category: "Cleaning" },
+const DEFAULT_CATEGORIES: Category[] = [
+  { _id: "65f0a1b2c3d4e5f6a7b8c001", name: "Electrical Services", slug: "electrical-services", description: "Wiring, switchboards, fixtures, and power installations", isActive: true, createdAt: "", updatedAt: "" },
+  { _id: "65f0a1b2c3d4e5f6a7b8c002", name: "Plumbing Services", slug: "plumbing-services", description: "Pipes, leakage repairs, bathroom fixtures, and drainage", isActive: true, createdAt: "", updatedAt: "" },
+  { _id: "65f0a1b2c3d4e5f6a7b8c003", name: "Carpentry & Woodwork", slug: "carpentry-woodwork", description: "Furniture fabrication, repairs, doors, and custom woodwork", isActive: true, createdAt: "", updatedAt: "" },
+  { _id: "65f0a1b2c3d4e5f6a7b8c004", name: "HVAC & Air Conditioning", slug: "hvac-air-conditioning", description: "AC servicing, installation, gas refill, and cooling systems", isActive: true, createdAt: "", updatedAt: "" },
+  { _id: "65f0a1b2c3d4e5f6a7b8c005", name: "Painting & Renovation", slug: "painting-renovation", description: "Interior & exterior wall painting, waterproof coating", isActive: true, createdAt: "", updatedAt: "" },
+  { _id: "65f0a1b2c3d4e5f6a7b8c006", name: "Appliance Repair", slug: "appliance-repair", description: "Refrigerators, washing machines, microwaves, and electronics", isActive: true, createdAt: "", updatedAt: "" },
 ];
 
 export default function WorkerRegisterForm() {
@@ -43,10 +40,10 @@ export default function WorkerRegisterForm() {
   // Step state
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
 
-  // Step 1: Services & Work settings
-  const [servicesList, setServicesList] = useState<ServiceOption[]>(DEFAULT_SERVICES);
-  const [selectedSkillIds, setSelectedSkillIds] = useState<string[]>([]);
-  const [isLoadingServices, setIsLoadingServices] = useState(true);
+  // Step 1: Category & Work settings
+  const [categoriesList, setCategoriesList] = useState<Category[]>(DEFAULT_CATEGORIES);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [availability, setAvailability] = useState<"Full-Time" | "Part-Time">("Full-Time");
   const [experience, setExperience] = useState<number>(3);
   const [cooperativesList, setCooperativesList] = useState<CooperativeOption[]>([]);
@@ -72,28 +69,20 @@ export default function WorkerRegisterForm() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Fetch real services and cooperatives
+  // Fetch real categories and cooperatives
   useEffect(() => {
     let isMounted = true;
 
-    getCustomerServices({ isActive: true })
+    getCustomerCategories({ isActive: true })
       .then((data) => {
         if (isMounted && Array.isArray(data) && data.length > 0) {
-          setServicesList(
-            data.map((s: CustomerService) => ({
-              _id: s._id,
-              name: s.name,
-              category:
-                typeof s.category === "object" && s.category?.name
-                  ? s.category.name
-                  : "Trade Skill",
-            }))
-          );
+          setCategoriesList(data);
+          setSelectedCategoryId((curr) => curr || data[0]._id);
         }
-        if (isMounted) setIsLoadingServices(false);
+        if (isMounted) setIsLoadingCategories(false);
       })
       .catch(() => {
-        if (isMounted) setIsLoadingServices(false);
+        if (isMounted) setIsLoadingCategories(false);
       });
 
     getCooperatives()
@@ -112,12 +101,6 @@ export default function WorkerRegisterForm() {
       isMounted = false;
     };
   }, []);
-
-  const handleToggleSkill = (id: string) => {
-    setSelectedSkillIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
-  };
 
   // Location Auto-Detect
   const handleDetectLocation = () => {
@@ -217,8 +200,8 @@ export default function WorkerRegisterForm() {
 
   // Step Validations
   const validateStep1 = () => {
-    if (selectedSkillIds.length === 0) {
-      toast.error("Please select at least one trade skill.");
+    if (!selectedCategoryId || !selectedCategoryId.trim()) {
+      toast.error("Please select your primary trade category.");
       return false;
     }
     if (experience < 0 || isNaN(experience)) {
@@ -289,7 +272,10 @@ export default function WorkerRegisterForm() {
 
     try {
       const formData = new FormData();
-      formData.append("skills", JSON.stringify(selectedSkillIds));
+      formData.append("category", selectedCategoryId);
+      formData.append("categoryId", selectedCategoryId);
+      formData.append("categories", JSON.stringify([selectedCategoryId]));
+      formData.append("categoryIds", JSON.stringify([selectedCategoryId]));
       formData.append("availability", availability);
       formData.append("experience", String(Math.max(0, Number(experience) || 0)));
       formData.append("cooperativeId", cooperativeId.trim());
@@ -355,11 +341,11 @@ export default function WorkerRegisterForm() {
         <CardContent className="p-6 sm:p-8">
           <form onSubmit={handleSubmit}>
             {currentStep === 1 && (
-              <SkillsStep
-                services={servicesList}
-                selectedSkillIds={selectedSkillIds}
-                onToggleSkill={handleToggleSkill}
-                isLoadingServices={isLoadingServices}
+              <CategoryStep
+                categories={categoriesList}
+                selectedCategoryId={selectedCategoryId}
+                onSelectCategory={(id) => setSelectedCategoryId(id)}
+                isLoadingCategories={isLoadingCategories}
                 availability={availability}
                 onAvailabilityChange={setAvailability}
                 experience={experience}

@@ -485,6 +485,7 @@ export class ForecastingService {
 
     const workers = await Worker.find({ cooperativeId, isActive: true })
       .populate("userId", "name phone profilePicture")
+      .populate("category", "name icon slug")
       .lean();
 
     const workerIds = workers.map((w) => w._id);
@@ -518,6 +519,7 @@ export class ForecastingService {
       return {
         workerId: w._id,
         name: (w.userId as any)?.name || "Member Worker",
+        category: (w.category as any)?.name || "General Trade",
         recentGigsCount: completedRecent,
         dispatchPriority,
         fairSharePercentage: Math.round((1 / Math.max(1, workers.length)) * 100),
@@ -664,11 +666,14 @@ export class ForecastingService {
 
     const worker = await Worker.findById(workerId)
       .populate("userId", "name")
+      .populate("category", "name icon slug")
       .populate("skills")
       .lean();
 
-    const skillServices = worker?.skills as any[] | undefined;
-    const primaryServiceName = skillServices?.[0]?.name || "Household Maintenance & Repairs";
+    const tradeName =
+      (worker?.category as any)?.name ||
+      (worker?.skills as any[])?.[0]?.name ||
+      "Household Maintenance & Repairs";
 
     return {
       workerId,
@@ -678,7 +683,7 @@ export class ForecastingService {
         expectedGigMultiplier: 1.3,
         estimatedEarningsBoost: "25% – 35% higher earnings",
         priorityStatus: "HIGH_DISPATCH_PRIORITY",
-        reason: `High weekend customer booking density forecasted for your trade (${primaryServiceName}). AI rotation assigns priority dispatch to your profile.`,
+        reason: `High weekend customer booking density forecasted for your trade category (${tradeName}). AI rotation assigns priority dispatch to your profile.`,
       },
       activeSurgeBounties: [
         {

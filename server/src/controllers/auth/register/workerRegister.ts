@@ -5,6 +5,8 @@ import Worker, {
   AvailabilityStatus,
   VerificationStatus,
 } from "../../../models/auth/worker.model";
+import Category from "../../../models/category.model";
+import Service from "../../../models/service.model";
 import { fail, ok } from "../../../shared/envelope";
 import { generateAuthTokens } from "../../../utils/jwt.utils";
 import { uploadToCloudinary } from "../../../services/cloudinaryservices";
@@ -34,6 +36,10 @@ export const workerRegister = async (
   // 3. Extract request body fields (support JSON or multipart/form-data)
   let {
     cooperativeId,
+    category,
+    categoryId,
+    categories,
+    categoryIds,
     skills,
     availability,
     experience,
@@ -47,31 +53,87 @@ export const workerRegister = async (
     longitude,
   } = req.body;
 
-  // Parse skills if stringified (FormData sends strings)
-  if (typeof skills === "string") {
-    try {
-      skills = JSON.parse(skills);
-    } catch {
-      skills = skills.split(",").map((s: string) => s.trim()).filter(Boolean);
+  // Extract raw category inputs
+  let rawCategories: any[] = [];
+  const primaryCat = categoryId || category;
+  if (primaryCat) {
+    rawCategories.push(primaryCat);
+  }
+  const multiCat = categoryIds || categories;
+  if (multiCat) {
+    if (typeof multiCat === "string") {
+      try {
+        const parsed = JSON.parse(multiCat);
+        if (Array.isArray(parsed)) rawCategories.push(...parsed);
+        else rawCategories.push(multiCat);
+      } catch {
+        rawCategories.push(
+          ...multiCat.split(",").map((c: string) => c.trim()).filter(Boolean)
+        );
+      }
+    } else if (Array.isArray(multiCat)) {
+      rawCategories.push(...multiCat);
     }
   }
 
-  if (!Array.isArray(skills) || skills.length === 0) {
-    return fail(res, "At least one skill (service) is required.", null, 400);
+  // Parse legacy skills if passed
+  let skillList: any[] = [];
+  if (typeof skills === "string") {
+    try {
+      skillList = JSON.parse(skills);
+    } catch {
+      skillList = skills.split(",").map((s: string) => s.trim()).filter(Boolean);
+    }
+  } else if (Array.isArray(skills)) {
+    skillList = skills;
   }
 
-  // Validate that skill IDs are valid Mongo ObjectIds
-  const invalidSkills = skills.filter((s) => !mongoose.Types.ObjectId.isValid(s));
-  if (invalidSkills.length > 0) {
+  // Resolve valid Categories
+  let validCategoryObjectIds: Types.ObjectId[] = [];
+  const candidateCatIds = [...new Set(rawCategories)]
+    .map((c) => (typeof c === "object" && c?._id ? String(c._id) : String(c).trim()))
+    .filter((id) => mongoose.Types.ObjectId.isValid(id));
+
+  if (candidateCatIds.length > 0) {
+    const existingCats = await Category.find({
+      _id: { $in: candidateCatIds.map((id) => new Types.ObjectId(id)) },
+    }).select("_id name");
+    validCategoryObjectIds = existingCats.map((c) => c._id as Types.ObjectId);
+  }
+
+  // Fallback: If no category provided but legacy skills were provided, derive categories from services
+  if (validCategoryObjectIds.length === 0 && skillList.length > 0) {
+    const validSkillIds = skillList
+      .filter((s) => mongoose.Types.ObjectId.isValid(s))
+      .map((s) => new Types.ObjectId(s));
+    if (validSkillIds.length > 0) {
+      const services = await Service.find({ _id: { $in: validSkillIds } }).select("category");
+      const derived = [...new Set(services.map((s) => s.category?.toString()).filter(Boolean))];
+      validCategoryObjectIds = derived.map((id) => new Types.ObjectId(id));
+    }
+  }
+
+  if (validCategoryObjectIds.length === 0) {
     return fail(
       res,
-      "One or more selected skill IDs are invalid services.",
+      "Please select at least one valid trade category (e.g. Electrical Services, Plumbing, etc.).",
       null,
       400
     );
   }
 
-  const skillObjectIds = skills.map((s) => new Types.ObjectId(s));
+  // Automatically associate all active services under the chosen categories into worker's skills
+  const categoryServices = await Service.find({
+    category: { $in: validCategoryObjectIds },
+    isActive: true,
+  }).select("_id");
+
+  const skillObjectIds = [
+    ...new Set([
+      ...categoryServices.map((s) => s._id.toString()),
+      ...skillList.filter((s) => mongoose.Types.ObjectId.isValid(s)),
+    ]),
+  ].map((id) => new Types.ObjectId(id));
 
   // Parse availability
   if (
@@ -237,6 +299,8 @@ export const workerRegister = async (
   const worker: any = await Worker.create({
     userId,
     cooperativeId: validCoopId,
+    category: validCategoryObjectIds[0],
+    categories: validCategoryObjectIds,
     skills: skillObjectIds,
     availability: workerAvailability,
     verificationStatus: VerificationStatus.PENDING,
@@ -295,6 +359,8 @@ export const workerRegister = async (
   }
 
   const populatedWorker = await Worker.findById(worker._id)
+    .populate("category", "name icon slug description")
+    .populate("categories", "name icon slug description")
     .populate("skills", "name description category priceType hourlyPrice metersPrice")
     .populate("cooperativeId", "cooperativeName cooperativeAddress");
 

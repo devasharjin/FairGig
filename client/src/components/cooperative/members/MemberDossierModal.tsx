@@ -188,15 +188,27 @@ export const MemberDossierModal = ({
           <div className="space-y-4">
             <div>
               <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <Wrench className="size-3.5 text-primary" /> Certified Skills & Services
+                <Wrench className="size-3.5 text-primary" /> Trade Category & Services
               </h4>
+
+              {member.category && (
+                <div className="mb-2.5 flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">Primary Trade:</span>
+                  <Badge className="px-3 py-1 text-xs rounded-lg font-semibold bg-primary text-primary-foreground shadow-xs">
+                    {typeof member.category === "object" && member.category.name
+                      ? member.category.name
+                      : member.category}
+                  </Badge>
+                </div>
+              )}
+
               <div className="flex flex-wrap gap-2">
                 {member.skills && member.skills.length > 0 ? (
                   member.skills.map((skill) => (
                     <Badge
                       key={skill._id}
                       variant="secondary"
-                      className="px-3 py-1 text-xs rounded-lg font-medium bg-primary/10 text-primary border-primary/20"
+                      className="px-3 py-1 text-xs rounded-lg font-medium bg-muted/70 text-muted-foreground border border-border/60"
                     >
                       {skill.name}
                       {skill.hourlyPrice && (

@@ -75,6 +75,7 @@ export interface WorkforceRebalancePlan {
 export interface RotationWorker {
   workerId: string;
   name: string;
+  category?: string;
   recentGigsCount: number;
   dispatchPriority: "HIGH" | "BALANCED" | "STANDBY";
   fairSharePercentage: number;

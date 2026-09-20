@@ -66,7 +66,7 @@ export default function CooperativeHome() {
   const workforce = data?.workforce || { total: 0, active: 0, pending: 0, approved: 0, rejected: 0 };
   const financials = data?.financials || { grossTurnover: 0, cooperativeShareEarned: 0, workerNetDisbursed: 0, welfareReserveFund: 0, paidTransactionsCount: 0 };
   const gigs = data?.gigs || { total: 0, completed: 0, inProgress: 0, pending: 0, emergency: 0 };
-  const pendingActions = data?.pendingActions || { pendingWorkersCount: 0, pendingClaimsCount: 0, openTendersCount: 0, activeEmergencyGigs: 0 };
+  const pendingActions = data?.pendingActions || { pendingWorkersCount: 0, pendingClaimsCount: 0, activeEmergencyGigs: 0 };
   const recentBookings = data?.recentBookings || [];
   const topTrades = data?.topTrades || [];
 
@@ -208,32 +208,6 @@ export default function CooperativeHome() {
                 onClick={() => navigate("/cooperative/welfare")}
               >
                 Inspect
-              </Button>
-            </div>
-          )}
-
-          {pendingActions.openTendersCount > 0 && (
-            <div className="p-4 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-between gap-3 text-xs">
-              <div className="flex items-center gap-2.5">
-                <div className="size-8 rounded-xl bg-primary/20 text-primary flex items-center justify-center shrink-0">
-                  <Briefcase className="size-4" />
-                </div>
-                <div>
-                  <p className="font-bold text-foreground">
-                    {pendingActions.openTendersCount} Institutional Tenders
-                  </p>
-                  <p className="text-muted-foreground text-[11px]">
-                    Open commercial contracts to bid
-                  </p>
-                </div>
-              </div>
-              <Button
-                size="sm"
-                variant="outline"
-                className="text-xs h-8 rounded-xl border-primary/40 text-primary hover:bg-primary/20"
-                onClick={() => navigate("/cooperative/bids")}
-              >
-                Explore
               </Button>
             </div>
           )}
@@ -433,7 +407,7 @@ export default function CooperativeHome() {
                 Workforce Trade Capacity
               </CardTitle>
               <CardDescription className="text-xs text-muted-foreground">
-                Active member concentration across skill categories
+                Active member concentration across trade categories
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3.5">
@@ -497,17 +471,6 @@ export default function CooperativeHome() {
               >
                 <span className="flex items-center gap-2">
                   <FileCheck className="size-3.5 text-amber-500" /> Worker Verification Queue
-                </span>
-                <ArrowRight className="size-3 text-muted-foreground" />
-              </Button>
-
-              <Button
-                variant="outline"
-                className="w-full justify-between rounded-xl h-10 text-xs hover:bg-primary/5 hover:border-primary/40"
-                onClick={() => navigate("/cooperative/bids")}
-              >
-                <span className="flex items-center gap-2">
-                  <Briefcase className="size-3.5 text-indigo-500" /> Institutional Tenders & Bids
                 </span>
                 <ArrowRight className="size-3 text-muted-foreground" />
               </Button>

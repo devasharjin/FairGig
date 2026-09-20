@@ -10,18 +10,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  ServiceSelector,
-  type ServiceOption,
-} from "./ServiceSelector";
+import { CategorySelector } from "./CategorySelector";
+import type { Category } from "@/features/customer/categories/types";
 import type { CooperativeOption } from "@/features/auth/types";
 import { cn } from "@/lib/utils";
 
-interface SkillsStepProps {
-  services: ServiceOption[];
-  selectedSkillIds: string[];
-  onToggleSkill: (id: string) => void;
-  isLoadingServices: boolean;
+export interface CategoryStepProps {
+  categories: Category[];
+  selectedCategoryId: string;
+  onSelectCategory: (id: string) => void;
+  isLoadingCategories: boolean;
   availability: "Full-Time" | "Part-Time";
   onAvailabilityChange: (val: "Full-Time" | "Part-Time") => void;
   experience: number;
@@ -32,11 +30,11 @@ interface SkillsStepProps {
   onNext: () => void;
 }
 
-export const SkillsStep: React.FC<SkillsStepProps> = ({
-  services,
-  selectedSkillIds,
-  onToggleSkill,
-  isLoadingServices,
+export const CategoryStep: React.FC<CategoryStepProps> = ({
+  categories,
+  selectedCategoryId,
+  onSelectCategory,
+  isLoadingCategories,
   availability,
   onAvailabilityChange,
   experience,
@@ -48,12 +46,12 @@ export const SkillsStep: React.FC<SkillsStepProps> = ({
 }) => {
   return (
     <div className="space-y-6 animate-in fade-in-50 duration-200">
-      {/* 1. Services Selector */}
-      <ServiceSelector
-        services={services}
-        selectedIds={selectedSkillIds}
-        onToggleSkill={onToggleSkill}
-        isLoading={isLoadingServices}
+      {/* 1. Category Selector */}
+      <CategorySelector
+        categories={categories}
+        selectedCategoryId={selectedCategoryId}
+        onSelectCategory={onSelectCategory}
+        isLoading={isLoadingCategories}
       />
 
       {/* 2. Availability & Experience */}
@@ -150,7 +148,7 @@ export const SkillsStep: React.FC<SkillsStepProps> = ({
           onClick={onNext}
           className="w-full h-11 rounded-2xl text-sm font-semibold shadow-md shadow-primary/10 gap-2 cursor-pointer"
         >
-          Continue to Service Area
+          Continue to Coverage Area
           <ArrowRight className="size-4" />
         </Button>
       </div>

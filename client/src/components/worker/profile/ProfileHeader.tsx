@@ -18,6 +18,7 @@ interface ProfileHeaderProps {
     phone?: string;
   } | null;
   worker: {
+    category?: any;
     verificationStatus?: string;
     availability?: string;
     location?: {
@@ -36,12 +37,27 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const verificationStatus = worker?.verificationStatus || "Pending";
   const isApproved = verificationStatus === "Approved";
   const isPending = verificationStatus === "Pending";
+  const categoryName =
+    typeof worker?.category === "object" && worker?.category?.name
+      ? worker.category.name
+      : typeof worker?.category === "string"
+      ? worker.category
+      : null;
 
   return (
     <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-6 sm:p-8 shadow-xs">
       <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
+            {categoryName && (
+              <Badge
+                variant="default"
+                className="bg-primary text-primary-foreground text-xs font-semibold shadow-xs"
+              >
+                {categoryName}
+              </Badge>
+            )}
+
             <Badge
               variant="outline"
               className={`text-xs font-semibold gap-1.5 ${

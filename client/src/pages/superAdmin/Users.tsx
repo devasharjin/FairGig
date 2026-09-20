@@ -692,16 +692,24 @@ export function AdminUsers() {
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-muted-foreground">
                     <div>
-                      <span className="text-foreground font-medium">Hourly Base: </span>
-                      ₹{detailUser.workerProfile.hourlyRate || 0}/hr
+                      <span className="text-foreground font-medium">Trade Category: </span>
+                      <span className="font-semibold text-emerald-700 dark:text-emerald-300">
+                        {typeof detailUser.workerProfile.category === "object" && detailUser.workerProfile.category?.name
+                          ? detailUser.workerProfile.category.name
+                          : detailUser.workerProfile.category || "General Trade"}
+                      </span>
                     </div>
                     <div>
                       <span className="text-foreground font-medium">Rating: </span>
                       ⭐ {detailUser.workerProfile.rating || "5.0"}
                     </div>
                     <div className="col-span-2">
-                      <span className="text-foreground font-medium">Skills: </span>
-                      {detailUser.workerProfile.skills?.join(", ") || "General Services"}
+                      <span className="text-foreground font-medium">Active Services: </span>
+                      {Array.isArray(detailUser.workerProfile.skills)
+                        ? detailUser.workerProfile.skills
+                            .map((s: any) => (typeof s === "object" ? s.name : s))
+                            .join(", ") || "General Services"
+                        : "General Services"}
                     </div>
                   </div>
                 </div>

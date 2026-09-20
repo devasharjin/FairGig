@@ -25,6 +25,8 @@ export async function getProfile(req: Request, res: Response) {
   if (user.role.includes(UserRole.WORKER) || user.role.includes(UserRole.CUSTOMER)) {
     const workerDoc: any = await Worker.findOne({ userId })
       .populate("cooperativeId", "cooperativeName cooperativeAddress cooperativePhone cooperativeEmail")
+      .populate("category", "name icon slug description")
+      .populate("categories", "name icon slug description")
       .populate("skills", "name description priceType hourlyPrice metersPrice")
       .lean();
 

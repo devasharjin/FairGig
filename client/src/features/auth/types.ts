@@ -83,7 +83,11 @@ export type UserRegisterPayload = CustomerRegisterPayload;
  * Payload for POST /api/auth/register/worker (Requires Authentication)
  */
 export interface WorkerRegisterPayload {
-  skills: string[];
+  category?: string;
+  categoryId?: string;
+  categories?: string[];
+  categoryIds?: string[];
+  skills?: string[];
   cooperativeId: string;
   availability?: WorkerAvailability;
   experience: number;
@@ -128,6 +132,14 @@ export interface RefreshTokenPayload {
 // Profile & Entity Models
 // ==========================================
 
+export interface WorkerCategoryItem {
+  _id: string;
+  name: string;
+  slug?: string;
+  icon?: string;
+  description?: string;
+}
+
 export interface WorkerSkillItem {
   _id: string;
   name: string;
@@ -142,6 +154,8 @@ export interface WorkerProfile {
   _id: string;
   userId: string;
   cooperativeId: string | CooperativeProfile;
+  category?: string | WorkerCategoryItem;
+  categories?: (string | WorkerCategoryItem)[];
   skills: (string | WorkerSkillItem)[];
   availability: WorkerAvailability;
   experience: number;

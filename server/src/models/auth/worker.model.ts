@@ -27,6 +27,8 @@ export interface IVerificationDocuments {
 export interface IWorker extends Document {
   userId: Types.ObjectId;
   cooperativeId: Types.ObjectId;
+  category?: Types.ObjectId;
+  categories?: Types.ObjectId[];
   skills: Types.ObjectId[];
   availability: AvailabilityStatus;
   verificationStatus: VerificationStatus;
@@ -62,6 +64,18 @@ const WorkerSchema = new Schema<IWorker>(
       required: [true, "Cooperative ID is required"],
       index: true,
     },
+    category: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+      required: [true, "Trade category is required"],
+      index: true,
+    },
+    categories: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Category",
+      },
+    ],
     skills: [
       {
         type: Schema.Types.ObjectId,

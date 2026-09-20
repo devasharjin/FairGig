@@ -21,6 +21,14 @@ export interface CooperativeWorkerSkill {
   metersPrice?: number;
 }
 
+export interface CooperativeWorkerCategory {
+  _id: string;
+  name: string;
+  slug?: string;
+  icon?: string;
+  description?: string;
+}
+
 export interface VerificationDocument {
   url: string;
   status: VerificationStatus;
@@ -31,6 +39,8 @@ export interface CooperativeWorker {
   _id: string;
   userId: CooperativeWorkerUser;
   cooperativeId: string;
+  category?: CooperativeWorkerCategory | string;
+  categories?: (CooperativeWorkerCategory | string)[];
   skills: CooperativeWorkerSkill[];
   availability: "Full-Time" | "Part-Time";
   verificationStatus: VerificationStatus;

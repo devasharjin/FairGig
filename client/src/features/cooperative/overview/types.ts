@@ -37,7 +37,6 @@ export interface GigSummaryData {
 export interface PendingActionItemsData {
   pendingWorkersCount: number;
   pendingClaimsCount: number;
-  openTendersCount: number;
   activeEmergencyGigs: number;
 }
 

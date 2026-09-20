@@ -31,6 +31,7 @@ export async function getCooperativeMembers(req: Request, res: Response) {
     status,
     availability,
     skill,
+    category,
     page = "1",
     limit = "20",
   } = req.query;
@@ -69,6 +70,14 @@ export async function getCooperativeMembers(req: Request, res: Response) {
   if (skill && skill !== "ALL") {
     if (mongoose.Types.ObjectId.isValid(skill as string)) {
       query.skills = skill;
+    }
+  }
+
+  // Category Filter
+  if (category && category !== "ALL") {
+    if (mongoose.Types.ObjectId.isValid(category as string)) {
+      const catObjId = new mongoose.Types.ObjectId(category as string);
+      query.$or = [{ category: catObjId }, { categories: catObjId }];
     }
   }
 
@@ -131,6 +140,8 @@ export async function getCooperativeMembers(req: Request, res: Response) {
   const [workers, totalFiltered] = await Promise.all([
     Worker.find(query)
       .populate("userId", "name email phone profilePicture accountStatus createdAt")
+      .populate("category", "name icon slug description")
+      .populate("categories", "name icon slug description")
       .populate("skills", "name description category priceType hourlyPrice metersPrice")
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -212,6 +223,8 @@ export async function toggleMemberStatus(req: Request, res: Response) {
 
   const updatedWorker = await Worker.findById(worker._id)
     .populate("userId", "name email phone profilePicture accountStatus")
+    .populate("category", "name icon slug description")
+    .populate("categories", "name icon slug description")
     .populate("skills", "name description category priceType hourlyPrice metersPrice");
 
   return ok(
@@ -246,6 +259,8 @@ export async function getMemberDetails(req: Request, res: Response) {
     cooperativeId: cooperative._id,
   })
     .populate("userId", "name email phone profilePicture accountStatus createdAt")
+    .populate("category", "name icon slug description")
+    .populate("categories", "name icon slug description")
     .populate("skills", "name description category priceType hourlyPrice metersPrice")
     .lean();
 

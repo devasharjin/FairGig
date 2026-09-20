@@ -288,6 +288,7 @@ export async function getCooperativeWorkerWelfareList(req: Request, res: Respons
 
   const workers = await Worker.find({ cooperativeId: cooperative._id })
     .populate("userId", "name phone email profilePicture")
+    .populate("category", "name icon slug")
     .lean();
 
   const workerIds = workers.map((w) => w._id);
@@ -333,6 +334,7 @@ export async function getCooperativeWorkerWelfareList(req: Request, res: Respons
     return {
       workerId: w._id,
       user: w.userId,
+      category: (w.category as any)?.name || "General Trades",
       policyNumber: WelfareService.generatePolicyNumber(w._id),
       coverageStatus: "ACTIVE_PROTECTED",
       experience: w.experience,

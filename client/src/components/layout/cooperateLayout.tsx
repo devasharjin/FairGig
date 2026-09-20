@@ -62,11 +62,6 @@ const cooperativeNavGroups: SidebarGroupConfig[] = [
         to: "/cooperative/members",
         icon: Users,
       },
-      {
-        title: "Contracts & Bids",
-        to: "/cooperative/bids",
-        icon: Briefcase,
-      },
     ],
   },
 ];

@@ -86,6 +86,8 @@ export async function getCooperativeWorkers(req: Request, res: Response) {
       "userId",
       "name email phone profilePicture accountStatus createdAt"
     )
+    .populate("category", "name icon slug description")
+    .populate("categories", "name icon slug description")
     .populate(
       "skills",
       "name description category priceType hourlyPrice metersPrice"
@@ -150,6 +152,8 @@ export async function getCooperativeWorkerById(req: Request, res: Response) {
       "userId",
       "name email phone profilePicture accountStatus createdAt lastLoginAt"
     )
+    .populate("category", "name icon slug description")
+    .populate("categories", "name icon slug description")
     .populate(
       "skills",
       "name description category priceType hourlyPrice metersPrice"
@@ -228,6 +232,8 @@ export async function verifyWorker(req: Request, res: Response) {
 
     const populatedWorker = await Worker.findById(worker._id)
       .populate("userId", "name email phone profilePicture accountStatus")
+      .populate("category", "name icon slug description")
+      .populate("categories", "name icon slug description")
       .populate("skills", "name description category");
 
     return ok(
@@ -257,6 +263,8 @@ export async function verifyWorker(req: Request, res: Response) {
 
     const populatedWorker = await Worker.findById(worker._id)
       .populate("userId", "name email phone profilePicture accountStatus")
+      .populate("category", "name icon slug description")
+      .populate("categories", "name icon slug description")
       .populate("skills", "name description category");
 
     return ok(

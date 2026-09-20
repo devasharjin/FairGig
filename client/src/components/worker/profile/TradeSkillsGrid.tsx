@@ -13,29 +13,44 @@ interface TradeSkill {
 
 interface TradeSkillsGridProps {
   skills: (TradeSkill | string)[];
+  category?: any;
 }
 
-export const TradeSkillsGrid: React.FC<TradeSkillsGridProps> = ({ skills }) => {
+export const TradeSkillsGrid: React.FC<TradeSkillsGridProps> = ({ skills, category }) => {
+  const categoryName =
+    typeof category === "object" && category?.name
+      ? category.name
+      : typeof category === "string"
+      ? category
+      : null;
+
   return (
     <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="size-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
             <Wrench className="size-5" />
           </div>
           <div>
             <h3 className="text-base font-bold text-foreground">
-              Verified Trade Skills & Rate Card
+              Verified Trade Category & Rate Card
             </h3>
             <p className="text-xs text-muted-foreground">
-              Services you are authorized to fulfill on the platform
+              Authorized category and services under platform cooperative dispatch
             </p>
           </div>
         </div>
 
-        <Badge variant="secondary" className="text-xs font-semibold">
-          {skills.length} Registered {skills.length === 1 ? "Skill" : "Skills"}
-        </Badge>
+        <div className="flex items-center gap-2">
+          {categoryName && (
+            <Badge variant="default" className="text-xs font-semibold bg-primary text-primary-foreground shadow-xs">
+              {categoryName}
+            </Badge>
+          )}
+          <Badge variant="secondary" className="text-xs font-semibold">
+            {skills.length} {skills.length === 1 ? "Service" : "Services"}
+          </Badge>
+        </div>
       </div>
 
       {skills.length === 0 ? (

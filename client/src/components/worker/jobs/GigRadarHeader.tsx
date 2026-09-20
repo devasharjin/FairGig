@@ -7,12 +7,14 @@ interface GigRadarHeaderProps {
   totalAvailable: number;
   isRefetching: boolean;
   onRefresh: () => void;
+  categoryName?: string;
 }
 
 export const GigRadarHeader: React.FC<GigRadarHeaderProps> = ({
   totalAvailable,
   isRefetching,
   onRefresh,
+  categoryName,
 }) => {
   return (
     <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-6 sm:p-8 shadow-xs">
@@ -30,6 +32,15 @@ export const GigRadarHeader: React.FC<GigRadarHeaderProps> = ({
               Live Cooperative Dispatch Radar
             </Badge>
 
+            {categoryName && (
+              <Badge
+                variant="outline"
+                className="bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/30 text-xs font-semibold gap-1"
+              >
+                🎯 {categoryName} (Exclusive Trade Matching)
+              </Badge>
+            )}
+
             <Badge
               variant="outline"
               className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-xs font-semibold gap-1"
@@ -43,7 +54,7 @@ export const GigRadarHeader: React.FC<GigRadarHeaderProps> = ({
             Available Gigs
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground max-w-xl">
-            Real-time broadcast of customer requests matching your registered skills and cooperative district. Review rates, service specifications, and accept assignments instantly.
+            Real-time broadcast of customer requests matching your registered trade category and cooperative district. You will receive jobs exclusively from your selected category.
           </p>
         </div>
 

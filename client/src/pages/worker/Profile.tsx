@@ -138,7 +138,7 @@ export const WorkerProfile: React.FC = () => {
         {/* Left 2 Columns: Cooperative Affiliation & Verified Trade Skills */}
         <div className="lg:col-span-2 space-y-6">
           <CooperativeCard cooperative={cooperative} />
-          <TradeSkillsGrid skills={skills} />
+          <TradeSkillsGrid skills={skills} category={worker?.category} />
         </div>
 
         {/* Right Column: Contact, Location & Document Verification */}

@@ -14,7 +14,7 @@ import { FIXED_TRANSPORT_FEE, BillingService } from "../../services/billing.serv
 export async function getAvailableGigs(req: Request, res: Response) {
   const userId = (req.user as any)?.userId || (req.user as any)?._id;
   const worker = await Worker.findOne({ userId })
-    .select("_id skills cooperativeId")
+    .select("_id category categories skills cooperativeId")
     .lean();
 
   if (!worker) {
@@ -22,33 +22,62 @@ export async function getAvailableGigs(req: Request, res: Response) {
   }
 
   const { type } = req.query;
-  const query: Record<string, any> = {
-    status: BookingStatus.PENDING,
-    $or: [{ worker: null }, { worker: { $exists: false } }],
-  };
+
+  // If worker has registered trade category, resolve category IDs and all services under that category
+  const workerCats = [
+    ...(worker.category ? [worker.category] : []),
+    ...((worker as any).categories || []),
+  ].filter(Boolean);
+
+  if (workerCats.length === 0 && worker.skills && worker.skills.length > 0) {
+    const srvCats = await Service.find({ _id: { $in: worker.skills } }).distinct("category");
+    workerCats.push(...srvCats.filter(Boolean));
+  }
+
+  const categoryServices = workerCats.length > 0
+    ? await Service.find({ category: { $in: workerCats } }).distinct("_id")
+    : (worker.skills || []);
+
+  // Strict category isolation: only jobs belonging to this worker's trade category can be returned
+  const andConditions: any[] = [
+    { status: BookingStatus.PENDING },
+    { $or: [{ worker: null }, { worker: { $exists: false } }] },
+  ];
+
+  if (workerCats.length > 0 || categoryServices.length > 0) {
+    const categoryClauses: any[] = [];
+    if (workerCats.length > 0) {
+      categoryClauses.push({ category: { $in: workerCats } });
+    }
+    if (categoryServices.length > 0) {
+      categoryClauses.push({ service: { $in: categoryServices } });
+    }
+    andConditions.push({ $or: categoryClauses });
+  }
+
+  // Cooperative membership filter: workers only receive unassigned jobs or jobs designated for their cooperative
+  if (worker.cooperativeId) {
+    andConditions.push({
+      $or: [
+        { cooperative: worker.cooperativeId },
+        { cooperative: null },
+        { cooperative: { $exists: false } },
+      ],
+    });
+  }
 
   if (type && typeof type === "string") {
     const t = type.toLowerCase();
     if (t === "emergency") {
-      query.isEmergency = true;
+      andConditions.push({ isEmergency: true });
     } else if (t === "on_demand" || t === "ondemand") {
-      query.bookingType = BookingType.ON_DEMAND;
+      andConditions.push({ bookingType: BookingType.ON_DEMAND });
     } else if (t === "scheduled") {
-      query.bookingType = BookingType.SCHEDULED;
+      andConditions.push({ bookingType: BookingType.SCHEDULED });
     }
   }
 
-  // If worker has registered skills or cooperative, filter relevant gigs
-  if (worker.skills && worker.skills.length > 0) {
-    const baseConditions: any[] = [
-      { service: { $in: worker.skills } },
-      ...(worker.cooperativeId ? [{ cooperative: worker.cooperativeId }] : []),
-    ];
-
-    query.$or = baseConditions;
-    query.status = BookingStatus.PENDING;
-    query.worker = null;
-  }
+  const query = { $and: andConditions };
 
   // Priority sorting: EMERGENCY gigs ranked FIRST, then imminent scheduled/on-demand dates
   const gigs = await Booking.find(query)
@@ -130,7 +159,7 @@ export async function getWorkerJobById(req: Request, res: Response) {
 
 export async function acceptGig(req: Request, res: Response) {
   const userId = (req.user as any)?.userId || (req.user as any)?._id;
-  const worker = await Worker.findOne({ userId }).select("_id skills cooperativeId");
+  const worker = await Worker.findOne({ userId }).select("_id category categories skills cooperativeId");
 
   if (!worker) {
     return fail(res, "Worker profile not found", null, 404);
@@ -146,7 +175,7 @@ export async function acceptGig(req: Request, res: Response) {
     _id: id,
     status: BookingStatus.PENDING,
     $or: [{ worker: null }, { worker: { $exists: false } }],
-  });
+  }).populate("service", "category");
 
   if (!booking) {
     return fail(
@@ -154,6 +183,38 @@ export async function acceptGig(req: Request, res: Response) {
       "This gig is no longer available or has already been accepted by another worker",
       null,
       409
+    );
+  }
+
+  // Enforce trade category match: worker can only accept gigs from their selected category
+  const workerCats = [
+    ...(worker.category ? [worker.category.toString()] : []),
+    ...((worker as any).categories || []).map((c: any) => c.toString()),
+  ].filter(Boolean);
+
+  if (workerCats.length > 0) {
+    const bookingCat = (booking.category || (booking.service as any)?.category)?.toString();
+    if (bookingCat && !workerCats.includes(bookingCat)) {
+      return fail(
+        res,
+        "You can only accept jobs matching your registered trade category.",
+        null,
+        403
+      );
+    }
+  }
+
+  // Enforce cooperative isolation if booking is reserved for a specific cooperative
+  if (
+    booking.cooperative &&
+    worker.cooperativeId &&
+    booking.cooperative.toString() !== worker.cooperativeId.toString()
+  ) {
+    return fail(
+      res,
+      "This job is reserved for members of another cooperative society.",
+      null,
+      403
     );
   }
 
@@ -324,24 +385,33 @@ export async function updateJobStatus(req: Request, res: Response) {
 export async function getWorkerStats(req: Request, res: Response) {
   const userId = (req.user as any)?.userId || (req.user as any)?._id;
   const worker = await Worker.findOne({ userId })
-    .select("_id skills cooperativeId rating totalJobsCompleted verificationStatus")
+    .select("_id category categories skills cooperativeId rating totalJobsCompleted verificationStatus")
     .lean();
 
   if (!worker) {
     return fail(res, "Worker profile not found", null, 404);
   }
 
+  const workerCats = [
+    ...(worker.category ? [worker.category] : []),
+    ...((worker as any).categories || []),
+  ];
+
+  const statsMatchConditions: any[] = [];
+  if (workerCats.length > 0) {
+    statsMatchConditions.push({ category: { $in: workerCats } });
+  }
+  if (worker.skills && worker.skills.length > 0) {
+    statsMatchConditions.push({ service: { $in: worker.skills } });
+  }
+  if (worker.cooperativeId) {
+    statsMatchConditions.push({ cooperative: worker.cooperativeId });
+  }
+
   const gigFilter = {
     status: BookingStatus.PENDING,
     $or: [{ worker: null }, { worker: { $exists: false } }],
-    ...(worker.skills && worker.skills.length > 0
-      ? {
-        $or: [
-          { service: { $in: worker.skills } },
-          ...(worker.cooperativeId ? [{ cooperative: worker.cooperativeId }] : []),
-        ],
-      }
-      : {}),
+    ...(statsMatchConditions.length > 0 ? { $or: statsMatchConditions } : {}),
   };
 
   // Run all counts and earnings aggregate in parallel in 1 roundtrip
@@ -442,6 +512,8 @@ export async function updateWorkerProfile(req: Request, res: Response) {
 
   const updatedWorker = await Worker.findOne({ userId })
     .populate("cooperativeId")
+    .populate("category", "name icon description")
+    .populate("categories", "name icon description")
     .populate("skills", "name description priceType hourlyPrice metersPrice");
   const updatedUser = await User.findById(userId);
 
