@@ -23,7 +23,12 @@ import workerWelfareRoutes from './routes/worker/welfare.routes';
 import cooperativeWelfareRoutes from './routes/cooperative/welfare.routes';
 import adminWelfareRoutes from './routes/admin/welfare.routes';
 import cooperativeForecastingRoutes from './routes/cooperative/forecasting.routes';
+import cooperativeOverviewRoutes from './routes/cooperative/overview.routes';
+import cooperativeMemberRoutes from './routes/cooperative/members.routes';
+import cooperativeBidRoutes from './routes/cooperative/bids.routes';
 import adminForecastingRoutes from './routes/admin/forecasting.routes';
+import adminOverviewRoutes from './routes/admin/overview.routes';
+import adminUserRoutes from './routes/admin/user.routes';
 import workerForecastingRoutes from './routes/worker/forecasting.routes';
 import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
@@ -57,6 +62,8 @@ app.get('/health', (req: Request, res: Response) => {
 
 // API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/admin/overview', adminOverviewRoutes);
+app.use('/api/admin/users', adminUserRoutes);
 app.use('/api/admin/categories', adminCategoryRoutes);
 app.use('/api/admin/services', adminServiceRoutes);
 app.use('/api/admin/verifications', adminVerificationRoutes);
@@ -72,6 +79,9 @@ app.use('/api/worker/gigs', workerGigRoutes);
 app.use('/api/worker/welfare', workerWelfareRoutes);
 app.use('/api/worker/forecasting', workerForecastingRoutes);
 app.use('/api/cooperative', cooperativeRoutes);
+app.use('/api/cooperative/overview', cooperativeOverviewRoutes);
+app.use('/api/cooperative/members', cooperativeMemberRoutes);
+app.use('/api/cooperative/bids', cooperativeBidRoutes);
 app.use('/api/cooperative/payments', cooperativePaymentRoutes);
 app.use('/api/cooperative/welfare', cooperativeWelfareRoutes);
 app.use('/api/cooperative/forecasting', cooperativeForecastingRoutes);

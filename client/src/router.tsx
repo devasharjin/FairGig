@@ -23,8 +23,11 @@ import CooperativeRegister from "./pages/auth/CooperativeRegister";
 import CustomerHome from "./pages/customer/Home";
 import WorkerHome from "./pages/worker/Home";
 import CooperativeHome from "./pages/cooperative/Home";
+import CooperativeMembers from "./pages/cooperative/Members";
+import CooperativeBids from "./pages/cooperative/Bids";
 import WorkerVerifications from "./pages/cooperative/WorkerVerifications";
 import SuperAdminHome from "./pages/superAdmin/Home";
+import AdminUsers from "./pages/superAdmin/Users";
 import AdminServices from "./pages/superAdmin/Services";
 import AdminVerifications from "./pages/superAdmin/Verifications";
 import AdminPayments from "./pages/superAdmin/Payments";
@@ -257,11 +260,11 @@ export const router = createBrowserRouter([
                   },
                   {
                     path: "members",
-                    element: <CooperativeHome />,
+                    element: <CooperativeMembers />,
                   },
                   {
                     path: "bids",
-                    element: <CooperativeHome />,
+                    element: <CooperativeBids />,
                   },
                 ],
               },
@@ -291,7 +294,7 @@ export const router = createBrowserRouter([
                   },
                   {
                     path: "users",
-                    element: <SuperAdminHome />,
+                    element: <AdminUsers />,
                   },
                   {
                     path : "services",
