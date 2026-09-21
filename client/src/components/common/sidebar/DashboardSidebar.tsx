@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, User as UserIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 import {
   Sheet,
   SheetContent,
@@ -30,42 +29,53 @@ export const DashboardSidebar = ({
   const BrandIcon = branding.icon;
 
   const sidebarContent = (isMobile = false) => (
-    <div className="flex flex-col h-full select-none bg-[#0F2338] text-slate-200">
+    <div className="flex flex-col h-full select-none bg-card text-foreground">
       {/* Sidebar Header / Logo */}
       <div
         className={cn(
-          "h-16 flex items-center px-4 border-b border-[#1F364D] shrink-0 transition-all",
+          "h-16 flex items-center px-4 border-b border-border shrink-0 transition-all duration-300",
           isCollapsed && !isMobile ? "justify-center px-2" : "justify-between"
         )}
       >
         <Link
           to={branding.homePath}
-          className="flex items-center gap-2.5 group outline-none overflow-hidden"
+          className="flex items-center gap-3 group outline-none overflow-hidden"
           title={`${branding.title || "fairgig"} - ${branding.subtitle || ""}`}
           onClick={() => isMobile && setMobileOpen(false)}
         >
-          <div className="size-8 rounded-lg bg-teal-600 text-white flex items-center justify-center transition-all duration-200 shadow-xs shrink-0 group-hover:bg-teal-500">
-            <BrandIcon className="size-4" />
+          {/* Brand Emblem — Deep Navy with inner glow + teal icon */}
+          <div
+            className="size-9 rounded-xl shrink-0 flex items-center justify-center transition-all duration-200 group-hover:scale-[1.06]"
+            style={{
+              background: "linear-gradient(135deg, #1e3f5c 0%, #17324D 60%, #142a40 100%)",
+              boxShadow: "0 2px 10px rgba(23,50,77,0.35), inset 0 1px 0 rgba(255,255,255,0.08)",
+            }}
+          >
+            <BrandIcon className="size-[18px] text-accent" style={{ filter: "drop-shadow(0 0 4px rgba(22,140,131,0.6))" }} />
           </div>
 
           {(!isCollapsed || isMobile) && (
-            <div className="flex flex-col overflow-hidden leading-none pr-4">
+            <div className="flex flex-col overflow-hidden leading-none pr-2 gap-1">
               <div className="flex items-center gap-1.5">
-                <span className="font-bold text-base tracking-tight flex items-center">
-                  <span className="text-white">fair</span>
-                  <span className="text-teal-400 font-bold ml-0.5">gig</span>
+                <span className="font-black text-[15px] tracking-tight flex items-center leading-none">
+                  <span className="text-slate-800">fair</span>
+                  <span className="text-accent">gig</span>
                 </span>
                 {branding.badge && (
-                  <Badge
-                    variant="outline"
-                    className="text-[9px] px-1.5 py-0 font-bold uppercase tracking-wider bg-teal-500/15 text-teal-300 border-teal-400/30"
+                  <span
+                    className="text-[8px] px-1.5 py-[3px] font-extrabold uppercase tracking-[0.13em] rounded-md leading-none"
+                    style={{
+                      background: "rgba(22,140,131,0.1)",
+                      color: "#168C83",
+                      border: "1px solid rgba(22,140,131,0.22)",
+                    }}
                   >
                     {branding.badge}
-                  </Badge>
+                  </span>
                 )}
               </div>
               {branding.subtitle && (
-                <span className="text-[10px] text-slate-400 font-medium truncate mt-0.5">
+                <span className="text-[10px] text-slate-400 font-medium uppercase tracking-[0.08em] truncate leading-none">
                   {branding.subtitle}
                 </span>
               )}
@@ -75,7 +85,8 @@ export const DashboardSidebar = ({
       </div>
 
       {/* Navigation Groups List (Scrollable) */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-3 custom-scrollbar">
+      {/* Navigation Groups List (Scrollable) */}
+      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-3 select-none scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
         {groups.map((group, idx) => (
           <SidebarNavGroup
             key={group.heading || idx}
@@ -86,46 +97,52 @@ export const DashboardSidebar = ({
       </div>
 
       {/* Sidebar Footer / User Context Card */}
-      <div className="p-3 border-t border-[#1F364D] shrink-0 bg-[#0B1A2B]/60">
+      <div className="p-3 border-t border-border shrink-0 bg-muted/20 space-y-2">
+        {/* User Card */}
         <div
           className={cn(
-            "flex items-center gap-3 p-2 rounded-xl transition-colors bg-[#17324D]/60 border border-[#1F364D]/80",
+            "flex items-center gap-3 p-2 rounded-xl transition-all duration-150 bg-card hover:bg-muted/60 border border-border shadow-2xs group",
             isCollapsed && !isMobile && "justify-center p-1.5"
           )}
         >
-          <div className="size-8 rounded-full bg-teal-500/20 text-teal-300 flex items-center justify-center font-bold text-xs shrink-0 border border-teal-500/30">
-            {user?.name ? user.name.charAt(0).toUpperCase() : <UserIcon className="size-4" />}
+          {/* Avatar with status indicator */}
+          <div className="relative shrink-0">
+            <div className="size-8 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center font-bold text-xs">
+              {user?.name ? user.name.charAt(0).toUpperCase() : <UserIcon className="size-4" />}
+            </div>
+            {/* Online indicator dot */}
+            <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full bg-emerald-500 ring-2 ring-card" />
           </div>
 
           {(!isCollapsed || isMobile) && (
             <div className="flex flex-col min-w-0 flex-1">
-              <span className="text-xs font-semibold text-white truncate">
+              <span className="text-xs font-semibold text-foreground truncate group-hover:text-primary transition-colors">
                 {user?.name || "My Account"}
               </span>
-              <span className="text-[10px] text-slate-400 truncate uppercase font-medium">
-                {branding.badge || "User"}
+              <span className="text-[10px] text-muted-foreground truncate uppercase font-medium">
+                {branding.badge || "Authenticated"}
               </span>
             </div>
           )}
         </div>
 
-        {/* Desktop Collapse / Expand Toggle Button at Bottom */}
+        {/* Desktop Collapse / Expand Toggle Button */}
         {!isMobile && (
           <button
             type="button"
             onClick={toggleCollapse}
             className={cn(
-              "mt-2 w-full hidden lg:flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-all cursor-pointer",
-              isCollapsed && "justify-center px-0"
+              "w-full hidden lg:flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/70 transition-all cursor-pointer",
+              isCollapsed && "justify-center px-0 py-2"
             )}
             title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {isCollapsed ? (
-              <ChevronRight className="size-4 shrink-0" />
+              <ChevronRight className="size-4 shrink-0 transition-transform group-hover:translate-x-0.5" />
             ) : (
               <>
+                <span className="text-[11px] text-muted-foreground font-medium">Collapse menu</span>
                 <ChevronLeft className="size-4 shrink-0" />
-                <span>Collapse Sidebar</span>
               </>
             )}
           </button>
@@ -139,7 +156,7 @@ export const DashboardSidebar = ({
       {/* Desktop Sticky Sidebar */}
       <aside
         className={cn(
-          "hidden lg:flex flex-col sticky top-0 h-screen border-r border-[#1F364D] bg-[#0F2338] text-slate-200 transition-all duration-300 shrink-0 z-30",
+          "hidden lg:flex flex-col sticky top-0 h-screen border-r border-border bg-card text-foreground transition-all duration-300 shrink-0 z-30 shadow-2xs",
           isCollapsed ? "w-20" : "w-64",
           className
         )}
@@ -151,7 +168,7 @@ export const DashboardSidebar = ({
       <Sheet open={isMobileOpen} onOpenChange={setMobileOpen}>
         <SheetContent
           side="left"
-          className="p-0 w-72 sm:w-80 bg-[#0F2338] text-slate-200 border-[#1F364D] flex flex-col gap-0 outline-none"
+          className="p-0 w-72 sm:w-80 bg-card text-foreground border-r border-border flex flex-col gap-0 outline-none"
           showCloseButton={true}
         >
           <SheetHeader className="sr-only">
@@ -168,3 +185,5 @@ export const DashboardSidebar = ({
     </>
   );
 };
+
+export default DashboardSidebar;

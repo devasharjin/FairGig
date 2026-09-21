@@ -198,7 +198,7 @@ export const CooperativeVerificationModal: React.FC<CooperativeVerificationModal
         </DialogHeader>
 
         {/* Modal Body */}
-        <div className="p-6 space-y-5">
+        <div className="p-4 sm:p-5 space-y-4">
           {/* TAB 1: DETAILS */}
           {activeTab === "details" && (
             <div className="space-y-4 animate-in fade-in-50 duration-200">
@@ -278,7 +278,7 @@ export const CooperativeVerificationModal: React.FC<CooperativeVerificationModal
 
           {/* TAB 2: LOGO PREVIEW */}
           {activeTab === "logo" && (
-            <div className="space-y-3 animate-in fade-in-50 duration-200">
+            <div className="space-y-2.5 animate-in fade-in-50 duration-200">
               <div className="flex items-center justify-between">
                 <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                   <ImageIcon className="size-3.5 text-primary" />
@@ -298,18 +298,18 @@ export const CooperativeVerificationModal: React.FC<CooperativeVerificationModal
               </div>
 
               {cooperative.cooperativeLogo?.url ? (
-                <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-muted/30 border border-border/60">
+                <div className="h-[230px] sm:h-[270px] flex flex-col items-center justify-center p-3 rounded-2xl bg-muted/30 border border-border/60 overflow-hidden">
                   <img
                     src={cooperative.cooperativeLogo.url}
                     alt="Cooperative Logo Full Preview"
-                    className="max-h-72 max-w-full rounded-2xl object-contain shadow-md border border-border/80 bg-background"
+                    className="h-[170px] sm:h-[200px] w-auto max-w-full rounded-xl object-contain shadow-xs border border-border/80 bg-background"
                   />
-                  <p className="text-[11px] text-muted-foreground mt-3">
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-2 truncate max-w-full">
                     Public ID: <span className="font-mono">{cooperative.cooperativeLogo.publicId}</span>
                   </p>
                 </div>
               ) : (
-                <div className="p-8 text-center rounded-2xl bg-muted/20 border border-dashed border-border/80 text-muted-foreground text-xs">
+                <div className="h-[230px] sm:h-[270px] flex items-center justify-center rounded-2xl bg-muted/20 border border-dashed border-border/80 text-muted-foreground text-xs">
                   No logo uploaded for this society.
                 </div>
               )}
@@ -318,7 +318,7 @@ export const CooperativeVerificationModal: React.FC<CooperativeVerificationModal
 
           {/* TAB 3: CERTIFICATE PREVIEW */}
           {activeTab === "certificate" && (
-            <div className="space-y-3 animate-in fade-in-50 duration-200">
+            <div className="space-y-2.5 animate-in fade-in-50 duration-200">
               <div className="flex items-center justify-between">
                 <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                   <FileCheck className="size-3.5 text-primary" />
@@ -338,25 +338,25 @@ export const CooperativeVerificationModal: React.FC<CooperativeVerificationModal
               </div>
 
               {cooperative.verificationCertificate?.url ? (
-                <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-muted/30 border border-border/60">
+                <div className="h-[260px] sm:h-[300px] flex flex-col items-center justify-center p-3 rounded-2xl bg-muted/30 border border-border/60 overflow-hidden">
                   {isCertPdf ? (
-                    <div className="w-full text-center space-y-4 py-8">
-                      <div className="size-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto">
-                        <FileText className="size-8" />
+                    <div className="w-full text-center space-y-3 py-2">
+                      <div className="size-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mx-auto">
+                        <FileText className="size-6" />
                       </div>
                       <div>
                         <p className="text-sm font-bold text-foreground">
                           PDF Certificate Attached
                         </p>
-                        <p className="text-xs text-muted-foreground mt-1 max-w-md mx-auto">
-                          The cooperative uploaded a PDF registration document. Click below to inspect or download the official verification certificate in a new tab.
+                        <p className="text-xs text-muted-foreground mt-0.5 max-w-md mx-auto">
+                          Click below to inspect or download the official verification certificate in a new tab.
                         </p>
                       </div>
                       <a
                         href={cooperative.verificationCertificate.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 transition-all"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 transition-all"
                       >
                         <ExternalLink className="size-3.5" />
                         View Official PDF Document
@@ -366,15 +366,15 @@ export const CooperativeVerificationModal: React.FC<CooperativeVerificationModal
                     <img
                       src={cooperative.verificationCertificate.url}
                       alt="Certificate Preview"
-                      className="max-h-96 max-w-full rounded-2xl object-contain shadow-md border border-border/80 bg-background"
+                      className="h-[200px] sm:h-[240px] w-auto max-w-full rounded-xl object-contain shadow-xs border border-border/80 bg-background"
                     />
                   )}
-                  <p className="text-[11px] text-muted-foreground mt-3">
+                  <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-2 truncate max-w-full">
                     Public ID: <span className="font-mono">{cooperative.verificationCertificate.publicId}</span>
                   </p>
                 </div>
               ) : (
-                <div className="p-8 text-center rounded-2xl bg-muted/20 border border-dashed border-border/80 text-muted-foreground text-xs">
+                <div className="h-[260px] sm:h-[300px] flex items-center justify-center rounded-2xl bg-muted/20 border border-dashed border-border/80 text-muted-foreground text-xs">
                   No verification certificate uploaded.
                 </div>
               )}

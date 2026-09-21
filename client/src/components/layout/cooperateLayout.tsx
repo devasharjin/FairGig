@@ -20,6 +20,7 @@ const cooperativeBranding: PortalBrandingConfig = {
   badge: "SOCIETY",
   icon: Building2,
   homePath: "/cooperative",
+  portalTheme: "cooperative",
 };
 
 const cooperativeNavGroups: SidebarGroupConfig[] = [

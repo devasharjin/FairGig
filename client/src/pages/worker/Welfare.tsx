@@ -181,126 +181,126 @@ export const WorkerWelfare = () => {
       </div>
 
       {/* Coverage Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3">
         <Card className="rounded-xl border-border/70 hover:border-primary/40 transition">
-          <CardHeader className="p-4 pb-1">
-            <CardDescription className="text-[11px] font-semibold flex items-center justify-between">
-              <span>Personal Accident</span>
-              <ShieldCheck className="size-3.5 text-primary" />
+          <CardHeader className="p-3 sm:p-4 pb-1">
+            <CardDescription className="text-[11px] font-semibold flex items-center justify-between gap-1">
+              <span className="truncate">Personal Accident</span>
+              <ShieldCheck className="size-3.5 text-primary shrink-0" />
             </CardDescription>
-            <CardTitle className="text-lg font-extrabold text-foreground">
+            <CardTitle className="text-base sm:text-lg font-extrabold text-foreground">
               ₹{(overview?.policy?.coverage?.accidentalInjuryMax || 500000).toLocaleString("en-IN")}
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 pt-1">
-            <p className="text-[10px] text-muted-foreground">On-duty accidental injury, fracture, or disability cover</p>
+          <CardContent className="p-3 sm:p-4 pt-1">
+            <p className="text-[10px] text-muted-foreground leading-snug">On-duty accidental injury, fracture, or disability cover</p>
           </CardContent>
         </Card>
 
         <Card className="rounded-xl border-border/70 hover:border-primary/40 transition">
-          <CardHeader className="p-4 pb-1">
-            <CardDescription className="text-[11px] font-semibold flex items-center justify-between">
-              <span>Hospitalization</span>
-              <Stethoscope className="size-3.5 text-rose-500" />
+          <CardHeader className="p-3 sm:p-4 pb-1">
+            <CardDescription className="text-[11px] font-semibold flex items-center justify-between gap-1">
+              <span className="truncate">Hospitalization</span>
+              <Stethoscope className="size-3.5 text-rose-500 shrink-0" />
             </CardDescription>
-            <CardTitle className="text-lg font-extrabold text-foreground">
+            <CardTitle className="text-base sm:text-lg font-extrabold text-foreground">
               ₹{(overview?.policy?.coverage?.hospitalizationMax || 200000).toLocaleString("en-IN")}
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 pt-1">
-            <p className="text-[10px] text-muted-foreground">Cashless inpatient medical care and emergency surgery</p>
+          <CardContent className="p-3 sm:p-4 pt-1">
+            <p className="text-[10px] text-muted-foreground leading-snug">Cashless inpatient medical care and emergency surgery</p>
           </CardContent>
         </Card>
 
         <Card className="rounded-xl border-border/70 hover:border-primary/40 transition">
-          <CardHeader className="p-4 pb-1">
-            <CardDescription className="text-[11px] font-semibold flex items-center justify-between">
-              <span>Distress Relief</span>
-              <HeartHandshake className="size-3.5 text-accent" />
+          <CardHeader className="p-3 sm:p-4 pb-1">
+            <CardDescription className="text-[11px] font-semibold flex items-center justify-between gap-1">
+              <span className="truncate">Distress Relief</span>
+              <HeartHandshake className="size-3.5 text-accent shrink-0" />
             </CardDescription>
-            <CardTitle className="text-lg font-extrabold text-foreground">
+            <CardTitle className="text-base sm:text-lg font-extrabold text-foreground">
               ₹{(overview?.policy?.coverage?.emergencyHardshipMax || 25000).toLocaleString("en-IN")}
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 pt-1">
-            <p className="text-[10px] text-muted-foreground">Immediate 24-hr crisis stipend for family distress</p>
+          <CardContent className="p-3 sm:p-4 pt-1">
+            <p className="text-[10px] text-muted-foreground leading-snug">Immediate 24-hr crisis stipend for family distress</p>
           </CardContent>
         </Card>
 
         <Card className="rounded-xl border-border/70 hover:border-primary/40 transition">
-          <CardHeader className="p-4 pb-1">
-            <CardDescription className="text-[11px] font-semibold flex items-center justify-between">
-              <span>Tool Protection</span>
-              <Wrench className="size-3.5 text-primary" />
+          <CardHeader className="p-3 sm:p-4 pb-1">
+            <CardDescription className="text-[11px] font-semibold flex items-center justify-between gap-1">
+              <span className="truncate">Tool Protection</span>
+              <Wrench className="size-3.5 text-primary shrink-0" />
             </CardDescription>
-            <CardTitle className="text-lg font-extrabold text-foreground">
+            <CardTitle className="text-base sm:text-lg font-extrabold text-foreground">
               ₹{(overview?.policy?.coverage?.toolEquipmentLossMax || 15000).toLocaleString("en-IN")}
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 pt-1">
-            <p className="text-[10px] text-muted-foreground">Reimbursement for stolen or damaged trade equipment</p>
+          <CardContent className="p-3 sm:p-4 pt-1">
+            <p className="text-[10px] text-muted-foreground leading-snug">Reimbursement for stolen or damaged trade equipment</p>
           </CardContent>
         </Card>
 
-        <Card className="rounded-xl border-border/70 hover:border-primary/40 transition">
-          <CardHeader className="p-4 pb-1">
-            <CardDescription className="text-[11px] font-semibold flex items-center justify-between">
-              <span>Annual Health</span>
-              <Sparkles className="size-3.5 text-emerald-500" />
+        <Card className="rounded-xl border-border/70 hover:border-primary/40 transition col-span-2 lg:col-span-1">
+          <CardHeader className="p-3 sm:p-4 pb-1">
+            <CardDescription className="text-[11px] font-semibold flex items-center justify-between gap-1">
+              <span className="truncate">Annual Health</span>
+              <Sparkles className="size-3.5 text-emerald-500 shrink-0" />
             </CardDescription>
-            <CardTitle className="text-lg font-extrabold text-foreground">
+            <CardTitle className="text-base sm:text-lg font-extrabold text-foreground">
               ₹{(overview?.policy?.coverage?.healthCheckupAnnualMax || 3000).toLocaleString("en-IN")}
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 pt-1">
-            <p className="text-[10px] text-muted-foreground">Full annual preventative diagnostic checkup allowance</p>
+          <CardContent className="p-3 sm:p-4 pt-1">
+            <p className="text-[10px] text-muted-foreground leading-snug">Full annual preventative diagnostic checkup allowance</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Welfare Accrual & Activity Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="p-5 rounded-xl bg-card border border-border/80 flex items-center gap-4">
-          <div className="size-12 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-            <IndianRupee className="size-6" />
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-4">
+        <div className="p-3.5 sm:p-5 rounded-xl bg-card border border-border/80 flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-4">
+          <div className="size-9 sm:size-12 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+            <IndianRupee className="size-4.5 sm:size-6" />
           </div>
-          <div>
-            <div className="text-xs text-muted-foreground font-semibold">Your Accrued Insurance Pool Share</div>
-            <div className="text-2xl font-black text-foreground">
+          <div className="min-w-0">
+            <div className="text-[11px] sm:text-xs text-muted-foreground font-semibold leading-tight">Your Accrued Insurance Pool Share</div>
+            <div className="text-lg sm:text-2xl font-black text-foreground mt-0.5">
               ₹{(overview?.contributions?.totalInsuranceAccrued || 0).toLocaleString("en-IN")}
             </div>
-            <div className="text-[11px] text-muted-foreground mt-0.5">
+            <div className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-tight">
               Across {overview?.contributions?.coveredJobsCompleted || 0} completed bookings
             </div>
           </div>
         </div>
 
-        <div className="p-5 rounded-xl bg-card border border-border/80 flex items-center gap-4">
-          <div className="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-            <FileText className="size-6" />
+        <div className="p-3.5 sm:p-5 rounded-xl bg-card border border-border/80 flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-4">
+          <div className="size-9 sm:size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+            <FileText className="size-4.5 sm:size-6" />
           </div>
-          <div>
-            <div className="text-xs text-muted-foreground font-semibold">Active Claims Tracked</div>
-            <div className="text-2xl font-black text-foreground">
+          <div className="min-w-0">
+            <div className="text-[11px] sm:text-xs text-muted-foreground font-semibold leading-tight">Active Claims Tracked</div>
+            <div className="text-lg sm:text-2xl font-black text-foreground mt-0.5 flex items-baseline gap-1">
               {overview?.claimsOverview?.pendingClaimsCount || 0}
-              <span className="text-xs font-normal text-muted-foreground ml-1">in review</span>
+              <span className="text-[10px] sm:text-xs font-normal text-muted-foreground">in review</span>
             </div>
-            <div className="text-[11px] text-muted-foreground mt-0.5">
+            <div className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-tight">
               {overview?.claimsOverview?.totalClaimsCount || 0} total claims filed to date
             </div>
           </div>
         </div>
 
-        <div className="p-5 rounded-xl bg-card border border-border/80 flex items-center gap-4">
-          <div className="size-12 rounded-lg bg-accent/10 text-accent flex items-center justify-center shrink-0">
-            <Award className="size-6" />
+        <div className="p-3.5 sm:p-5 rounded-xl bg-card border border-border/80 flex flex-row items-center gap-3 sm:gap-4 col-span-2 md:col-span-1">
+          <div className="size-10 sm:size-12 rounded-lg bg-accent/10 text-accent flex items-center justify-center shrink-0">
+            <Award className="size-5 sm:size-6" />
           </div>
-          <div>
-            <div className="text-xs text-muted-foreground font-semibold">Total Benefits Disbursed</div>
-            <div className="text-2xl font-black text-foreground">
+          <div className="min-w-0">
+            <div className="text-[11px] sm:text-xs text-muted-foreground font-semibold leading-tight">Total Benefits Disbursed</div>
+            <div className="text-lg sm:text-2xl font-black text-foreground mt-0.5">
               ₹{(overview?.claimsOverview?.totalBenefitsReceived || 0).toLocaleString("en-IN")}
             </div>
-            <div className="text-[11px] text-muted-foreground mt-0.5">
+            <div className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 leading-tight">
               Directly deposited to your account
             </div>
           </div>

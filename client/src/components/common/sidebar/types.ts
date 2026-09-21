@@ -21,4 +21,5 @@ export interface PortalBrandingConfig {
   badge?: string;
   icon: LucideIcon;
   homePath: string;
+  portalTheme?: "worker" | "cooperative" | "superadmin";
 }

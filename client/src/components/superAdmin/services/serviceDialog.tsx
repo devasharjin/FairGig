@@ -19,14 +19,10 @@ import {
 import type { Category, Service } from "@/features/admin/services/types";
 import {
   Briefcase,
-  Clock,
   Coins,
   IndianRupee,
   Loader2,
-  Percent,
-  ShieldCheck,
   Truck,
-  Building2,
 } from "lucide-react";
 
 interface ServiceDialogProps {
@@ -226,17 +222,17 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl rounded-3xl p-6 border border-border/80 shadow-2xl bg-card max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="max-w-2xl sm:max-w-2xl rounded-2xl p-4 sm:p-5 border border-border/80 shadow-2xl bg-card overflow-hidden">
+        <DialogHeader className="pb-1">
           <div className="flex items-center gap-3">
-            <div className="flex size-10 items-center justify-center rounded-2xl bg-primary/10 text-primary shrink-0">
-              <Briefcase className="size-5" />
+            <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
+              <Briefcase className="size-4.5" />
             </div>
             <div>
-              <DialogTitle className="text-lg font-bold text-foreground">
+              <DialogTitle className="text-base font-bold text-foreground">
                 {isEditing ? "Edit Service & Pricing Model" : "Add New Gig Service"}
               </DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+              <DialogDescription className="text-xs text-muted-foreground line-clamp-1">
                 {isEditing
                   ? "Update hourly rate tiers, transport fee benchmark, and salary deductions."
                   : "Define a standardized gig service with hourly ceiling rates and cooperative distributions."}
@@ -245,183 +241,140 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
           </div>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 pt-2">
-          {/* Service Name */}
-          <div className="space-y-1.5">
-            <Label htmlFor="service-name" className="text-xs font-semibold text-foreground">
-              Service Name <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="service-name"
-              placeholder="e.g. Ceiling Fan Repair & Electrician"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              disabled={isPending}
-              className={`h-10 text-sm ${errors.name ? "border-destructive focus-visible:ring-destructive/30" : ""}`}
-            />
-            {errors.name && (
-              <p className="text-[11px] font-medium text-destructive">{errors.name}</p>
-            )}
-          </div>
-
-          {/* Category Selector */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="service-category" className="text-xs font-semibold text-foreground">
-                Category <span className="text-destructive">*</span>
+        <form onSubmit={handleSubmit} className="space-y-3 pt-1">
+          {/* Service Name & Category Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label htmlFor="service-name" className="text-xs font-semibold text-foreground">
+                Service Name <span className="text-destructive">*</span>
               </Label>
-              {categories.length === 0 && !isLoadingCategories && (
-                <span className="text-[11px] text-amber-500 font-medium">
-                  No categories found. Please create one first!
-                </span>
+              <Input
+                id="service-name"
+                placeholder="e.g. Ceiling Fan Repair & Electrician"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                disabled={isPending}
+                className={`h-9 text-xs ${errors.name ? "border-destructive focus-visible:ring-destructive/30" : ""}`}
+              />
+              {errors.name && (
+                <p className="text-[11px] font-medium text-destructive">{errors.name}</p>
               )}
             </div>
 
-            <select
-              id="service-category"
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              disabled={isPending || isLoadingCategories}
-              className={`w-full h-10 px-3 rounded-2xl border bg-input/20 text-xs sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition cursor-pointer ${
-                errors.category ? "border-destructive ring-destructive/30" : "border-input"
-              }`}
-            >
-              <option value="" disabled className="bg-popover text-muted-foreground">
-                {isLoadingCategories ? "Loading categories..." : "Select parent category..."}
-              </option>
-              {categories.map((cat) => (
-                <option key={cat._id} value={cat._id} className="bg-popover text-foreground">
-                  {cat.name} {!cat.isActive ? "(Inactive)" : ""}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="service-category" className="text-xs font-semibold text-foreground">
+                  Category <span className="text-destructive">*</span>
+                </Label>
+                {categories.length === 0 && !isLoadingCategories && (
+                  <span className="text-[10px] text-amber-500 font-medium">
+                    No categories found
+                  </span>
+                )}
+              </div>
+              <select
+                id="service-category"
+                value={categoryId}
+                onChange={(e) => setCategoryId(e.target.value)}
+                disabled={isPending || isLoadingCategories}
+                className={`w-full h-9 px-3 rounded-lg border bg-input/20 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition cursor-pointer ${
+                  errors.category ? "border-destructive ring-destructive/30" : "border-input"
+                }`}
+              >
+                <option value="" disabled className="bg-popover text-muted-foreground">
+                  {isLoadingCategories ? "Loading categories..." : "Select parent category..."}
                 </option>
-              ))}
-            </select>
-            {errors.category && (
-              <p className="text-[11px] font-medium text-destructive">{errors.category}</p>
-            )}
+                {categories.map((cat) => (
+                  <option key={cat._id} value={cat._id} className="bg-popover text-foreground">
+                    {cat.name} {!cat.isActive ? "(Inactive)" : ""}
+                  </option>
+                ))}
+              </select>
+              {errors.category && (
+                <p className="text-[11px] font-medium text-destructive">{errors.category}</p>
+              )}
+            </div>
           </div>
 
-          {/* Service Pricing Architecture Card */}
-          <div className="rounded-2xl border border-border/80 bg-muted/20 p-4 space-y-3.5">
+          {/* Service Pricing & Distribution Card */}
+          <div className="rounded-xl border border-border/80 bg-muted/20 p-3 sm:p-3.5 space-y-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
-                <Coins className="size-4 text-primary" />
+                <Coins className="size-3.5 text-primary" />
                 <span className="text-xs font-bold text-foreground">
-                  Service Pricing & Rates (Hourly Tiered)
+                  Rates & Salary Distribution
                 </span>
               </div>
-              <Badge variant="outline" className="text-[10px] bg-primary/10 border-primary/30 text-primary">
-                Ceiling Billing Rule
-              </Badge>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-muted-foreground hidden sm:inline">
+                  Ceiling Hourly Tiers
+                </span>
+                <Badge variant="outline" className="text-[10px] bg-primary/10 border-primary/30 text-primary py-0 px-1.5">
+                  Standardized
+                </Badge>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               {/* First Hour Rate */}
               <div className="space-y-1">
-                <Label htmlFor="first-hour-rate" className="text-xs font-semibold text-foreground flex items-center justify-between">
-                  <span>First Hour Rate (₹) <span className="text-destructive">*</span></span>
-                  <span className="text-[10px] text-muted-foreground font-normal">≤ 60 mins</span>
+                <Label htmlFor="first-hour-rate" className="text-[11px] font-semibold text-foreground flex items-center justify-between">
+                  <span>First Hr (₹) <span className="text-destructive">*</span></span>
+                  <span className="text-[10px] text-muted-foreground font-normal">≤ 60m</span>
                 </Label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
-                    <IndianRupee className="size-3.5" />
+                  <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-muted-foreground">
+                    <IndianRupee className="size-3" />
                   </div>
                   <Input
                     id="first-hour-rate"
                     type="number"
                     min="0"
                     step="1"
-                    placeholder="e.g. 300"
+                    placeholder="300"
                     value={firstHourRate}
                     onChange={(e) => setFirstHourRate(e.target.value)}
                     disabled={isPending}
-                    className={`pl-8 h-10 text-xs sm:text-sm ${errors.firstHourRate ? "border-destructive" : ""}`}
+                    className={`pl-7 h-8 text-xs font-mono font-bold ${errors.firstHourRate ? "border-destructive" : ""}`}
                   />
                 </div>
                 {errors.firstHourRate && (
-                  <p className="text-[11px] font-medium text-destructive">{errors.firstHourRate}</p>
+                  <p className="text-[10px] font-medium text-destructive">{errors.firstHourRate}</p>
                 )}
               </div>
 
               {/* Additional Hour Rate */}
               <div className="space-y-1">
-                <Label htmlFor="addl-hour-rate" className="text-xs font-semibold text-foreground flex items-center justify-between">
-                  <span>Additional Hour Rate (₹) <span className="text-destructive">*</span></span>
-                  <span className="text-[10px] text-muted-foreground font-normal">Per +60 mins</span>
+                <Label htmlFor="addl-hour-rate" className="text-[11px] font-semibold text-foreground flex items-center justify-between">
+                  <span>Add'l Hr (₹) <span className="text-destructive">*</span></span>
+                  <span className="text-[10px] text-muted-foreground font-normal">+60m</span>
                 </Label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
-                    <IndianRupee className="size-3.5" />
+                  <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-muted-foreground">
+                    <IndianRupee className="size-3" />
                   </div>
                   <Input
                     id="addl-hour-rate"
                     type="number"
                     min="0"
                     step="1"
-                    placeholder="e.g. 150"
+                    placeholder="150"
                     value={additionalHourRate}
                     onChange={(e) => setAdditionalHourRate(e.target.value)}
                     disabled={isPending}
-                    className={`pl-8 h-10 text-xs sm:text-sm ${errors.additionalHourRate ? "border-destructive" : ""}`}
+                    className={`pl-7 h-8 text-xs font-mono font-bold ${errors.additionalHourRate ? "border-destructive" : ""}`}
                   />
                 </div>
                 {errors.additionalHourRate && (
-                  <p className="text-[11px] font-medium text-destructive">{errors.additionalHourRate}</p>
+                  <p className="text-[10px] font-medium text-destructive">{errors.additionalHourRate}</p>
                 )}
               </div>
-            </div>
 
-            {/* Transport Fee (Centrally Fixed) */}
-            <div className="space-y-1 pt-1">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="transport-fee" className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                  <Truck className="size-3.5 text-primary" />
-                  Transport Fee (₹)
-                </Label>
-                <Badge variant="secondary" className="text-[10px] py-0 px-2 font-medium">
-                  Fixed Centrally (Non-editable)
-                </Badge>
-              </div>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
-                  <IndianRupee className="size-3.5" />
-                </div>
-                <Input
-                  id="transport-fee"
-                  type="number"
-                  value="30"
-                  disabled
-                  className="pl-8 h-10 text-xs sm:text-sm bg-muted/60 text-muted-foreground cursor-not-allowed font-bold"
-                />
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-[11px] text-muted-foreground font-medium">
-                  ₹30 flat per service dispatch
-                </div>
-              </div>
-              <p className="text-[11px] text-muted-foreground">
-                Added directly to customer invoice. Kept strictly separate from worker gross service deductions.
-              </p>
-            </div>
-          </div>
-
-          {/* Salary & Financial Distribution Card */}
-          <div className="rounded-2xl border border-border/80 bg-muted/20 p-4 space-y-3.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <Percent className="size-4 text-emerald-500" />
-                <span className="text-xs font-bold text-foreground">
-                  Worker Salary & Financial Distribution (%)
-                </span>
-              </div>
-              <span className="text-[11px] text-muted-foreground font-medium">
-                Deductions from Gross Service Amount
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* Cooperative Admin Share */}
+              {/* Cooperative Share */}
               <div className="space-y-1">
-                <Label htmlFor="coop-share" className="text-xs font-semibold text-foreground flex items-center gap-1">
-                  <Building2 className="size-3 text-purple-500" />
-                  Cooperative Admin Share (%) <span className="text-destructive">*</span>
+                <Label htmlFor="coop-share" className="text-[11px] font-semibold text-foreground flex items-center justify-between">
+                  <span>Coop (%) <span className="text-destructive">*</span></span>
+                  <span className="text-[10px] text-purple-600 dark:text-purple-400 font-normal">Admin</span>
                 </Label>
                 <div className="relative">
                   <Input
@@ -430,26 +383,26 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
                     min="0"
                     max="100"
                     step="0.5"
-                    placeholder="e.g. 10"
+                    placeholder="10"
                     value={cooperativeShare}
                     onChange={(e) => setCooperativeShare(e.target.value)}
                     disabled={isPending}
-                    className={`h-10 text-xs sm:text-sm pr-7 ${errors.cooperativeShare ? "border-destructive" : ""}`}
+                    className={`h-8 text-xs font-mono font-bold pr-6 ${errors.cooperativeShare ? "border-destructive" : ""}`}
                   />
-                  <div className="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none text-muted-foreground font-bold text-xs">
+                  <div className="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none text-muted-foreground font-bold text-xs">
                     %
                   </div>
                 </div>
                 {errors.cooperativeShare && (
-                  <p className="text-[11px] font-medium text-destructive">{errors.cooperativeShare}</p>
+                  <p className="text-[10px] font-medium text-destructive">{errors.cooperativeShare}</p>
                 )}
               </div>
 
               {/* Insurance Share */}
               <div className="space-y-1">
-                <Label htmlFor="ins-share" className="text-xs font-semibold text-foreground flex items-center gap-1">
-                  <ShieldCheck className="size-3 text-blue-500" />
-                  Insurance Fund Share (%) <span className="text-destructive">*</span>
+                <Label htmlFor="ins-share" className="text-[11px] font-semibold text-foreground flex items-center justify-between">
+                  <span>Insurance (%) <span className="text-destructive">*</span></span>
+                  <span className="text-[10px] text-blue-600 dark:text-blue-400 font-normal">Pool</span>
                 </Label>
                 <div className="relative">
                   <Input
@@ -458,18 +411,18 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
                     min="0"
                     max="100"
                     step="0.5"
-                    placeholder="e.g. 5"
+                    placeholder="5"
                     value={insuranceShare}
                     onChange={(e) => setInsuranceShare(e.target.value)}
                     disabled={isPending}
-                    className={`h-10 text-xs sm:text-sm pr-7 ${errors.insuranceShare ? "border-destructive" : ""}`}
+                    className={`h-8 text-xs font-mono font-bold pr-6 ${errors.insuranceShare ? "border-destructive" : ""}`}
                   />
-                  <div className="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none text-muted-foreground font-bold text-xs">
+                  <div className="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none text-muted-foreground font-bold text-xs">
                     %
                   </div>
                 </div>
                 {errors.insuranceShare && (
-                  <p className="text-[11px] font-medium text-destructive">{errors.insuranceShare}</p>
+                  <p className="text-[10px] font-medium text-destructive">{errors.insuranceShare}</p>
                 )}
               </div>
             </div>
@@ -478,27 +431,31 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
               <p className="text-[11px] font-medium text-destructive">{errors.combinedShares}</p>
             )}
 
-            {/* Visual allocation pill */}
-            <div className="p-2.5 rounded-xl bg-card border border-border/70 flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">Payout Allocation:</span>
-              <div className="flex items-center gap-2 font-semibold">
-                <span className="text-emerald-600 dark:text-emerald-400">
-                  Worker: {workerPercent.toFixed(1)}%
+            {/* Visual allocation pill & transport benchmark */}
+            <div className="py-1.5 px-2.5 rounded-lg bg-card border border-border/70 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-muted-foreground font-medium text-[11px]">Payout Split:</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400 text-[11px]">
+                  Worker {workerPercent.toFixed(1)}%
                 </span>
-                <span>•</span>
-                <span className="text-purple-600 dark:text-purple-400">
-                  Coop: {numCoop}%
+                <span className="text-muted-foreground text-[10px]">•</span>
+                <span className="font-bold text-purple-600 dark:text-purple-400 text-[11px]">
+                  Coop {numCoop}%
                 </span>
-                <span>•</span>
-                <span className="text-blue-600 dark:text-blue-400">
-                  Insurance: {numIns}%
+                <span className="text-muted-foreground text-[10px]">•</span>
+                <span className="font-bold text-blue-600 dark:text-blue-400 text-[11px]">
+                  Insurance {numIns}%
                 </span>
+              </div>
+              <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                <Truck className="size-3 text-primary shrink-0" />
+                <span>₹30 transport fee (flat benchmark)</span>
               </div>
             </div>
           </div>
 
           {/* Description */}
-          <div className="space-y-1.5">
+          <div className="space-y-1">
             <div className="flex items-center justify-between">
               <Label htmlFor="service-desc" className="text-xs font-semibold text-foreground">
                 Service Scope & Description <span className="text-destructive">*</span>
@@ -509,12 +466,12 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
             </div>
             <textarea
               id="service-desc"
-              rows={3}
+              rows={2}
               placeholder="Provide a clear description of what this service entails, scope of work, and standard expectations..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               disabled={isPending}
-              className={`w-full rounded-2xl border bg-input/20 p-3 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 outline-none resize-none transition ${
+              className={`w-full rounded-xl border bg-input/20 p-2.5 text-xs text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[2px] focus-visible:ring-ring/50 outline-none resize-none transition h-14 ${
                 errors.description ? "border-destructive" : "border-input"
               }`}
             />
@@ -523,20 +480,20 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
             )}
           </div>
 
-          <DialogFooter className="pt-2">
+          <DialogFooter className="pt-1">
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={isPending}
-              className="rounded-xl text-xs"
+              className="rounded-lg text-xs h-8 sm:h-9"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isPending}
-              className="rounded-xl text-xs font-semibold"
+              className="rounded-lg text-xs font-semibold h-8 sm:h-9"
             >
               {isPending && <Loader2 className="mr-1.5 size-3.5 animate-spin" />}
               {isEditing ? "Save Service" : "Add Service"}

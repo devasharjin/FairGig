@@ -96,15 +96,15 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-2xl sm:max-w-3xl max-h-[90vh] overflow-y-auto p-0 gap-0 rounded-xl border-border/80 bg-card shadow-2xl">
         {/* Header */}
-        <div className="p-5 sm:p-6 border-b border-border/60 bg-muted/20">
+        <div className="p-4 sm:p-5 border-b border-border/60 bg-muted/20">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="size-11 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-base shrink-0">
+              <div className="size-10 sm:size-11 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-base shrink-0">
                 {user?.name?.[0]?.toUpperCase() || "W"}
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-bold text-foreground">
+                  <h3 className="text-base sm:text-lg font-bold text-foreground">
                     {user?.name || "Worker Applicant"}
                   </h3>
                   <Badge
@@ -135,18 +135,18 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
+              className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors cursor-pointer"
             >
               <X className="size-4" />
             </button>
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex items-center gap-2 mt-4">
+          <div className="flex items-center gap-2 mt-3.5">
             <button
               type="button"
               onClick={() => setActiveTab("details")}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                 activeTab === "details"
                   ? "bg-card text-foreground shadow-xs border border-border/80"
                   : "text-muted-foreground hover:text-foreground"
@@ -157,7 +157,7 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
             <button
               type="button"
               onClick={() => setActiveTab("documents")}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                 activeTab === "documents"
                   ? "bg-card text-foreground shadow-xs border border-border/80"
                   : "text-muted-foreground hover:text-foreground"
@@ -169,7 +169,7 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
         </div>
 
         {/* Modal Content */}
-        <div className="p-5 sm:p-6 space-y-5">
+        <div className="p-4 sm:p-5 space-y-4">
           {activeTab === "details" ? (
             <div className="space-y-4">
               {/* Contact Information */}
@@ -272,9 +272,9 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
             </div>
           ) : (
             /* Documents Tab */
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* Document sub-tabs */}
-              <div className="flex items-center gap-2 border-b border-border/60 pb-3">
+              <div className="flex items-center gap-2 border-b border-border/60 pb-2.5">
                 <button
                   type="button"
                   onClick={() => setActiveDocTab("identity")}
@@ -304,7 +304,7 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
 
               {/* Document Display / Preview */}
               {currentDoc?.url ? (
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">
                       Status:{" "}
@@ -320,11 +320,11 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
                     </a>
                   </div>
 
-                  <div className="rounded-2xl border border-border/80 bg-muted/10 p-2 overflow-hidden flex items-center justify-center min-h-[260px] max-h-[380px]">
+                  <div className="rounded-2xl border border-border/80 bg-muted/10 p-2 overflow-hidden flex items-center justify-center h-[240px] sm:h-[280px]">
                     {currentDoc.url.includes(".pdf") ||
                     currentDoc.url.startsWith("data:application/pdf") ? (
-                      <div className="flex flex-col items-center justify-center gap-3 py-10">
-                        <FileText className="size-16 text-primary/60" />
+                      <div className="flex flex-col items-center justify-center gap-2.5 py-4">
+                        <FileText className="size-12 text-primary/60" />
                         <p className="text-xs font-medium text-foreground">
                           PDF Document Attached
                         </p>
@@ -332,7 +332,7 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
                           href={currentDoc.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold flex items-center gap-1.5 shadow-sm"
+                          className="px-3.5 py-1.5 rounded-xl bg-primary text-primary-foreground text-xs font-semibold flex items-center gap-1.5 shadow-xs"
                         >
                           View PDF Document <ExternalLink className="size-3.5" />
                         </a>
@@ -341,13 +341,13 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
                       <img
                         src={currentDoc.url}
                         alt="Verification Document"
-                        className="max-h-[360px] w-auto max-w-full rounded-xl object-contain shadow-sm border"
+                        className="h-[210px] sm:h-[250px] w-auto max-w-full rounded-xl object-contain shadow-xs border bg-background"
                       />
                     )}
                   </div>
                 </div>
               ) : (
-                <div className="py-12 text-center text-xs text-muted-foreground">
+                <div className="h-[240px] sm:h-[280px] flex items-center justify-center text-xs text-muted-foreground border border-dashed border-border/80 rounded-2xl">
                   No document uploaded for this section.
                 </div>
               )}
@@ -372,7 +372,7 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 sm:p-5 border-t border-border/60 bg-muted/10 flex flex-wrap items-center justify-between gap-3">
+        <div className="p-3.5 sm:p-4 border-t border-border/60 bg-muted/10 flex flex-wrap items-center justify-between gap-3">
           <Button
             type="button"
             variant="outline"

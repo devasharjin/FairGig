@@ -63,15 +63,15 @@
     --radius: 0.5rem;
 
     /* ═══════════════════════════════════════
-       ENTERPRISE DASHBOARD SIDEBAR
+       ENTERPRISE DASHBOARD SIDEBAR (LIGHT THEME)
        ═══════════════════════════════════════ */
-    --sidebar: #0F2338;
-    --sidebar-foreground: #F1F5F9;
-    --sidebar-primary: #168C83;
+    --sidebar: #FFFFFF;
+    --sidebar-foreground: #172B3A;
+    --sidebar-primary: #17324D;
     --sidebar-primary-foreground: #FFFFFF;
-    --sidebar-accent: #17324D;
+    --sidebar-accent: #168C83;
     --sidebar-accent-foreground: #FFFFFF;
-    --sidebar-border: #1F364D;
+    --sidebar-border: #E2E8F0;
     --sidebar-ring: #168C83;
 }
 
@@ -239,13 +239,16 @@
     width: 6px;
     height: 6px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
     background: rgba(100, 116, 139, 0.25);
     border-radius: 9999px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgba(100, 116, 139, 0.45);
 }

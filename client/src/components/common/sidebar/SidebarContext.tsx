@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
+export type PortalTheme = "worker" | "cooperative" | "superadmin";
+
 interface SidebarContextType {
   isCollapsed: boolean;
   toggleCollapse: () => void;
@@ -8,6 +10,7 @@ interface SidebarContextType {
   isMobileOpen: boolean;
   toggleMobile: () => void;
   setMobileOpen: (open: boolean) => void;
+  portalTheme: PortalTheme;
 }
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
@@ -17,9 +20,11 @@ const STORAGE_KEY = "fairgig_sidebar_collapsed";
 export const SidebarProvider = ({
   children,
   defaultCollapsed = false,
+  portalTheme = "worker",
 }: {
   children: React.ReactNode;
   defaultCollapsed?: boolean;
+  portalTheme?: PortalTheme;
 }) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
     try {
@@ -79,6 +84,7 @@ export const SidebarProvider = ({
         isMobileOpen,
         toggleMobile,
         setMobileOpen,
+        portalTheme,
       }}
     >
       {children}

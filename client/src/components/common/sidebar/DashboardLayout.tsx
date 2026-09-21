@@ -19,7 +19,7 @@ export const DashboardLayout = ({
   headerActions,
 }: DashboardLayoutProps) => {
   return (
-    <SidebarProvider>
+    <SidebarProvider portalTheme={branding.portalTheme || currentPortal}>
       <div className="min-h-screen flex bg-background text-foreground">
         {/* Responsive Dashboard Sidebar */}
         <DashboardSidebar branding={branding} groups={groups} />

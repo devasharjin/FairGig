@@ -399,63 +399,99 @@ export function SuperAdminHome() {
             <Card className="border-border/50 shadow-sm flex flex-col justify-between">
               <div>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
-                    <Server className="size-4 text-emerald-500" />
-                    System Telemetry & Health
-                  </CardTitle>
-                  <CardDescription className="text-xs">
-                    Autonomous cluster operational telemetry
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/50 border border-border/40 text-xs">
-                    <div className="flex items-center gap-2">
-                      <Database className="size-4 text-emerald-500" />
-                      <span className="font-medium">MongoDB Cluster</span>
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="space-y-0.5">
+                      <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+                        <Server className="size-4 text-emerald-500" />
+                        System Telemetry & Health
+                      </CardTitle>
+                      <CardDescription className="text-xs text-muted-foreground">
+                        Autonomous cluster operational telemetry
+                      </CardDescription>
                     </div>
-                    <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[11px]">
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 text-[11px] font-semibold shrink-0">
+                      <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      Live
+                    </span>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-2.5">
+                  {/* Service 1: MongoDB Cluster */}
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-card border border-border/70 hover:border-emerald-500/30 transition flex items-center justify-between gap-3 shadow-2xs">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="size-9 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/20">
+                        <Database className="size-4.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-semibold text-foreground truncate">MongoDB Cluster</div>
+                        <div className="text-[10px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                          <span>Primary DB Replica Set</span>
+                        </div>
+                      </div>
+                    </div>
+                    <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-[11px] font-bold px-2 py-0.5 gap-1 shrink-0">
+                      <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       {health?.databaseStatus || "CONNECTED"}
                     </Badge>
                   </div>
 
-                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/50 border border-border/40 text-xs">
-                    <div className="flex items-center gap-2">
-                      <BrainCircuit className="size-4 text-blue-500" />
-                      <span className="font-medium">AI Demand Forecaster</span>
+                  {/* Service 2: AI Demand Forecaster */}
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-card border border-border/70 hover:border-blue-500/30 transition flex items-center justify-between gap-3 shadow-2xs">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="size-9 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 border border-blue-500/20">
+                        <BrainCircuit className="size-4.5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-semibold text-foreground truncate">AI Demand Forecaster</div>
+                        <div className="text-[10px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                          <span>Predictive Dynamic Dispatch</span>
+                        </div>
+                      </div>
                     </div>
-                    <Badge variant="outline" className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 text-[11px]">
+                    <Badge variant="outline" className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30 text-[11px] font-bold px-2 py-0.5 gap-1 shrink-0">
+                      <span className="size-1.5 rounded-full bg-blue-500 animate-pulse" />
                       {health?.aiTelemetryStatus || "ONLINE"}
                     </Badge>
                   </div>
 
-                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/50 border border-border/40 text-xs">
-                    <div className="flex items-center gap-2">
-                      <Activity className="size-4 text-indigo-500" />
-                      <span className="font-medium">Platform Uptime</span>
+                  {/* Telemetry Metrics: Uptime & Nodes */}
+                  <div className="grid grid-cols-2 gap-2.5 pt-0.5">
+                    <div className="p-3 rounded-xl bg-muted/40 hover:bg-muted/60 border border-border/70 transition-colors space-y-1">
+                      <div className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+                        <Activity className="size-3.5 text-indigo-500 shrink-0" />
+                        <span className="truncate">Platform Uptime</span>
+                      </div>
+                      <div className="text-lg font-black font-mono text-foreground tracking-tight">
+                        {health?.uptimeHours ? `${health.uptimeHours} hrs` : "99.98 hrs"}
+                      </div>
+                      <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                        <span className="size-1.5 rounded-full bg-emerald-500 inline-block" />
+                        High Availability
+                      </div>
                     </div>
-                    <span className="font-mono font-semibold text-foreground">
-                      {health?.uptimeHours ? `${health.uptimeHours} hrs` : "99.98%"}
-                    </span>
-                  </div>
 
-                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-secondary/50 border border-border/40 text-xs">
-                    <div className="flex items-center gap-2">
-                      <ShieldAlert className="size-4 text-amber-500" />
-                      <span className="font-medium">Active Nodes</span>
+                    <div className="p-3 rounded-xl bg-muted/40 hover:bg-muted/60 border border-border/70 transition-colors space-y-1">
+                      <div className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+                        <ShieldAlert className="size-3.5 text-amber-500 shrink-0" />
+                        <span className="truncate">Active Nodes</span>
+                      </div>
+                      <div className="text-lg font-black font-mono text-foreground tracking-tight">
+                        {health?.activeNodes || 1} <span className="text-xs font-semibold text-muted-foreground font-sans">Node</span>
+                      </div>
+                      <div className="text-[10px] text-muted-foreground font-medium truncate">
+                        1 Primary Instance
+                      </div>
                     </div>
-                    <span className="font-mono font-semibold text-foreground">
-                      {health?.activeNodes || 1} Primary Instance
-                    </span>
                   </div>
                 </CardContent>
               </div>
 
-              <div className="p-4 pt-0">
+              <div className="p-4 pt-2">
                 <Link to="/admin/forecasting">
-                  <Button variant="outline" size="sm" className="w-full text-xs flex items-center justify-center gap-1.5">
-                    <BrainCircuit className="size-3.5 text-primary" />
+                  <Button variant="outline" size="sm" className="w-full text-xs font-semibold h-9 rounded-lg flex items-center justify-center gap-1.5 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all group cursor-pointer">
+                    <BrainCircuit className="size-3.5 text-primary group-hover:text-primary-foreground transition-colors" />
                     <span>Open AI Forecast Telemetry</span>
-                    <ArrowRight className="size-3" />
+                    <ArrowRight className="size-3 group-hover:translate-x-0.5 transition-transform" />
                   </Button>
                 </Link>
               </div>

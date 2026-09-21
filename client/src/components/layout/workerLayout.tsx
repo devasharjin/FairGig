@@ -23,6 +23,7 @@ const workerBranding: PortalBrandingConfig = {
   badge: "PRO",
   icon: Wrench,
   homePath: "/worker",
+  portalTheme: "worker",
 };
 
 const workerNavGroups: SidebarGroupConfig[] = [

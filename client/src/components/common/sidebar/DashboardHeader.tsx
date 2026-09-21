@@ -20,7 +20,7 @@ export const DashboardHeader = ({
   const { isCollapsed, toggleCollapse, toggleMobile } = useSidebar();
 
   return (
-    <header className="sticky top-0 z-20 w-full h-16 border-b border-border bg-white dark:bg-[#0F2338] shadow-xs">
+    <header className="sticky top-0 z-20 w-full h-16 border-b border-slate-200/80 dark:border-border/80 bg-white/95 dark:bg-card/90 backdrop-blur-md shadow-2xs">
       <div className="w-full h-full flex items-center justify-between px-4 sm:px-6">
         {/* Left: Desktop Collapse Trigger + Portal Context */}
         <div className="flex items-center gap-2 sm:gap-3">

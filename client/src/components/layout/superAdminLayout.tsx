@@ -21,6 +21,7 @@ const superAdminBranding: PortalBrandingConfig = {
   badge: "ADMIN",
   icon: ShieldAlert,
   homePath: "/admin",
+  portalTheme: "superadmin",
 };
 
 const superAdminNavGroups: SidebarGroupConfig[] = [
