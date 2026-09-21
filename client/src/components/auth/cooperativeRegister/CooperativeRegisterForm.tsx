@@ -257,7 +257,7 @@ export default function CooperativeRegisterForm() {
 
   return (
     <div className="w-full mx-auto">
-      <Card className="border border-border/80 bg-card/95 shadow-2xl backdrop-blur-xl rounded-2xl sm:rounded-3xl overflow-hidden transition-all">
+      <Card className="border border-border/80 bg-card/95 shadow-2xl backdrop-blur-xl rounded-xl overflow-hidden transition-all">
         {/* Header with 2-Step Navigator */}
         <CardHeader className="space-y-4 pb-5 pt-6 sm:pt-8 px-5 sm:px-8 border-b border-border/50 bg-gradient-to-r from-muted/30 via-background to-muted/20">
           <CooperativeRegisterStepper

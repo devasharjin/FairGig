@@ -94,7 +94,7 @@ export default function WorkerVerifications() {
           <div className="flex items-center gap-2 mb-1.5">
             <Badge
               variant="secondary"
-              className="rounded-full px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider bg-primary/10 text-primary border-primary/20"
+              className="rounded-md px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider bg-accent/10 text-accent border-accent/20"
             >
               <UserCheck className="size-3.5 mr-1" />
               Cooperative Onboarding
@@ -119,10 +119,10 @@ export default function WorkerVerifications() {
           size="sm"
           onClick={() => refetch()}
           disabled={isFetching}
-          className="rounded-xl text-xs h-9 gap-1.5 border-border/80 self-start sm:self-auto cursor-pointer"
+          className="rounded-lg text-xs h-9 gap-1.5 border-border/80 self-start sm:self-auto cursor-pointer shadow-xs"
         >
           <RotateCcw
-            className={`size-3.5 ${isFetching ? "animate-spin text-primary" : ""}`}
+            className={`size-3.5 ${isFetching ? "animate-spin text-accent" : ""}`}
           />
           {isFetching ? "Updating..." : "Refresh"}
         </Button>
@@ -135,7 +135,7 @@ export default function WorkerVerifications() {
       <div className="space-y-3">
         <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
           {/* Status Tabs */}
-          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-muted/40 border border-border/70 overflow-x-auto">
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-muted/50 border border-border/70 overflow-x-auto">
             {filterTabs.map((tab) => {
               const isActive = statusFilter === tab.key;
               return (
@@ -143,7 +143,7 @@ export default function WorkerVerifications() {
                   key={tab.key}
                   type="button"
                   onClick={() => setStatusFilter(tab.key)}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer whitespace-nowrap ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer whitespace-nowrap ${
                     isActive
                       ? "bg-card text-foreground shadow-xs border border-border/80"
                       : "text-muted-foreground hover:text-foreground"
@@ -151,7 +151,7 @@ export default function WorkerVerifications() {
                 >
                   <span>{tab.label}</span>
                   <span
-                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                    className={`text-[10px] px-1.5 py-0.2 rounded-md font-bold ${
                       isActive
                         ? "bg-primary text-primary-foreground"
                         : "bg-muted text-muted-foreground"
@@ -172,7 +172,7 @@ export default function WorkerVerifications() {
               placeholder="Search name, phone, email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-10 pl-9 pr-8 text-xs rounded-2xl bg-card border-border/80"
+              className="h-9 pl-9 pr-8 text-xs rounded-lg bg-card border-border/80"
             />
             {searchQuery && (
               <button
@@ -190,14 +190,14 @@ export default function WorkerVerifications() {
       {/* Workers List */}
       {isLoading ? (
         <div className="py-20 flex flex-col items-center justify-center gap-3 text-muted-foreground">
-          <Loader2 className="size-8 animate-spin text-primary" />
+          <Loader2 className="size-8 animate-spin text-accent" />
           <p className="text-xs font-medium">
             Fetching worker registration records...
           </p>
         </div>
       ) : workers.length === 0 ? (
-        <div className="py-16 text-center rounded-3xl border border-dashed border-border/80 bg-muted/10 p-8">
-          <div className="size-12 rounded-2xl bg-muted/60 flex items-center justify-center mx-auto text-muted-foreground mb-3">
+        <div className="py-16 text-center rounded-xl border border-dashed border-border/80 bg-muted/10 p-8">
+          <div className="size-12 rounded-lg bg-muted/60 flex items-center justify-center mx-auto text-muted-foreground mb-3">
             <Users className="size-6" />
           </div>
           <h3 className="text-sm font-bold text-foreground">
@@ -218,7 +218,7 @@ export default function WorkerVerifications() {
                 setStatusFilter("All");
                 setSearchQuery("");
               }}
-              className="mt-4 rounded-xl text-xs h-8"
+              className="mt-4 rounded-lg text-xs h-8 shadow-xs"
             >
               Reset Filters
             </Button>

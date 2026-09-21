@@ -20,7 +20,7 @@ export const DashboardHeader = ({
   const { isCollapsed, toggleCollapse, toggleMobile } = useSidebar();
 
   return (
-    <header className="sticky top-0 z-20 w-full h-16 border-b border-border/50 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 shadow-xs">
+    <header className="sticky top-0 z-20 w-full h-16 border-b border-border bg-white dark:bg-[#0F2338] shadow-xs">
       <div className="w-full h-full flex items-center justify-between px-4 sm:px-6">
         {/* Left: Desktop Collapse Trigger + Portal Context */}
         <div className="flex items-center gap-2 sm:gap-3">
@@ -29,13 +29,13 @@ export const DashboardHeader = ({
             variant="ghost"
             size="icon"
             onClick={toggleCollapse}
-            className="hidden lg:flex size-9 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
+            className="hidden lg:flex size-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
             title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             {isCollapsed ? (
-              <PanelLeft className="size-5" />
+              <PanelLeft className="size-4" />
             ) : (
-              <PanelLeftClose className="size-5" />
+              <PanelLeftClose className="size-4" />
             )}
             <span className="sr-only">Toggle sidebar</span>
           </Button>
@@ -47,7 +47,7 @@ export const DashboardHeader = ({
                 {portalTitle}
               </span>
               {portalBadge && (
-                <span className="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20 hidden sm:inline-block">
+                <span className="text-[10px] px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wider bg-accent/10 text-accent border border-accent/25 hidden sm:inline-block">
                   {portalBadge}
                 </span>
               )}
@@ -63,7 +63,7 @@ export const DashboardHeader = ({
           {/* Quick link to customer marketplace */}
           <Link
             to="/"
-            className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-xl hover:bg-muted/60 transition-colors"
+            className="hidden sm:flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-2.5 py-1.5 rounded-lg hover:bg-muted/60 transition-colors"
             title="Browse fairgig as a customer"
           >
             <Store className="size-3.5" />
@@ -78,10 +78,10 @@ export const DashboardHeader = ({
             variant="ghost"
             size="icon"
             onClick={toggleMobile}
-            className="lg:hidden size-9 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
+            className="lg:hidden size-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
             title="Open navigation menu"
           >
-            <Menu className="size-5" />
+            <Menu className="size-4" />
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
         </div>

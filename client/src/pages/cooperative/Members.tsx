@@ -135,13 +135,13 @@ export default function CooperativeMembers() {
           <div className="flex items-center gap-2 mb-1">
             <Badge
               variant="secondary"
-              className="rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider bg-primary/10 text-primary border-primary/20"
+              className="rounded-md px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider bg-accent/10 text-accent border border-accent/20"
             >
               <Users className="size-3.5 mr-1" />
               Society Workforce
             </Badge>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             Members Directory
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
@@ -154,7 +154,7 @@ export default function CooperativeMembers() {
             variant="outline"
             size="sm"
             onClick={fetchMembers}
-            className="rounded-xl gap-1.5 text-xs h-9"
+            className="rounded-lg gap-1.5 text-xs h-9 shadow-xs"
           >
             <RefreshCw className="size-3.5" />
             Refresh
@@ -162,7 +162,7 @@ export default function CooperativeMembers() {
           <Button
             size="sm"
             onClick={() => navigate("/cooperative/verifications")}
-            className="rounded-xl gap-1.5 text-xs h-9"
+            className="rounded-lg gap-1.5 text-xs h-9 shadow-xs"
           >
             <UserCheck className="size-3.5" />
             Applicant Queue
@@ -173,48 +173,48 @@ export default function CooperativeMembers() {
       {/* KPI Stats Row */}
       {stats && (
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3.5">
-          <div className="p-4 rounded-2xl bg-card border border-border/70 shadow-xs text-center">
+          <div className="p-4 rounded-xl bg-card border border-border/80 shadow-xs text-center">
             <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Enrolled Members
             </p>
-            <p className="text-2xl font-black text-foreground mt-1">
+            <p className="text-2xl font-bold tracking-tight text-foreground mt-1">
               {stats.totalMembers}
             </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-card border border-border/70 shadow-xs text-center">
+          <div className="p-4 rounded-xl bg-card border border-border/80 shadow-xs text-center">
             <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Active On-Duty
             </p>
-            <p className="text-2xl font-black text-emerald-500 mt-1">
+            <p className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400 mt-1">
               {stats.activeOnDuty}
             </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-card border border-border/70 shadow-xs text-center">
+          <div className="p-4 rounded-xl bg-card border border-border/80 shadow-xs text-center">
             <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Pending Verification
             </p>
-            <p className="text-2xl font-black text-amber-500 mt-1">
+            <p className="text-2xl font-bold tracking-tight text-amber-600 dark:text-amber-400 mt-1">
               {stats.pendingVerificationCount}
             </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-card border border-border/70 shadow-xs text-center">
+          <div className="p-4 rounded-xl bg-card border border-border/80 shadow-xs text-center">
             <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Average Rating
             </p>
-            <div className="flex items-center justify-center gap-1 mt-1 text-2xl font-black text-amber-500">
-              <Star className="size-5 fill-amber-500" />
+            <div className="flex items-center justify-center gap-1 mt-1 text-2xl font-bold tracking-tight text-amber-600 dark:text-amber-400">
+              <Star className="size-5 fill-amber-500 text-amber-500" />
               <span>{stats.averageRating > 0 ? stats.averageRating.toFixed(1) : "5.0"}</span>
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-card border border-border/70 shadow-xs text-center col-span-2 sm:col-span-1">
+          <div className="p-4 rounded-xl bg-card border border-border/80 shadow-xs text-center col-span-2 sm:col-span-1">
             <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
               Jobs Delivered
             </p>
-            <p className="text-2xl font-black text-primary mt-1">
+            <p className="text-2xl font-bold tracking-tight text-primary mt-1">
               {stats.totalJobsCompleted}
             </p>
           </div>
@@ -222,8 +222,8 @@ export default function CooperativeMembers() {
       )}
 
       {/* Filter Toolbar */}
-      <Card className="rounded-2xl border-border/80 shadow-xs">
-        <CardContent className="p-4">
+      <Card className="rounded-xl border-border/80 shadow-xs">
+        <CardContent className="p-3.5">
           <form
             onSubmit={handleSearchSubmit}
             className="flex flex-col md:flex-row items-center gap-3"
@@ -235,7 +235,7 @@ export default function CooperativeMembers() {
                 placeholder="Search member by worker name, email, or mobile..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 text-xs h-10 rounded-xl"
+                className="pl-9 text-xs h-9 rounded-lg"
               />
             </div>
 
@@ -247,7 +247,7 @@ export default function CooperativeMembers() {
                 setCurrentPage(1);
               }}
             >
-              <SelectTrigger className="w-full md:w-44 text-xs h-10 rounded-xl">
+              <SelectTrigger className="w-full md:w-44 text-xs h-9 rounded-lg">
                 <SelectValue placeholder="Status: All" />
               </SelectTrigger>
               <SelectContent>
@@ -268,7 +268,7 @@ export default function CooperativeMembers() {
                 setCurrentPage(1);
               }}
             >
-              <SelectTrigger className="w-full md:w-40 text-xs h-10 rounded-xl">
+              <SelectTrigger className="w-full md:w-40 text-xs h-9 rounded-lg">
                 <SelectValue placeholder="Availability: All" />
               </SelectTrigger>
               <SelectContent>
@@ -278,7 +278,7 @@ export default function CooperativeMembers() {
               </SelectContent>
             </Select>
 
-            <Button type="submit" size="sm" className="w-full md:w-auto h-10 rounded-xl text-xs px-5">
+            <Button type="submit" size="sm" className="w-full md:w-auto h-9 rounded-lg text-xs px-5 shadow-xs">
               Search
             </Button>
           </form>
@@ -286,30 +286,30 @@ export default function CooperativeMembers() {
       </Card>
 
       {/* Members Roster Table */}
-      <Card className="rounded-2xl border-border/80 shadow-xs overflow-hidden">
+      <Card className="rounded-xl border-border/80 shadow-xs overflow-hidden">
         <CardContent className="p-0">
           {isLoading ? (
             <div className="p-12 flex flex-col items-center justify-center gap-2 text-xs text-muted-foreground">
-              <Loader2 className="size-6 animate-spin text-primary" />
+              <Loader2 className="size-6 animate-spin text-accent" />
               <span>Loading cooperative member roster...</span>
             </div>
           ) : members.length === 0 ? (
             <div className="p-12 text-center text-xs text-muted-foreground space-y-2">
-              <Users className="size-8 mx-auto opacity-40 text-primary" />
+              <Users className="size-8 mx-auto opacity-40 text-accent" />
               <p className="font-semibold text-foreground">No member workers found</p>
               <p>Try adjusting your search criteria or review pending applicant verifications.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-muted/40 text-muted-foreground border-b border-border/60">
+                <thead className="bg-muted/50 text-muted-foreground border-b border-border/60">
                   <tr>
-                    <th className="py-3.5 px-4 font-semibold">Worker Details</th>
-                    <th className="py-3.5 px-4 font-semibold">Trade Category & Services</th>
-                    <th className="py-3.5 px-4 font-semibold">Availability & Status</th>
-                    <th className="py-3.5 px-4 font-semibold">Performance</th>
-                    <th className="py-3.5 px-4 font-semibold">Dispatch Active</th>
-                    <th className="py-3.5 px-4 text-right font-semibold">Actions</th>
+                    <th className="py-3 px-4 font-semibold uppercase tracking-wider text-[11px]">Worker Details</th>
+                    <th className="py-3 px-4 font-semibold uppercase tracking-wider text-[11px]">Trade Category & Services</th>
+                    <th className="py-3 px-4 font-semibold uppercase tracking-wider text-[11px]">Availability & Status</th>
+                    <th className="py-3 px-4 font-semibold uppercase tracking-wider text-[11px]">Performance</th>
+                    <th className="py-3 px-4 font-semibold uppercase tracking-wider text-[11px]">Dispatch Active</th>
+                    <th className="py-3 px-4 text-right font-semibold uppercase tracking-wider text-[11px]">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/60">

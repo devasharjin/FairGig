@@ -47,13 +47,15 @@ export const FeaturedServicesSection: React.FC<FeaturedServicesSectionProps> = (
           </Link>
         </div>
 
-        {/* Services Grid */}
+        {/* Services Grid: 6 services on desktop, 4 on mobile */}
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            {[1, 2, 3].map((i) => (
+            {[1, 2, 3, 4, 5, 6].map((i, index) => (
               <div
                 key={i}
-                className="h-64 rounded-3xl bg-muted/40 border border-border/60 animate-pulse p-6"
+                className={`h-64 rounded-xl bg-muted/40 border border-border/60 animate-pulse p-6 ${
+                  index >= 4 ? "hidden sm:block" : ""
+                }`}
               />
             ))}
           </div>
@@ -63,11 +65,12 @@ export const FeaturedServicesSection: React.FC<FeaturedServicesSectionProps> = (
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            {featured.map((service) => (
+            {featured.map((service, index) => (
               <ServiceCard
                 key={service._id}
                 service={service}
                 onBookService={onBookService}
+                className={index >= 4 ? "hidden sm:flex" : undefined}
               />
             ))}
           </div>
@@ -82,7 +85,7 @@ export const FeaturedServicesSection: React.FC<FeaturedServicesSectionProps> = (
                 size="lg"
                 className="rounded-2xl px-6 h-12 font-bold gap-2 cursor-pointer shadow-xs hover:border-primary/50"
               >
-                <span>View All {services.length} Published Services</span>
+                <span>View All Published Services</span>
                 <ArrowRight className="size-4" />
               </Button>
             </Link>

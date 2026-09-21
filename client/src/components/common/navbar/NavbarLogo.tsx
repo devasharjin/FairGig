@@ -27,17 +27,17 @@ export const NavbarLogo = ({
         className
       )}
     >
-      <div className="size-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shadow-xs shrink-0">
-        <Icon className="size-5" />
+      <div className="size-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center transition-all duration-200 shadow-xs shrink-0 group-hover:bg-primary/90">
+        <Icon className="size-4" />
       </div>
       <div className="flex items-center gap-2">
         <div className="flex flex-col">
-          <span className="font-bold text-lg tracking-tight flex items-center leading-none">
+          <span className="font-bold text-base tracking-tight flex items-center leading-none">
             <span className="text-foreground">fair</span>
-            <span className="text-primary font-extrabold ml-0.5">gig</span>
+            <span className="text-accent font-bold ml-0.5">gig</span>
           </span>
           {subtitle && (
-            <span className="text-[10px] text-muted-foreground font-medium tracking-wide">
+            <span className="text-[10px] text-muted-foreground font-medium tracking-normal mt-0.5">
               {subtitle}
             </span>
           )}
@@ -45,7 +45,7 @@ export const NavbarLogo = ({
         {badge && (
           <Badge
             variant="outline"
-            className="text-[10px] px-1.5 py-0.5 font-bold uppercase tracking-wider bg-primary/10 text-primary border-primary/20 hidden sm:inline-flex"
+            className="text-[9px] px-1.5 py-0.5 font-bold uppercase tracking-wider bg-accent/10 text-accent border-accent/25 hidden sm:inline-flex"
           >
             {badge}
           </Badge>

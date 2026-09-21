@@ -17,17 +17,17 @@ export const GigRadarHeader: React.FC<GigRadarHeaderProps> = ({
   categoryName,
 }) => {
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-6 sm:p-8 shadow-xs">
+    <div className="relative overflow-hidden rounded-xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs">
       <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <div className="flex flex-wrap items-center gap-2">
             <Badge
               variant="outline"
-              className="bg-primary/10 text-primary border-primary/30 text-xs font-semibold gap-1.5"
+              className="bg-accent/10 text-accent border-accent/20 text-[11px] font-semibold gap-1.5 rounded-md px-2.5 py-0.5"
             >
               <span className="relative flex size-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                <span className="relative inline-flex rounded-full size-2 bg-primary" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
+                <span className="relative inline-flex rounded-full size-2 bg-accent" />
               </span>
               Live Cooperative Dispatch Radar
             </Badge>
@@ -35,7 +35,7 @@ export const GigRadarHeader: React.FC<GigRadarHeaderProps> = ({
             {categoryName && (
               <Badge
                 variant="outline"
-                className="bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/30 text-xs font-semibold gap-1"
+                className="bg-primary/10 text-primary border-primary/20 text-[11px] font-semibold gap-1 rounded-md px-2.5 py-0.5"
               >
                 🎯 {categoryName} (Exclusive Trade Matching)
               </Badge>
@@ -43,14 +43,14 @@ export const GigRadarHeader: React.FC<GigRadarHeaderProps> = ({
 
             <Badge
               variant="outline"
-              className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-xs font-semibold gap-1"
+              className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[11px] font-semibold gap-1 rounded-md px-2.5 py-0.5"
             >
               <ShieldCheck className="size-3 text-emerald-500" />
               Guaranteed Pay Protection
             </Badge>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
             Available Gigs
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground max-w-xl">
@@ -60,7 +60,7 @@ export const GigRadarHeader: React.FC<GigRadarHeaderProps> = ({
 
         <div className="flex items-center gap-3 shrink-0">
           <div className="text-right hidden sm:block">
-            <span className="text-2xl font-black text-primary">
+            <span className="text-2xl font-bold text-primary">
               {totalAvailable}
             </span>
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
@@ -73,9 +73,9 @@ export const GigRadarHeader: React.FC<GigRadarHeaderProps> = ({
             size="sm"
             onClick={onRefresh}
             disabled={isRefetching}
-            className="rounded-2xl h-10 px-4 text-xs font-semibold gap-2 border-border/80 hover:bg-muted cursor-pointer"
+            className="rounded-lg h-9 px-3.5 text-xs font-semibold gap-2 border-border/80 hover:bg-muted cursor-pointer shadow-xs"
           >
-            <RotateCcw className={`size-3.5 ${isRefetching ? "animate-spin text-primary" : ""}`} />
+            <RotateCcw className={`size-3.5 ${isRefetching ? "animate-spin text-accent" : ""}`} />
             <span>{isRefetching ? "Scanning..." : "Refresh"}</span>
           </Button>
         </div>

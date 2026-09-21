@@ -23,10 +23,10 @@ export const NavbarNavLink = ({
       end={end}
       className={({ isActive }) =>
         cn(
-          "px-3.5 py-1.5 rounded-xl text-sm font-medium transition-colors cursor-pointer flex items-center gap-1.5 select-none",
+          "px-3.5 py-1.5 rounded-lg text-sm transition-all duration-150 cursor-pointer flex items-center gap-1.5 select-none",
           isActive
-            ? "text-primary font-semibold bg-primary/10"
-            : "text-muted-foreground hover:text-foreground hover:bg-muted/60",
+            ? "bg-slate-300 dark:bg-slate-800 text-primary dark:text-teal-300 font-semibold shadow-xs"
+            : "text-slate-600 dark:text-slate-400 font-medium hover:text-primary dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-slate-800/50",
           className
         )
       }

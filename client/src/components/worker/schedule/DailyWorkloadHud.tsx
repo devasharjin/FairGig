@@ -18,8 +18,8 @@ export const DailyWorkloadHud: React.FC<DailyWorkloadHudProps> = ({
 }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-      <div className="p-4 rounded-2xl border border-border/80 bg-card shadow-xs flex items-center gap-4">
-        <div className="size-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+      <div className="p-4 rounded-xl border border-border/80 bg-card shadow-xs flex items-center gap-4">
+        <div className="size-11 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
           <CalendarIcon className="size-5" />
         </div>
         <div>
@@ -32,8 +32,8 @@ export const DailyWorkloadHud: React.FC<DailyWorkloadHudProps> = ({
         </div>
       </div>
 
-      <div className="p-4 rounded-2xl border border-border/80 bg-card shadow-xs flex items-center gap-4">
-        <div className="size-11 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
+      <div className="p-4 rounded-xl border border-border/80 bg-card shadow-xs flex items-center gap-4">
+        <div className="size-11 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
           <CheckCircle2 className="size-5" />
         </div>
         <div>
@@ -46,8 +46,8 @@ export const DailyWorkloadHud: React.FC<DailyWorkloadHudProps> = ({
         </div>
       </div>
 
-      <div className="p-4 rounded-2xl border border-border/80 bg-card shadow-xs flex items-center gap-4">
-        <div className="size-11 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
+      <div className="p-4 rounded-xl border border-border/80 bg-card shadow-xs flex items-center gap-4">
+        <div className="size-11 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
           <Clock className="size-5" />
         </div>
         <div>

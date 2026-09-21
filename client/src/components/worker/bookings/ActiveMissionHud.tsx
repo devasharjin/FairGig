@@ -61,11 +61,11 @@ export const ActiveMissionHud: React.FC<ActiveMissionHudProps> = ({
 
   const formattedStartTime = mission.startedAt
     ? new Date(mission.startedAt).toLocaleTimeString("en-IN", {
-        hour: "numeric",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true,
-      })
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    })
     : "Just now";
 
   const isEmergency = mission.isEmergency;
@@ -73,10 +73,10 @@ export const ActiveMissionHud: React.FC<ActiveMissionHudProps> = ({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-3xl border p-6 shadow-md ring-1 space-y-4",
+        "relative overflow-hidden rounded-xl border p-5 sm:p-6 shadow-md ring-1 space-y-4",
         isEmergency
           ? "border-rose-500/50 bg-gradient-to-r from-rose-500/15 via-card to-card ring-rose-500/20 shadow-rose-500/10"
-          : "border-purple-500/40 bg-gradient-to-r from-purple-500/10 via-card to-card ring-purple-500/20"
+          : "border-accent/40 bg-gradient-to-r from-accent/10 via-card to-card ring-accent/20"
       )}
     >
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
@@ -86,13 +86,13 @@ export const ActiveMissionHud: React.FC<ActiveMissionHudProps> = ({
               <span
                 className={cn(
                   "animate-ping absolute inline-flex h-full w-full rounded-full opacity-75",
-                  isEmergency ? "bg-rose-400" : "bg-purple-400"
+                  isEmergency ? "bg-rose-400" : "bg-accent"
                 )}
               />
               <span
                 className={cn(
                   "relative inline-flex rounded-full size-3",
-                  isEmergency ? "bg-rose-500" : "bg-purple-500"
+                  isEmergency ? "bg-rose-500" : "bg-accent"
                 )}
               />
             </span>
@@ -107,7 +107,7 @@ export const ActiveMissionHud: React.FC<ActiveMissionHudProps> = ({
             ) : (
               <Badge
                 variant="outline"
-                className="bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-500/30 text-xs font-extrabold uppercase tracking-wider"
+                className="bg-accent/15 text-accent border-accent/30 text-xs font-extrabold uppercase tracking-wider"
               >
                 ⚡ Live Fieldwork Active
               </Badge>
@@ -123,7 +123,7 @@ export const ActiveMissionHud: React.FC<ActiveMissionHudProps> = ({
           </h2>
 
           {isEmergency && mission.emergencyDetails && (
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-rose-500/15 border border-rose-500/30 text-xs font-bold text-rose-700 dark:text-rose-300">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-rose-500/15 border border-rose-500/30 text-xs font-bold text-rose-700 dark:text-rose-300">
               <AlertTriangle className="size-3.5 shrink-0" />
               <span>Reported Hazard: {mission.emergencyDetails.hazardType || "Critical Emergency"}</span>
               {mission.emergencyDetails.immediateContact && (
@@ -155,7 +155,7 @@ export const ActiveMissionHud: React.FC<ActiveMissionHudProps> = ({
           {mission.customer?.phone && (
             <a
               href={`tel:${mission.customer.phone}`}
-              className="inline-flex items-center gap-1.5 h-11 px-4 rounded-2xl border border-border/80 bg-card hover:bg-muted text-xs font-bold text-foreground transition shadow-xs"
+              className="inline-flex items-center gap-1.5 h-10 px-4 rounded-lg border border-border/80 bg-card hover:bg-muted text-xs font-bold text-foreground transition shadow-xs"
               title="Call Customer"
             >
               <Phone className="size-3.5 text-primary" />
@@ -170,7 +170,7 @@ export const ActiveMissionHud: React.FC<ActiveMissionHudProps> = ({
               )}`}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 h-11 px-4 rounded-2xl border border-border/80 bg-card hover:bg-muted text-xs font-bold text-foreground transition shadow-xs"
+              className="inline-flex items-center gap-1.5 h-10 px-4 rounded-lg border border-border/80 bg-card hover:bg-muted text-xs font-bold text-foreground transition shadow-xs"
             >
               <Navigation className="size-3.5 text-primary" />
               <span>GPS Directions</span>
@@ -179,7 +179,7 @@ export const ActiveMissionHud: React.FC<ActiveMissionHudProps> = ({
 
           <Button
             onClick={() => onComplete(mission)}
-            className="h-11 px-6 rounded-2xl text-xs font-bold gap-2 shadow-sm cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white"
+            className="h-10 px-5 rounded-lg text-xs font-bold gap-2 shadow-sm cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white"
           >
             <CheckCircle2 className="size-4" />
             <span>Finish & Complete Job</span>
@@ -188,10 +188,10 @@ export const ActiveMissionHud: React.FC<ActiveMissionHudProps> = ({
       </div>
 
       {/* Live Timer & Applicable Rates HUD Banner */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-purple-500/20 text-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-border/60 text-xs">
         {/* Work Start Time */}
-        <div className="p-3 rounded-2xl bg-card/80 border border-border/60 flex items-center gap-3">
-          <div className="size-9 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
+        <div className="p-3 rounded-lg bg-card/80 border border-border/60 flex items-center gap-3">
+          <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
             <Clock className="size-4" />
           </div>
           <div>
@@ -201,8 +201,8 @@ export const ActiveMissionHud: React.FC<ActiveMissionHudProps> = ({
         </div>
 
         {/* Live Elapsed Duration */}
-        <div className="p-3 rounded-2xl bg-card/80 border border-border/60 flex items-center gap-3">
-          <div className="size-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+        <div className="p-3 rounded-lg bg-card/80 border border-border/60 flex items-center gap-3">
+          <div className="size-9 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
             <Hourglass className="size-4 animate-spin" style={{ animationDuration: "6s" }} />
           </div>
           <div>
@@ -217,8 +217,8 @@ export const ActiveMissionHud: React.FC<ActiveMissionHudProps> = ({
         </div>
 
         {/* Applicable Rates */}
-        <div className="p-3 rounded-2xl bg-card/80 border border-border/60 flex items-center gap-3">
-          <div className="size-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+        <div className="p-3 rounded-lg bg-card/80 border border-border/60 flex items-center gap-3">
+          <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
             <Coins className="size-4" />
           </div>
           <div>

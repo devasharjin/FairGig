@@ -45,7 +45,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       : null;
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-6 sm:p-8 shadow-xs">
+    <div className="relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-6 sm:p-8 shadow-xs">
       <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
@@ -119,7 +119,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         <div className="flex items-center gap-3 shrink-0">
           <Button
             onClick={onOpenEdit}
-            className="rounded-2xl h-11 px-5 text-sm font-semibold shadow-xs gap-2 cursor-pointer bg-primary text-primary-foreground"
+            className="rounded-lg h-10 px-5 text-sm font-semibold shadow-xs gap-2 cursor-pointer bg-primary text-primary-foreground"
           >
             <Edit3 className="size-4" />
             <span>Edit Profile</span>

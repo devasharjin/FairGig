@@ -328,7 +328,7 @@ export default function WorkerRegisterForm() {
 
   return (
     <div className="w-full">
-      <Card className="border border-border/60 bg-card/90 shadow-xl backdrop-blur-xl rounded-3xl overflow-hidden">
+      <Card className="border border-border/60 bg-card/90 shadow-xl backdrop-blur-xl rounded-xl overflow-hidden">
         {/* Header & Stepper */}
         <CardHeader className="p-6 sm:p-8 pb-4 border-b border-border/40 bg-muted/15">
           <WorkerRegisterStepper

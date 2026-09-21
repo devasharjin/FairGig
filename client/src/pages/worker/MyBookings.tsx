@@ -141,10 +141,10 @@ export const WorkerMyBookings: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/60">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
               My Assigned Bookings
             </h1>
-            <Badge variant="secondary" className="rounded-full text-xs font-bold">
+            <Badge variant="secondary" className="rounded-md text-xs font-semibold px-2 py-0.5">
               {myJobs.length}
             </Badge>
           </div>
@@ -159,16 +159,16 @@ export const WorkerMyBookings: React.FC = () => {
             size="sm"
             onClick={() => refetch()}
             disabled={isRefetching}
-            className="rounded-2xl h-10 gap-1.5 cursor-pointer text-xs font-semibold"
+            className="rounded-lg h-9 gap-1.5 cursor-pointer text-xs font-semibold shadow-xs"
           >
-            <RotateCcw className={cn("size-3.5", isRefetching && "animate-spin")} />
+            <RotateCcw className={cn("size-3.5", isRefetching && "animate-spin text-accent")} />
             <span>{isRefetching ? "Refreshing..." : "Refresh"}</span>
           </Button>
 
           <Link to="/worker/jobs">
             <Button
               size="sm"
-              className="rounded-2xl h-10 px-5 gap-2 text-xs font-bold cursor-pointer shadow-xs bg-primary text-primary-foreground"
+              className="rounded-lg h-9 px-4 gap-2 text-xs font-semibold cursor-pointer shadow-xs bg-primary text-primary-foreground"
             >
               <Sparkles className="size-3.5" />
               <span>Available Gigs ({stats?.availableGigs ?? 0})</span>
@@ -229,10 +229,10 @@ export const WorkerMyBookings: React.FC = () => {
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="p-6 rounded-3xl border border-border/60 bg-card/40 animate-pulse space-y-3"
+              className="p-6 rounded-xl border border-border/60 bg-card/40 animate-pulse space-y-3"
             >
-              <div className="h-6 bg-muted/60 rounded-xl w-1/3" />
-              <div className="h-10 bg-muted/40 rounded-xl w-3/4" />
+              <div className="h-6 bg-muted/60 rounded-lg w-1/3" />
+              <div className="h-10 bg-muted/40 rounded-lg w-3/4" />
             </div>
           ))}
         </div>
@@ -240,9 +240,9 @@ export const WorkerMyBookings: React.FC = () => {
 
       {/* Empty State */}
       {!isLoading && filteredJobs.length === 0 && (
-        <div className="p-12 sm:p-16 text-center rounded-3xl border border-dashed border-border/80 bg-card/30 max-w-md mx-auto my-10 space-y-4">
-          <div className="size-16 rounded-3xl bg-muted/50 text-muted-foreground flex items-center justify-center mx-auto">
-            <Briefcase className="size-8" />
+        <div className="p-10 sm:p-12 text-center rounded-xl border border-dashed border-border/80 bg-card max-w-md mx-auto my-10 space-y-4 shadow-xs">
+          <div className="size-12 rounded-lg bg-muted/60 text-muted-foreground flex items-center justify-center mx-auto">
+            <Briefcase className="size-6" />
           </div>
           <div className="space-y-1">
             <h3 className="text-base font-bold text-foreground">No bookings found</h3>
@@ -258,7 +258,7 @@ export const WorkerMyBookings: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setSearchQuery("")}
-                className="rounded-xl h-9 text-xs cursor-pointer"
+                className="rounded-lg h-8 text-xs cursor-pointer shadow-xs"
               >
                 Clear Search
               </Button>
@@ -266,7 +266,7 @@ export const WorkerMyBookings: React.FC = () => {
             <Link to="/worker/jobs">
               <Button
                 size="sm"
-                className="rounded-xl h-9 px-4 text-xs font-bold gap-1.5 shadow-xs bg-primary text-primary-foreground"
+                className="rounded-lg h-8 px-4 text-xs font-semibold gap-1.5 shadow-xs bg-primary text-primary-foreground"
               >
                 <Sparkles className="size-3.5" />
                 Browse Available Gigs

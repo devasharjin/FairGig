@@ -318,8 +318,18 @@ export async function updateJobStatus(req: Request, res: Response) {
 
     if (!firstHourRate || firstHourRate <= 0) {
       const serviceDoc = await Service.findById(booking.service);
-      firstHourRate = serviceDoc?.firstHourRate ?? serviceDoc?.hourlyPrice ?? booking.rate ?? 0;
-      additionalHourRate = serviceDoc?.additionalHourRate ?? serviceDoc?.firstHourRate ?? serviceDoc?.hourlyPrice ?? firstHourRate;
+      const baseFirst = serviceDoc?.firstHourRate ?? serviceDoc?.hourlyPrice ?? booking.rate ?? 0;
+      const baseAddl = serviceDoc?.additionalHourRate ?? serviceDoc?.firstHourRate ?? serviceDoc?.hourlyPrice ?? baseFirst;
+      
+      const multiplier =
+        booking.bookingType === BookingType.EMERGENCY || booking.isEmergency
+          ? 1.20
+          : booking.bookingType === BookingType.ON_DEMAND
+          ? 1.10
+          : 1.0;
+
+      firstHourRate = Math.round(baseFirst * multiplier);
+      additionalHourRate = Math.round(baseAddl * multiplier);
       cooperativePercentage = serviceDoc?.cooperativeShare ?? 10;
       insurancePercentage = serviceDoc?.insuranceShare ?? 5;
     }

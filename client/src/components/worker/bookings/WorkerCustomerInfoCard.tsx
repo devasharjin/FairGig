@@ -30,7 +30,7 @@ export const WorkerCustomerInfoCard: React.FC<WorkerCustomerInfoCardProps> = ({
   return (
     <div
       className={cn(
-        "rounded-3xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs space-y-5",
+        "rounded-xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs space-y-5",
         className
       )}
     >
@@ -51,16 +51,16 @@ export const WorkerCustomerInfoCard: React.FC<WorkerCustomerInfoCardProps> = ({
       </div>
 
       {/* Customer profile snippet */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-muted/30 border border-border/60">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg bg-muted/30 border border-border/60">
         <div className="flex items-center gap-3.5">
           {customer?.profilePicture ? (
             <img
               src={customer.profilePicture}
               alt={customer.name}
-              className="size-13 rounded-2xl object-cover ring-2 ring-primary/20 shrink-0"
+              className="size-13 rounded-lg object-cover ring-2 ring-primary/20 shrink-0"
             />
           ) : (
-            <div className="size-13 rounded-2xl bg-primary/15 text-primary text-xl font-extrabold flex items-center justify-center shrink-0 shadow-xs">
+            <div className="size-13 rounded-lg bg-primary/15 text-primary text-xl font-extrabold flex items-center justify-center shrink-0 shadow-xs">
               {initial}
             </div>
           )}
@@ -81,7 +81,7 @@ export const WorkerCustomerInfoCard: React.FC<WorkerCustomerInfoCardProps> = ({
             <a href={`tel:${customer.phone}`} className="flex-1 sm:flex-initial">
               <Button
                 size="sm"
-                className="w-full sm:w-auto rounded-xl h-9 px-3.5 gap-2 text-xs font-semibold cursor-pointer shadow-xs bg-primary text-primary-foreground"
+                className="w-full sm:w-auto rounded-lg h-9 px-3.5 gap-2 text-xs font-semibold cursor-pointer shadow-xs bg-primary text-primary-foreground"
               >
                 <Phone className="size-3.5" />
                 <span>Call Client</span>
@@ -94,7 +94,7 @@ export const WorkerCustomerInfoCard: React.FC<WorkerCustomerInfoCardProps> = ({
               <Button
                 variant="outline"
                 size="sm"
-                className="rounded-xl size-9 p-0 cursor-pointer"
+                className="rounded-lg size-9 p-0 cursor-pointer"
               >
                 <Mail className="size-3.5 text-muted-foreground" />
               </Button>
@@ -127,7 +127,7 @@ export const WorkerCustomerInfoCard: React.FC<WorkerCustomerInfoCardProps> = ({
           )}
         </div>
 
-        <div className="p-4 rounded-2xl bg-muted/40 border border-border/60 text-xs space-y-1">
+        <div className="p-4 rounded-lg bg-muted/40 border border-border/60 text-xs space-y-1">
           <p className="font-bold text-foreground text-sm">
             {address?.street || "Address provided at booking"}
           </p>

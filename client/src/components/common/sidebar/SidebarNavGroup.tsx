@@ -20,8 +20,8 @@ export const SidebarNavGroup = ({
       {group.heading && (
         <div
           className={cn(
-            "px-3 pt-4 pb-1 text-[11px] font-bold tracking-wider text-muted-foreground/70 uppercase select-none transition-all",
-            showCollapsed && "px-0 text-center text-[9px] truncate"
+            "px-3 pt-4 pb-1 text-[11px] font-bold tracking-wider text-slate-400 uppercase select-none transition-all",
+            showCollapsed && "px-0 text-center text-[9px] truncate text-slate-500"
           )}
         >
           {showCollapsed ? "• • •" : group.heading}

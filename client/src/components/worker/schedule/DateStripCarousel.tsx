@@ -45,7 +45,7 @@ export const DateStripCarousel: React.FC<DateStripCarouselProps> = ({
               key={item.dateStr}
               type="button"
               onClick={() => onSelectDate(item.dateStr)}
-              className={`relative flex flex-col items-center justify-center min-w-[72px] sm:min-w-[84px] py-3 px-2 rounded-2xl border transition-all cursor-pointer select-none shrink-0 snap-start ${
+              className={`relative flex flex-col items-center justify-center min-w-[72px] sm:min-w-[84px] py-3 px-2 rounded-lg border transition-all cursor-pointer select-none shrink-0 snap-start ${
                 isSelected
                   ? "bg-primary text-primary-foreground border-primary shadow-md shadow-primary/20 scale-[1.02]"
                   : "bg-card hover:bg-muted/50 border-border/70 text-foreground"

@@ -94,12 +94,12 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl sm:max-w-3xl max-h-[90vh] overflow-y-auto p-0 gap-0 rounded-3xl border-border/80 bg-card shadow-2xl">
+      <DialogContent className="max-w-2xl sm:max-w-3xl max-h-[90vh] overflow-y-auto p-0 gap-0 rounded-xl border-border/80 bg-card shadow-2xl">
         {/* Header */}
         <div className="p-5 sm:p-6 border-b border-border/60 bg-muted/20">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="size-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-bold text-lg shrink-0">
+              <div className="size-11 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-base shrink-0">
                 {user?.name?.[0]?.toUpperCase() || "W"}
               </div>
               <div>
@@ -115,13 +115,13 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
                         ? "destructive"
                         : "secondary"
                     }
-                    className={
+                    className={`rounded-md px-2 py-0.5 text-[11px] font-semibold tracking-wide uppercase border ${
                       isApproved
                         ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
                         : isPending
                         ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30"
                         : "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30"
-                    }
+                    }`}
                   >
                     {worker.verificationStatus}
                   </Badge>
@@ -135,7 +135,7 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
+              className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
             >
               <X className="size-4" />
             </button>
@@ -146,7 +146,7 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
             <button
               type="button"
               onClick={() => setActiveTab("details")}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                 activeTab === "details"
                   ? "bg-card text-foreground shadow-xs border border-border/80"
                   : "text-muted-foreground hover:text-foreground"
@@ -157,7 +157,7 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
             <button
               type="button"
               onClick={() => setActiveTab("documents")}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                 activeTab === "documents"
                   ? "bg-card text-foreground shadow-xs border border-border/80"
                   : "text-muted-foreground hover:text-foreground"
@@ -356,7 +356,7 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
 
           {/* Rejection input box if opened */}
           {showRejectInput && (
-            <div className="space-y-2 p-4 rounded-2xl bg-rose-500/5 border border-rose-500/20 animate-in fade-in-50">
+            <div className="space-y-2 p-3.5 rounded-lg bg-rose-500/5 border border-rose-500/20 animate-in fade-in-50">
               <label className="text-xs font-bold text-rose-600 dark:text-rose-400">
                 Reason for Rejection: <span className="text-destructive">*</span>
               </label>
@@ -365,19 +365,19 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
                 onChange={(e) => setRejectionReason(e.target.value)}
                 placeholder="Specify why this worker application is being rejected (e.g. Unclear ID, invalid certificate)..."
                 rows={2}
-                className="w-full text-xs p-3 rounded-xl bg-background border border-border/80 focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
+                className="w-full text-xs p-3 rounded-lg bg-background border border-border/80 focus:ring-2 focus:ring-rose-500/20 focus:outline-none"
               />
             </div>
           )}
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 sm:p-6 border-t border-border/60 bg-muted/10 flex flex-wrap items-center justify-between gap-3">
+        <div className="p-4 sm:p-5 border-t border-border/60 bg-muted/10 flex flex-wrap items-center justify-between gap-3">
           <Button
             type="button"
             variant="outline"
             onClick={onClose}
-            className="rounded-2xl text-xs h-10 px-4"
+            className="rounded-lg text-xs h-9 px-4 shadow-xs"
           >
             Close
           </Button>
@@ -390,7 +390,7 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
                 variant="destructive"
                 onClick={handleReject}
                 disabled={isProcessing}
-                className="rounded-2xl text-xs h-10 px-4 gap-1.5 shadow-xs"
+                className="rounded-lg text-xs h-9 px-4 gap-1.5 shadow-xs"
               >
                 {isProcessing ? (
                   <Loader2 className="size-3.5 animate-spin" />
@@ -407,7 +407,7 @@ export const WorkerVerificationModal: React.FC<WorkerVerificationModalProps> = (
                 type="button"
                 onClick={handleApprove}
                 disabled={isProcessing}
-                className="rounded-2xl text-xs h-10 px-5 gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/20 font-semibold"
+                className="rounded-lg text-xs h-9 px-5 gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs font-semibold"
               >
                 {isProcessing ? (
                   <Loader2 className="size-3.5 animate-spin" />

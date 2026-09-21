@@ -68,10 +68,6 @@ function resolveBookingPayload(input: {
     : now;
 
   const finalEmergencyDetails = {
-    hazardType:
-      input.emergencyDetails?.hazardType?.trim() ||
-      (finalIsEmergency ? "Urgent Emergency Callout" : ""),
-    severity: input.emergencyDetails?.severity || (finalIsEmergency ? "CRITICAL" : "MEDIUM"),
     immediateContact: input.emergencyDetails?.immediateContact?.trim() || "",
     notes:
       input.emergencyDetails?.notes?.trim() ||
@@ -115,12 +111,10 @@ assertTrue(
   "On-Demand scheduledDate automatically set to current timestamp"
 );
 
-// Test 3: Emergency Booking Resolution (Critical Hazard)
+// Test 3: Emergency Booking Resolution (Immediate Contact)
 const emergency = resolveBookingPayload({
   bookingType: "EMERGENCY",
   emergencyDetails: {
-    hazardType: "Burst Water Pipe",
-    severity: "CRITICAL",
     immediateContact: "9876543210",
     notes: "Main valve broken, water gushing into kitchen",
   },
@@ -129,9 +123,7 @@ assertEqual(emergency.bookingType, BookingType.EMERGENCY, "Emergency bookingType
 assertEqual(emergency.isEmergency, true, "Emergency isEmergency is true");
 assertEqual(emergency.urgencyLevel, UrgencyLevel.CRITICAL, "Emergency urgencyLevel defaults to CRITICAL");
 assertEqual(emergency.isImmediate, true, "Emergency booking marked immediate");
-assertEqual(emergency.emergencyDetails.hazardType, "Burst Water Pipe", "Emergency hazardType correctly captured");
 assertEqual(emergency.emergencyDetails.immediateContact, "9876543210", "Emergency contact correctly captured");
-assertEqual(emergency.emergencyDetails.severity, "CRITICAL", "Emergency severity is CRITICAL");
 
 // Test 4: Priority Sorting Simulation
 // EMERGENCY gigs must always rank higher than any standard scheduled or on-demand jobs

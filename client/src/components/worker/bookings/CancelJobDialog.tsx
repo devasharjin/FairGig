@@ -32,10 +32,10 @@ export const CancelJobDialog: React.FC<CancelJobDialogProps> = ({
       open={Boolean(cancellingJob)}
       onOpenChange={(open) => !open && onClose()}
     >
-      <DialogContent className="max-w-md rounded-3xl p-6 border border-border/80 shadow-2xl bg-card">
+      <DialogContent className="max-w-md rounded-xl p-6 border border-border/80 shadow-2xl bg-card">
         <DialogHeader>
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-2xl bg-destructive/10 text-destructive flex items-center justify-center shrink-0">
+            <div className="size-10 rounded-lg bg-destructive/10 text-destructive flex items-center justify-center shrink-0">
               <AlertCircle className="size-5" />
             </div>
             <div>
@@ -63,7 +63,7 @@ export const CancelJobDialog: React.FC<CancelJobDialogProps> = ({
               placeholder="Describe reason for emergency cancellation..."
               value={cancelReason}
               onChange={(e) => onReasonChange(e.target.value)}
-              className="w-full px-3 py-2 rounded-2xl border border-input bg-input/20 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition resize-none"
+              className="w-full px-3 py-2 rounded-lg border border-input bg-input/20 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition resize-none"
             />
           </div>
 
@@ -73,7 +73,7 @@ export const CancelJobDialog: React.FC<CancelJobDialogProps> = ({
               variant="outline"
               onClick={onClose}
               disabled={isPending}
-              className="h-10 px-4 rounded-xl text-xs cursor-pointer"
+              className="h-10 px-4 rounded-lg text-xs cursor-pointer"
             >
               Keep Job
             </Button>
@@ -81,7 +81,7 @@ export const CancelJobDialog: React.FC<CancelJobDialogProps> = ({
               type="submit"
               variant="destructive"
               disabled={isPending}
-              className="h-10 px-4 rounded-xl text-xs font-bold cursor-pointer shadow-sm"
+              className="h-10 px-4 rounded-lg text-xs font-bold cursor-pointer shadow-sm"
             >
               {isPending ? "Cancelling..." : "Confirm Cancellation"}
             </Button>

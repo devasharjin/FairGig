@@ -56,11 +56,11 @@ export const WorkerVerificationStats: React.FC<WorkerVerificationStatsProps> = (
         return (
           <Card
             key={stat.title}
-            className={`border ${stat.border} bg-card/85 shadow-sm rounded-2xl overflow-hidden`}
+            className={`border ${stat.border} bg-card shadow-xs rounded-xl overflow-hidden`}
           >
             <CardContent className="p-4 sm:p-5 flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-muted-foreground">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {stat.title}
                 </p>
                 <p className="text-2xl font-bold tracking-tight text-foreground mt-1">
@@ -68,7 +68,7 @@ export const WorkerVerificationStats: React.FC<WorkerVerificationStatsProps> = (
                 </p>
               </div>
               <div
-                className={`size-10 sm:size-11 rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center shrink-0`}
+                className={`size-10 rounded-lg ${stat.bg} ${stat.color} flex items-center justify-center shrink-0`}
               >
                 <Icon className="size-5" />
               </div>

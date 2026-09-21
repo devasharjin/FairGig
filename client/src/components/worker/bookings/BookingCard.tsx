@@ -144,10 +144,10 @@ export const BookingCard: React.FC<BookingCardProps> = ({
   return (
     <div
       className={cn(
-        "rounded-3xl border bg-card p-5 sm:p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-4",
+        "rounded-xl border bg-card p-5 shadow-xs hover:border-border transition-all flex flex-col justify-between space-y-4",
         isInProgress
-          ? "border-purple-500/50 ring-1 ring-purple-500/20 shadow-purple-500/5"
-          : "border-border/80 hover:border-primary/40"
+          ? "border-accent/40 ring-1 ring-accent/20"
+          : "border-border/80 hover:border-border"
       )}
     >
       {/* Header Section */}
@@ -159,25 +159,25 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                 {job.bookingNumber}
               </span>
               {job.isEmergency && (
-                <Badge variant="destructive" className="rounded-md text-[10px] py-0 px-2 font-black uppercase bg-rose-600 text-white animate-pulse">
+                <Badge variant="destructive" className="rounded-md text-[10px] py-0 px-2 font-bold uppercase bg-rose-600 text-white animate-pulse">
                   🚨 Emergency SOS
                 </Badge>
               )}
               {job.bookingType === "ON_DEMAND" && !job.isEmergency && (
-                <Badge variant="outline" className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 rounded-md text-[10px] py-0 px-2 font-bold">
+                <Badge variant="outline" className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 rounded-md text-[10px] py-0 px-2 font-semibold">
                   ⚡ On-Demand
                 </Badge>
               )}
-              <Badge variant="secondary" className="rounded-md text-[10px] py-0 px-2">
+              <Badge variant="secondary" className="rounded-md text-[10px] py-0 px-2 font-medium">
                 {job.category?.name || "Service"}
               </Badge>
             </div>
 
             <Link
               to={`/worker/bookings/${job._id}`}
-              className="hover:text-primary transition-colors block"
+              className="hover:text-accent transition-colors block"
             >
-              <h2 className="text-base sm:text-lg font-bold text-foreground mt-1 hover:text-primary transition-colors">
+              <h2 className="text-base sm:text-lg font-bold text-foreground mt-1 hover:text-accent transition-colors">
                 {job.service?.name}
               </h2>
             </Link>
@@ -187,13 +187,13 @@ export const BookingCard: React.FC<BookingCardProps> = ({
         </div>
 
         {/* Customer Card */}
-        <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/60 flex items-center justify-between gap-3">
+        <div className="p-3 rounded-lg bg-muted/40 border border-border/60 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-xl bg-primary/10 text-primary font-bold flex items-center justify-center text-xs shrink-0">
+            <div className="size-9 rounded-lg bg-primary/10 text-primary font-bold flex items-center justify-center text-xs shrink-0">
               {job.customer?.name?.charAt(0).toUpperCase() || "C"}
             </div>
             <div>
-              <p className="text-xs font-bold text-foreground">
+              <p className="text-xs font-semibold text-foreground">
                 {job.customer?.name || "Customer"}
               </p>
               <p className="text-[11px] text-muted-foreground">
@@ -206,7 +206,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             {job.customer?.phone && (
               <a
                 href={`tel:${job.customer.phone}`}
-                className="size-8.5 rounded-xl bg-primary text-primary-foreground flex items-center justify-center hover:opacity-90 transition cursor-pointer shadow-xs"
+                className="size-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center hover:opacity-90 transition cursor-pointer shadow-xs"
                 title="Call Customer"
               >
                 <Phone className="size-3.5" />
@@ -218,29 +218,29 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                 href={mapsUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="size-8.5 rounded-xl border border-border/80 bg-card hover:bg-muted text-foreground flex items-center justify-center transition cursor-pointer"
+                className="size-8 rounded-lg border border-border/80 bg-card hover:bg-muted text-foreground flex items-center justify-center transition cursor-pointer shadow-xs"
                 title="Google Maps Navigation"
               >
-                <Navigation className="size-3.5 text-primary" />
+                <Navigation className="size-3.5 text-accent" />
               </a>
             )}
           </div>
         </div>
 
         {/* Schedule & Address Block */}
-        <div className="p-3.5 rounded-2xl bg-card border border-border/60 space-y-2 text-xs text-muted-foreground">
+        <div className="p-3 rounded-lg bg-card border border-border/60 space-y-2 text-xs text-muted-foreground">
           <div className="flex items-start gap-2">
-            <Calendar className="size-4 text-primary shrink-0 mt-0.5" />
+            <Calendar className="size-3.5 text-accent shrink-0 mt-0.5" />
             <div>
-              <span className="font-semibold text-foreground">Appointment:</span>{" "}
+              <span className="font-medium text-foreground">Appointment:</span>{" "}
               {formatDate(job.scheduledDate)}
             </div>
           </div>
 
           <div className="flex items-start gap-2">
-            <MapPin className="size-4 text-primary shrink-0 mt-0.5" />
+            <MapPin className="size-3.5 text-accent shrink-0 mt-0.5" />
             <div>
-              <span className="font-semibold text-foreground">Address:</span>{" "}
+              <span className="font-medium text-foreground">Address:</span>{" "}
               {job.address?.street}
               {job.address?.city ? `, ${job.address.city}` : ""}
             </div>
@@ -248,7 +248,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
 
           {job.customerNotes && (
             <div className="flex items-start gap-2 pt-1 border-t border-border/40">
-              <FileText className="size-4 text-muted-foreground shrink-0 mt-0.5" />
+              <FileText className="size-3.5 text-muted-foreground shrink-0 mt-0.5" />
               <div className="italic text-foreground line-clamp-2">
                 "{job.customerNotes}"
               </div>
@@ -257,7 +257,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
         </div>
 
         {/* Pricing & Rate Breakdown */}
-        <div className="flex flex-col gap-1.5 px-3.5 py-2.5 rounded-xl bg-muted/20 border border-border/40 text-xs">
+        <div className="flex flex-col gap-1.5 px-3 py-2 rounded-lg bg-muted/20 border border-border/40 text-xs">
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">
               Rates:{" "}
@@ -267,15 +267,15 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             </span>
             <span className="text-muted-foreground">
               {job.status === "COMPLETED" ? "Net Payout: " : "Est. Payout: "}
-              <strong className="text-emerald-600 dark:text-emerald-400 text-sm font-black">
+              <strong className="text-emerald-600 dark:text-emerald-400 text-sm font-bold">
                 ₹{job.pricing?.workerNetEarnings ?? job.totalAmount}
               </strong>
             </span>
           </div>
           {isInProgress && job.startedAt && (
-            <div className="flex items-center justify-between pt-1 border-t border-border/30 text-[11px] text-purple-600 dark:text-purple-400 font-medium">
+            <div className="flex items-center justify-between pt-1 border-t border-border/30 text-[11px] text-accent font-medium">
               <span className="flex items-center gap-1">
-                <span className="size-1.5 rounded-full bg-purple-500 animate-ping inline-block" />
+                <span className="size-1.5 rounded-full bg-accent animate-ping inline-block" />
                 Work in progress on-site
               </span>
               <span>
@@ -287,10 +287,10 @@ export const BookingCard: React.FC<BookingCardProps> = ({
 
         {/* Rating received if completed */}
         {job.isRated && job.rating && (
-          <div className="p-3.5 rounded-2xl bg-amber-500/5 border border-amber-500/20 space-y-1.5 text-xs">
+          <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/20 space-y-1.5 text-xs">
             <div className="flex items-center justify-between">
               <span className="font-bold text-foreground">Customer Review</span>
-              <span className="flex items-center gap-1 font-extrabold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-md">
+              <span className="flex items-center gap-1 font-bold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-md">
                 <Star className="size-3 fill-amber-500" />
                 {job.rating.rating} / 5
               </span>
@@ -311,7 +311,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             variant="outline"
             size="sm"
             onClick={() => onSelect?.(job)}
-            className="rounded-xl h-9 text-xs cursor-pointer"
+            className="rounded-lg h-8 text-xs cursor-pointer shadow-xs"
           >
             View Details
           </Button>
@@ -324,7 +324,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => onCancelJob(job)}
-                className="rounded-xl h-9 text-xs text-destructive hover:bg-destructive/10 cursor-pointer"
+                className="rounded-lg h-8 text-xs text-destructive hover:bg-destructive/10 cursor-pointer"
               >
                 Cancel
               </Button>
@@ -332,7 +332,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                 size="sm"
                 onClick={() => onStartJob(job._id)}
                 disabled={isUpdating}
-                className="rounded-xl h-9 px-4 text-xs font-bold gap-1.5 cursor-pointer shadow-xs bg-purple-600 hover:bg-purple-700 text-white"
+                className="rounded-lg h-8 px-3.5 text-xs font-semibold gap-1.5 cursor-pointer shadow-xs bg-accent hover:bg-accent/90 text-accent-foreground"
               >
                 <PlayCircle className="size-3.5" />
                 Start Job
@@ -345,7 +345,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
               size="sm"
               onClick={() => onCompleteJob(job)}
               disabled={isUpdating}
-              className="rounded-xl h-9 px-4 text-xs font-bold gap-1.5 cursor-pointer shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+              className="rounded-lg h-8 px-3.5 text-xs font-semibold gap-1.5 cursor-pointer shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white"
             >
               <CheckCircle2 className="size-3.5" />
               Complete Job

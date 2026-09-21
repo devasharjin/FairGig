@@ -21,52 +21,43 @@ export const CategoryServiceGroup: React.FC<CategoryServiceGroupProps> = ({
   return (
     <section
       id={`category-${category._id}`}
-      className="scroll-mt-28 space-y-4 sm:space-y-6 pt-2"
+      className="scroll-mt-28 space-y-5 pt-2"
     >
-      {/* Category Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-5 rounded-3xl bg-muted/40 border border-border/70 backdrop-blur-xs">
-        <div className="flex items-center gap-3 sm:gap-4">
-          {/* Category Icon */}
-          <div
-            className="flex size-12 sm:size-14 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary shrink-0 text-xl sm:text-2xl shadow-xs"
-            title={category.name}
-          >
-            {category.icon ? (
-              <span dangerouslySetInnerHTML={{ __html: category.icon }} />
-            ) : (
-              <Briefcase className="size-6 text-primary" />
-            )}
-          </div>
+      {/* Category Header */}
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-transparent bg-gradient-to-r from-[#17324D]/[0.06] to-white px-3 py-2.5 ring-1 ring-[#17324D]/[0.08]">
+  {/* Icon + Title */}
+  <div className="flex min-w-0 items-center gap-3">
+    <div
+      className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[#17324D]/10 bg-white text-[#17324D] shadow-sm"
+      title={category.name}
+    >
+      {category.icon ? (
+        <span
+          className="flex items-center justify-center [&_svg]:size-5"
+          dangerouslySetInnerHTML={{ __html: category.icon }}
+        />
+      ) : (
+        <Briefcase className="size-5" />
+      )}
+    </div>
 
-          {/* Titles & Desc */}
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-lg sm:text-xl font-black text-foreground tracking-tight">
-                {category.name}
-              </h2>
-            </div>
-            {category.description && (
-              <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 line-clamp-1">
-                {category.description}
-              </p>
-            )}
-          </div>
-        </div>
+    <h2 className="text-sm sm:text-base font-bold tracking-tight text-[#172B3A]">
+      {category.name}
+    </h2>
+  </div>
 
-        {/* Count Badge */}
-        <div className="flex items-center gap-2 self-start sm:self-center">
-          <Badge
-            variant="secondary"
-            className="rounded-xl px-3 py-1 text-xs font-semibold bg-background border border-border/80 text-foreground"
-          >
-            <Sparkles className="size-3 text-primary mr-1" />
-            {services.length} {services.length === 1 ? "Service" : "Services"}
-          </Badge>
-        </div>
-      </div>
+  {/* Count Badge */}
+  <Badge
+    variant="secondary"
+    className="shrink-0 gap-1 rounded-md border border-[#17324D]/10 bg-white px-2 py-1 text-[11px] font-medium text-[#17324D]"
+  >
+    <Sparkles className="size-3 text-[#168C83]" />
+    {services.length} {services.length === 1 ? "Service" : "Services"}
+  </Badge>
+</div>
 
       {/* Services Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {services.map((service) => (
           <ServiceCard
             key={service._id}

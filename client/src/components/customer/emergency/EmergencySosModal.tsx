@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
@@ -6,12 +6,10 @@ import {
   MapPin,
   Phone,
   Crosshair,
-  Wrench,
-  Zap,
-  Lock,
-  Flame,
   ShieldCheck,
-  CheckCircle2,
+  Zap,
+  Layers,
+  Wrench,
 } from "lucide-react";
 import {
   Dialog,
@@ -20,59 +18,29 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { useCustomerCategories } from "@/features/customer/categories/hooks";
 import { useCustomerServices } from "@/features/customer/services/hooks";
 import { useCreateBooking } from "@/features/customer/bookings/hooks";
 import { useCustomerProfile } from "@/features/customer/profile/hooks";
 import { useAuthStore } from "@/features/auth/store";
 import type { CustomerService } from "@/features/customer/services/types";
+import { cn } from "@/lib/utils";
 
 interface EmergencySosModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
-
-interface EmergencyCategoryPreset {
-  id: string;
-  name: string;
-  hazardLabel: string;
-  keyword: string;
-  icon: React.ElementType;
-}
-
-const PRESETS: EmergencyCategoryPreset[] = [
-  {
-    id: "plumbing",
-    name: "Plumbing",
-    hazardLabel: "Burst Pipe / Severe Leak",
-    keyword: "plumb",
-    icon: Wrench,
-  },
-  {
-    id: "electrical",
-    name: "Electrical",
-    hazardLabel: "Electrical Spark / Power Failure",
-    keyword: "electr",
-    icon: Zap,
-  },
-  {
-    id: "locksmith",
-    name: "Lockout",
-    hazardLabel: "Jammed Lock / Locked Out",
-    keyword: "lock",
-    icon: Lock,
-  },
-  {
-    id: "appliance",
-    name: "Appliance",
-    hazardLabel: "Short Circuit / Danger Hazard",
-    keyword: "appliance",
-    icon: Flame,
-  },
-];
 
 export const EmergencySosModal: React.FC<EmergencySosModalProps> = ({
   open,
@@ -80,298 +48,357 @@ export const EmergencySosModal: React.FC<EmergencySosModalProps> = ({
 }) => {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
-  const { data: services = [] } = useCustomerServices({ isActive: true });
+  const { data: categories = [], isLoading: isLoadingCats } = useCustomerCategories({ isActive: true });
+  const { data: services = [], isLoading: isLoadingServices } = useCustomerServices({ isActive: true });
   const { data: profileData } = useCustomerProfile();
   const createBooking = useCreateBooking();
 
-  const [selectedPreset, setSelectedPreset] = useState<string>("plumbing");
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
+  const [selectedServiceId, setSelectedServiceId] = useState("");
   const [address, setAddress] = useState("");
   const [immediateContact, setImmediateContact] = useState("");
-  const [hazardDescription, setHazardDescription] = useState("");
+  const [notes, setNotes] = useState("");
   const [isLocating, setIsLocating] = useState(false);
 
-  // Pre-fill profile address & phone
+  // Auto-select first category when data loads
   useEffect(() => {
-    if (open) {
-      if (!address) {
-        if (profileData?.address?.street) {
-          const formatted = [
-            profileData.address.street,
-            profileData.address.city,
-            profileData.address.state,
-          ]
-            .filter(Boolean)
-            .join(", ");
-          setAddress(formatted);
-        } else if (profileData?.savedAddresses && profileData.savedAddresses.length > 0) {
-          const defaultAddr =
-            profileData.savedAddresses.find((a) => a.isDefault) ||
-            profileData.savedAddresses[0];
-          const formatted = [
-            defaultAddr.street,
-            defaultAddr.city,
-            defaultAddr.state,
-          ]
-            .filter(Boolean)
-            .join(", ");
-          setAddress(formatted);
-        }
-      }
+    if (categories.length > 0 && !selectedCategoryId) {
+      setSelectedCategoryId(categories[0]._id);
+    }
+  }, [categories, selectedCategoryId]);
 
-      if (!immediateContact) {
-        setImmediateContact(user?.phone || profileData?.phone || "");
+  // Services belonging to the selected category
+  const categoryServices = useMemo(() => {
+    if (!selectedCategoryId) return [];
+    return services.filter((s) => {
+      const catId =
+        typeof s.category === "object" && s.category !== null
+          ? s.category._id
+          : s.category;
+      return catId === selectedCategoryId;
+    });
+  }, [services, selectedCategoryId]);
+
+  // Auto-select first service when category changes
+  useEffect(() => {
+    if (categoryServices.length > 0) {
+      const exists = categoryServices.some((s) => s._id === selectedServiceId);
+      if (!exists) setSelectedServiceId(categoryServices[0]._id);
+    } else {
+      setSelectedServiceId("");
+    }
+  }, [categoryServices, selectedServiceId]);
+
+  const selectedService: CustomerService | undefined = useMemo(
+    () => categoryServices.find((s) => s._id === selectedServiceId) ?? categoryServices[0],
+    [categoryServices, selectedServiceId]
+  );
+
+  // Pre-fill address & phone from profile
+  useEffect(() => {
+    if (!open) return;
+    if (!address) {
+      const addr = profileData?.address;
+      const saved = profileData?.savedAddresses;
+      if (addr?.street) {
+        setAddress([addr.street, addr.city, addr.state].filter(Boolean).join(", "));
+      } else if (saved?.length) {
+        const def = saved.find((a) => a.isDefault) ?? saved[0];
+        setAddress([def.street, def.city, def.state].filter(Boolean).join(", "));
       }
+    }
+    if (!immediateContact) {
+      setImmediateContact(user?.phone || profileData?.user?.phone || "");
     }
   }, [open, profileData, user, address, immediateContact]);
 
-  // Match active service by selected preset keyword
-  const matchedService: CustomerService | undefined = React.useMemo(() => {
-    const current = PRESETS.find((p) => p.id === selectedPreset);
-    if (!current) return services[0];
-    const match = services.find((s) => {
-      const name = s.name.toLowerCase();
-      const desc = (s.description || "").toLowerCase();
-      const catName =
-        typeof s.category === "object" && s.category !== null
-          ? s.category.name.toLowerCase()
-          : "";
-      return (
-        name.includes(current.keyword) ||
-        desc.includes(current.keyword) ||
-        catName.includes(current.keyword)
-      );
-    });
-    return match || services[0];
-  }, [selectedPreset, services]);
-
-  const handleUseCurrentLocation = () => {
-    if (!navigator.geolocation) {
-      toast.error("Geolocation is not supported by your browser");
-      return;
-    }
-
+  const handleGps = () => {
+    if (!navigator.geolocation) { toast.error("Geolocation not supported"); return; }
     setIsLocating(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const { latitude, longitude } = pos.coords;
-        setAddress(`GPS: Lat ${latitude.toFixed(5)}, Long ${longitude.toFixed(5)} (Current Location)`);
+        setAddress(`GPS: ${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`);
         setIsLocating(false);
-        toast.success("Location acquired from GPS!");
+        toast.success("Location captured!");
       },
-      (err) => {
-        setIsLocating(false);
-        toast.error(`Could not retrieve location: ${err.message}`);
-      },
+      (err) => { setIsLocating(false); toast.error(err.message); },
       { timeout: 10000 }
     );
   };
 
-  const handleEmergencySubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!user) {
-      toast.error("Please log in to submit an emergency request");
-      onOpenChange(false);
-      navigate("/login");
-      return;
-    }
-
-    if (!matchedService) {
-      toast.error("No active service found for this trade. Please contact hotline.");
-      return;
-    }
-
-    if (!address.trim()) {
-      toast.error("Please provide your service location or use current GPS");
-      return;
-    }
-
-    if (!immediateContact.trim()) {
-      toast.error("Please provide an immediate contact phone number");
-      return;
-    }
-
-    const currentPreset = PRESETS.find((p) => p.id === selectedPreset);
-
+    if (!user) { toast.error("Please log in first"); onOpenChange(false); navigate("/login"); return; }
+    if (!selectedService) { toast.error("Please select a service"); return; }
+    if (!address.trim()) { toast.error("Please provide your location"); return; }
+    if (!immediateContact.trim()) { toast.error("Please provide a contact number"); return; }
     try {
       await createBooking.mutateAsync({
-        serviceId: matchedService._id,
+        serviceId: selectedService._id,
         address: address.trim(),
         scheduledDate: new Date().toISOString(),
-        customerNotes: hazardDescription.trim(),
+        customerNotes: notes.trim(),
         bookingType: "EMERGENCY",
         isEmergency: true,
         urgencyLevel: "CRITICAL",
         emergencyDetails: {
-          hazardType: currentPreset?.hazardLabel || "Critical Emergency",
-          severity: "CRITICAL",
           immediateContact: immediateContact.trim(),
-          notes: hazardDescription.trim(),
+          notes: notes.trim(),
         },
       });
-
-      setAddress("");
-      setHazardDescription("");
+      setAddress(""); setNotes("");
       onOpenChange(false);
       navigate("/bookings");
-    } catch {
-      // Handled by mutation toast
-    }
+    } catch { /* handled by mutation toast */ }
   };
 
-  const firstHourRate = matchedService?.firstHourRate ?? matchedService?.hourlyPrice ?? 300;
-  const transportFee = matchedService?.transportFee ?? 30;
+  const baseRate = selectedService?.firstHourRate ?? selectedService?.hourlyPrice ?? 0;
+  const emergencyRate = Math.round(baseRate * 1.2);
+  const transport = selectedService?.transportFee ?? 30;
+  const estimatedTotal = emergencyRate + transport;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg rounded-3xl p-6 border border-rose-500/50 shadow-2xl bg-card ring-2 ring-rose-500/20 max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <div className="flex items-center gap-3">
-            <div className="flex size-11 items-center justify-center rounded-2xl bg-rose-500/15 text-rose-600 dark:text-rose-400 shrink-0">
-              <AlertTriangle className="size-6 animate-pulse" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <DialogTitle className="text-lg font-black text-foreground">
-                  Emergency SOS Dispatch
-                </DialogTitle>
-                <Badge variant="destructive" className="text-[10px] uppercase font-black tracking-wider py-0 px-2">
-                  Immediate Priority
-                </Badge>
-              </div>
-              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Broadcast directly to top-of-queue for verified local cooperative workers
-              </DialogDescription>
-            </div>
-          </div>
-        </DialogHeader>
+      <DialogContent className="max-w-[460px] w-full rounded-2xl p-0 border border-rose-500/40 shadow-2xl bg-card ring-1 ring-rose-500/10 gap-0 overflow-hidden">
 
-        {/* 1. Quick Emergency Trade Selector */}
-        <div className="space-y-2 pt-2">
-          <Label className="text-xs font-bold text-foreground">
-            What is the emergency?
-          </Label>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {PRESETS.map((p) => {
-              const Icon = p.icon;
-              const isSelected = selectedPreset === p.id;
-              return (
-                <button
-                  type="button"
-                  key={p.id}
-                  onClick={() => setSelectedPreset(p.id)}
-                  className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 transition-all text-center cursor-pointer ${
-                    isSelected
-                      ? "border-rose-500 bg-rose-500/15 text-rose-700 dark:text-rose-300 font-bold shadow-xs scale-[1.02]"
-                      : "border-border/70 bg-card hover:bg-muted text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <Icon className="size-5" />
-                  <span className="text-xs">{p.name}</span>
-                </button>
-              );
-            })}
-          </div>
+        {/* ── Header ──────────────────────────────── */}
+        <div className="relative px-5 pt-4 pb-3.5 bg-gradient-to-r from-rose-600 to-rose-500 overflow-hidden">
+          <div className="absolute -right-4 -top-4 size-20 rounded-full bg-white/5 pointer-events-none" />
+          <div className="absolute right-8 top-5 size-10 rounded-full bg-white/5 pointer-events-none" />
+
+          <DialogHeader>
+            <div className="flex items-center gap-3 relative z-10">
+              <div className="flex size-9 items-center justify-center rounded-xl bg-white/15 text-white shrink-0 ring-1 ring-white/20">
+                <AlertTriangle className="size-4.5 animate-pulse" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <DialogTitle className="text-sm font-black text-white">
+                    Emergency SOS
+                  </DialogTitle>
+                  <Badge className="bg-white/20 border-0 text-white text-[9px] font-black uppercase tracking-wider py-0 px-1.5">
+                    Priority
+                  </Badge>
+                </div>
+                <DialogDescription className="text-[11px] text-rose-100/75 mt-0">
+                  Immediate dispatch · Nearest cooperative responder
+                </DialogDescription>
+              </div>
+              {selectedService && (
+                <div className="text-right shrink-0 relative z-10">
+                  <p className="text-[9px] text-rose-200/70 font-medium leading-none mb-0.5">
+                    Est. 1st Hr
+                  </p>
+                  <p className="text-xl font-black text-white leading-none">₹{estimatedTotal}</p>
+                  <p className="text-[9px] text-rose-200/60">+20% surge</p>
+                </div>
+              )}
+            </div>
+          </DialogHeader>
         </div>
 
-        {/* Selected service match banner */}
-        {matchedService && (
-          <div className="p-3 rounded-2xl bg-muted/40 border border-border/60 text-xs flex items-center justify-between">
-            <div>
-              <span className="text-muted-foreground block text-[11px]">Matched Trade Service:</span>
-              <strong className="text-foreground">{matchedService.name}</strong>
+        {/* ── Body ────────────────────────────────── */}
+        <form onSubmit={handleSubmit} className="px-5 pt-4 pb-5 space-y-4">
+
+          {/* Service Selection — Step 1 + Step 2 */}
+          <div className="rounded-xl border border-border/60 bg-muted/20 overflow-hidden divide-y divide-border/40">
+
+            {/* Step 1 — Category */}
+            <div className="px-3.5 py-3 flex items-center gap-3">
+              <div className={cn(
+                "flex size-6 items-center justify-center rounded-full text-[10px] font-black shrink-0 transition-all",
+                selectedCategoryId
+                  ? "bg-rose-500 text-white"
+                  : "bg-muted border border-border text-muted-foreground"
+              )}>
+                <Layers className="size-3" />
+              </div>
+              <div className="flex-1 min-w-0 space-y-1.5">
+                <Label className="text-[11px] font-bold text-foreground uppercase tracking-wider block">
+                  Trade Category
+                </Label>
+                <Select
+                  value={selectedCategoryId}
+                  onValueChange={setSelectedCategoryId}
+                  disabled={isLoadingCats}
+                >
+                  <SelectTrigger className="h-9 text-xs rounded-lg border-border/70 bg-card focus:ring-rose-500/40 focus:border-rose-500/50 w-full">
+                    <SelectValue placeholder={isLoadingCats ? "Loading..." : "Select a category…"}>
+                      {selectedCategoryId
+                        ? (categories.find((c) => c._id === selectedCategoryId)?.name ?? "")
+                        : undefined}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat._id} value={cat._id} className="text-xs">
+                        {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <div className="text-right">
-              <span className="text-muted-foreground block text-[11px]">Standard Ceiling Rate:</span>
-              <span className="font-bold text-foreground">
-                ₹{firstHourRate} 1st hr + ₹{transportFee} flat
-              </span>
+
+            {/* Step 2 — Service */}
+            <div className="px-3.5 py-3 flex items-center gap-3">
+              <div className={cn(
+                "flex size-6 items-center justify-center rounded-full text-[10px] font-black shrink-0 transition-all",
+                selectedServiceId
+                  ? "bg-rose-500 text-white"
+                  : selectedCategoryId
+                    ? "bg-muted border-2 border-rose-500/40 text-rose-600 dark:text-rose-400"
+                    : "bg-muted border border-border text-muted-foreground opacity-50"
+              )}>
+                <Wrench className="size-3" />
+              </div>
+              <div className="flex-1 min-w-0 space-y-1.5">
+                <Label className={cn(
+                  "text-[11px] font-bold uppercase tracking-wider block transition-colors",
+                  selectedCategoryId ? "text-foreground" : "text-muted-foreground/50"
+                )}>
+                  Specific Service
+                </Label>
+                <Select
+                  value={selectedServiceId}
+                  onValueChange={setSelectedServiceId}
+                  disabled={!selectedCategoryId || isLoadingServices || categoryServices.length === 0}
+                >
+                  <SelectTrigger className={cn(
+                    "h-9 text-xs rounded-lg border-border/70 bg-card w-full",
+                    selectedCategoryId
+                      ? "focus:ring-rose-500/40 focus:border-rose-500/50"
+                      : "opacity-50 cursor-not-allowed"
+                  )}>
+                    <SelectValue
+                      placeholder={
+                        !selectedCategoryId
+                          ? "Select a category first"
+                          : isLoadingServices
+                            ? "Loading services..."
+                            : categoryServices.length === 0
+                              ? "No services available"
+                              : "Select a service…"
+                      }
+                    >
+                      {selectedServiceId
+                        ? (categoryServices.find((s) => s._id === selectedServiceId)?.name ?? "")
+                        : undefined}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categoryServices.map((svc) => {
+                      const rate = Math.round((svc.firstHourRate ?? svc.hourlyPrice ?? 0) * 1.2);
+                      return (
+                        <SelectItem key={svc._id} value={svc._id} className="text-xs">
+                          <span className="flex items-center gap-2">
+                            <span>{svc.name}</span>
+                            <span className="text-muted-foreground font-normal">₹{rate}/hr</span>
+                          </span>
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
-        )}
 
-        <form onSubmit={handleEmergencySubmit} className="space-y-3.5 pt-1">
-          {/* Address with GPS */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <Label className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                <MapPin className="size-3.5 text-rose-500" />
-                Service Address / Exact Location <span className="text-destructive">*</span>
+          {/* Location & Contact */}
+          <div className="grid grid-cols-2 gap-3">
+
+            {/* Address */}
+            <div className="space-y-1.5 col-span-2 sm:col-span-1">
+              <div className="flex items-center justify-between">
+                <Label className="text-[11px] font-bold text-foreground flex items-center gap-1">
+                  <MapPin className="size-3 text-rose-500" />
+                  Location <span className="text-destructive ml-0.5">*</span>
+                </Label>
+                <button
+                  type="button"
+                  onClick={handleGps}
+                  disabled={isLocating}
+                  className="text-[10px] font-semibold text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-0.5 cursor-pointer"
+                >
+                  <Crosshair className={cn("size-2.5", isLocating && "animate-spin")} />
+                  <span>{isLocating ? "Locating..." : "GPS"}</span>
+                </button>
+              </div>
+              <Input
+                placeholder="Door / Street address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="h-9 text-xs rounded-lg"
+                required
+              />
+            </div>
+
+            {/* Phone */}
+            <div className="space-y-1.5 col-span-2 sm:col-span-1">
+              <Label className="text-[11px] font-bold text-foreground flex items-center gap-1">
+                <Phone className="size-3 text-rose-500" />
+                Contact <span className="text-destructive ml-0.5">*</span>
               </Label>
-              <button
-                type="button"
-                onClick={handleUseCurrentLocation}
-                disabled={isLocating}
-                className="text-[11px] font-semibold text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1 cursor-pointer"
-              >
-                <Crosshair className={`size-3 ${isLocating ? "animate-spin" : ""}`} />
-                <span>{isLocating ? "Locating..." : "Use Current GPS"}</span>
-              </button>
+              <Input
+                placeholder="e.g. 9876543210"
+                value={immediateContact}
+                onChange={(e) => setImmediateContact(e.target.value)}
+                className="h-9 text-xs rounded-lg"
+                required
+              />
             </div>
-            <Input
-              placeholder="e.g. Flat 302, Green Valley Apartments, Main Road"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              className="h-10 text-sm rounded-xl border-rose-500/30"
-              required
-            />
+
+            {/* Access notes */}
+            <div className="space-y-1.5 col-span-2">
+              <Label className="text-[11px] font-medium text-muted-foreground">
+                Access Notes <span className="opacity-60 font-normal">(optional)</span>
+              </Label>
+              <Input
+                placeholder="e.g. Gate code 1234, 3rd floor"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="h-9 text-xs rounded-lg"
+              />
+            </div>
           </div>
 
-          {/* Immediate Phone */}
-          <div className="space-y-1.5">
-            <Label className="text-xs font-bold text-foreground flex items-center gap-1.5">
-              <Phone className="size-3.5 text-rose-500" />
-              Immediate Contact Number <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              placeholder="e.g. 9876543210 (For worker to call while en-route)"
-              value={immediateContact}
-              onChange={(e) => setImmediateContact(e.target.value)}
-              className="h-10 text-sm rounded-xl border-rose-500/30"
-              required
-            />
-          </div>
+          {/* Footer */}
+          <div className="flex items-center justify-between pt-2 border-t border-border/60">
+            <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-muted-foreground">
+              <ShieldCheck className="size-3.5 text-rose-500 shrink-0" />
+              <span>Direct Co-op · No Middleman</span>
+            </div>
 
-          {/* Hazard Notes */}
-          <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-foreground">
-              Brief Hazard Notes / Access Instructions
-            </Label>
-            <textarea
-              rows={2}
-              placeholder="e.g. Water valve leaking heavily near meter, gate security code is 1234..."
-              value={hazardDescription}
-              onChange={(e) => setHazardDescription(e.target.value)}
-              className="w-full px-3 py-2 rounded-2xl border border-rose-500/20 bg-input/20 text-xs sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-rose-500 transition resize-none"
-            />
-          </div>
-
-          <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-[11px] text-rose-950 dark:text-rose-200 flex items-start gap-2 leading-relaxed">
-            <ShieldCheck className="size-4 shrink-0 mt-0.5 text-rose-600 dark:text-rose-400" />
-            <span>
-              <strong>Immediate Dispatch Policy:</strong> Clicking broadcast alerts all online cooperative responders with high-priority audio/visual radar notification. Zero middleman markup.
-            </span>
-          </div>
-
-          <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-border/80">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={createBooking.isPending}
-              className="h-10 px-4 rounded-xl text-xs cursor-pointer"
-            >
-              Cancel
-            </Button>
-
-            <Button
-              type="submit"
-              disabled={createBooking.isPending}
-              className="h-10 px-6 rounded-xl text-xs font-black bg-rose-600 hover:bg-rose-700 text-white cursor-pointer shadow-md shadow-rose-600/30 gap-2"
-            >
-              <AlertTriangle className="size-4 animate-bounce" />
-              <span>{createBooking.isPending ? "Broadcasting SOS..." : "Broadcast Emergency SOS Now"}</span>
-            </Button>
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => onOpenChange(false)}
+                disabled={createBooking.isPending}
+                className="h-8 px-3 rounded-lg text-xs cursor-pointer"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                size="sm"
+                disabled={createBooking.isPending || !selectedService}
+                className="h-8 px-5 rounded-lg text-xs font-black bg-rose-600 hover:bg-rose-700 text-white cursor-pointer shadow-md shadow-rose-600/25 gap-1.5 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:scale-100"
+              >
+                {createBooking.isPending ? (
+                  <>
+                    <Zap className="size-3.5 animate-pulse" />
+                    <span>Broadcasting...</span>
+                  </>
+                ) : (
+                  <>
+                    <AlertTriangle className="size-3.5" />
+                    <span>Broadcast SOS</span>
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </form>
       </DialogContent>

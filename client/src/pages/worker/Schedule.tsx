@@ -223,7 +223,7 @@ export const WorkerSchedule: React.FC = () => {
           </div>
 
           {upcomingJobs.length === 0 ? (
-            <div className="rounded-3xl border border-border/80 bg-card/50 p-12 text-center space-y-3">
+            <div className="rounded-xl border border-border/80 bg-card/50 p-12 text-center space-y-3">
               <Clock className="size-10 text-muted-foreground mx-auto" />
               <h3 className="text-base font-bold text-foreground">
                 No upcoming jobs scheduled
@@ -233,7 +233,7 @@ export const WorkerSchedule: React.FC = () => {
               </p>
               <div className="pt-2">
                 <Link to="/worker/jobs">
-                  <Button className="rounded-xl text-xs font-semibold gap-2 cursor-pointer">
+                  <Button className="rounded-lg text-xs font-semibold gap-2 cursor-pointer">
                     <Sparkles className="size-3.5" />
                     Browse Available Gigs
                   </Button>
@@ -250,7 +250,7 @@ export const WorkerSchedule: React.FC = () => {
         </div>
       ) : selectedDayJobs.length === 0 ? (
         /* Empty State for Selected Day */
-        <div className="rounded-3xl border border-border/80 bg-card/40 p-12 text-center space-y-3">
+        <div className="rounded-xl border border-border/80 bg-card/40 p-12 text-center space-y-3">
           <CalendarIcon className="size-10 text-muted-foreground/60 mx-auto" />
           <h3 className="text-base font-bold text-foreground">
             No Bookings for {selectedDateFormatted}
@@ -260,7 +260,7 @@ export const WorkerSchedule: React.FC = () => {
           </p>
           <div className="pt-2 flex justify-center gap-3">
             <Link to="/worker/jobs">
-              <Button className="rounded-xl text-xs font-semibold gap-2 cursor-pointer">
+              <Button className="rounded-lg text-xs font-semibold gap-2 cursor-pointer">
                 <Briefcase className="size-3.5" />
                 Find Available Gigs
               </Button>
@@ -268,7 +268,7 @@ export const WorkerSchedule: React.FC = () => {
             <Link to="/worker/bookings">
               <Button
                 variant="outline"
-                className="rounded-xl text-xs font-semibold cursor-pointer"
+                className="rounded-lg text-xs font-semibold cursor-pointer"
               >
                 View All My Bookings
               </Button>

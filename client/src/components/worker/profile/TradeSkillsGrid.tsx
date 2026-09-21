@@ -25,10 +25,10 @@ export const TradeSkillsGrid: React.FC<TradeSkillsGridProps> = ({ skills, catego
       : null;
 
   return (
-    <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-4">
+    <div className="rounded-xl border border-border/80 bg-card p-6 shadow-xs space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="size-10 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+          <div className="size-10 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
             <Wrench className="size-5" />
           </div>
           <div>
@@ -43,18 +43,18 @@ export const TradeSkillsGrid: React.FC<TradeSkillsGridProps> = ({ skills, catego
 
         <div className="flex items-center gap-2">
           {categoryName && (
-            <Badge variant="default" className="text-xs font-semibold bg-primary text-primary-foreground shadow-xs">
+            <Badge variant="default" className="text-xs font-semibold bg-primary text-primary-foreground shadow-xs rounded-md">
               {categoryName}
             </Badge>
           )}
-          <Badge variant="secondary" className="text-xs font-semibold">
+          <Badge variant="secondary" className="text-xs font-semibold rounded-md">
             {skills.length} {skills.length === 1 ? "Service" : "Services"}
           </Badge>
         </div>
       </div>
 
       {skills.length === 0 ? (
-        <div className="text-center p-8 border border-dashed border-border rounded-2xl space-y-2">
+        <div className="text-center p-8 border border-dashed border-border rounded-lg space-y-2">
           <Wrench className="size-8 text-muted-foreground mx-auto" />
           <p className="text-xs text-muted-foreground">
             No specialized skills loaded yet. Cooperative default gig assignment applies.
@@ -71,7 +71,7 @@ export const TradeSkillsGrid: React.FC<TradeSkillsGridProps> = ({ skills, catego
             return (
               <div
                 key={typeof skill === "object" ? skill._id || idx : idx}
-                className="rounded-2xl border border-border/70 bg-card/60 p-4 hover:border-primary/40 transition-colors space-y-2"
+                className="rounded-lg border border-border/70 bg-card/60 p-4 hover:border-primary/40 transition-colors space-y-2"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2">

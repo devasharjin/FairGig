@@ -147,7 +147,7 @@ export const WorkerProfile: React.FC = () => {
           <CredentialsCard />
 
           {/* Quick Actions Card */}
-          <div className="rounded-3xl border border-primary/30 bg-card p-6 shadow-xs space-y-3">
+          <div className="rounded-xl border border-primary/30 bg-card p-6 shadow-xs space-y-3">
             <h3 className="text-sm font-bold text-foreground">
               Ready for more work?
             </h3>
@@ -156,7 +156,7 @@ export const WorkerProfile: React.FC = () => {
             </p>
             <div className="pt-1 flex flex-col gap-2">
               <Link to="/worker/jobs" className="w-full">
-                <Button className="w-full rounded-xl text-xs font-semibold gap-2 cursor-pointer">
+                <Button className="w-full rounded-lg text-xs font-semibold gap-2 cursor-pointer">
                   <Briefcase className="size-3.5" />
                   Browse Available Gigs
                 </Button>
@@ -164,7 +164,7 @@ export const WorkerProfile: React.FC = () => {
               <Link to="/worker/schedule" className="w-full">
                 <Button
                   variant="outline"
-                  className="w-full rounded-xl text-xs font-semibold gap-2 cursor-pointer"
+                  className="w-full rounded-lg text-xs font-semibold gap-2 cursor-pointer"
                 >
                   <Calendar className="size-3.5" />
                   View Daily Schedule

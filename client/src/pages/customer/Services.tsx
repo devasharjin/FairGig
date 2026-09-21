@@ -241,63 +241,63 @@ export const CustomerServices: React.FC = () => {
   return (
     <div className="min-h-screen bg-background text-foreground pb-20">
       {/* Hero Header */}
-      <section className="relative overflow-hidden border-b border-border/60 bg-gradient-to-b from-primary/5 via-background to-background pt-10 pb-12 sm:pt-14 sm:pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto text-center space-y-4 sm:space-y-5">
+      <section className="relative overflow-hidden border-b border-border/60 bg-gradient-to-b from-muted/30 to-background pt-8 pb-10 sm:pt-12 sm:pb-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto text-center space-y-3 sm:space-y-4">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-primary/10 border border-primary/20 text-primary text-xs font-semibold shadow-xs animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-accent/10 border border-accent/25 text-accent text-xs font-semibold shadow-xs">
             <Sparkles className="size-3.5" />
             <span>Cooperative Gig Services Platform</span>
           </div>
 
           {/* Heading */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-foreground tracking-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground tracking-tight">
             {activeCategoryObj ? (
               <>
-                <span className="text-primary">{activeCategoryObj.name}</span> Services
+                <span className="text-accent">{activeCategoryObj.name}</span> Services
               </>
             ) : searchQuery ? (
               <>
-                Services matching "<span className="text-primary">{searchQuery}</span>"
+                Services matching "<span className="text-accent">{searchQuery}</span>"
               </>
             ) : (
               <>
-                Discover Verified <span className="text-primary">Gig Services</span>
+                Discover Verified <span className="text-accent">Cooperative Services</span>
               </>
             )}
           </h1>
 
           {/* Subtitle */}
-          <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             {activeCategoryObj?.description
               ? activeCategoryObj.description
-              : "Transparent hourly and metered pricing backed by verified local cooperative gig workers. Reliable service delivered right to your doorstep."}
+              : "Transparent hourly and metered pricing backed by verified local cooperative trade workers. Reliable service dispatched directly to your location."}
           </p>
 
           {/* Trust Highlights */}
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 pt-2 text-xs font-medium text-muted-foreground">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 pt-1 text-xs font-medium text-muted-foreground">
             <span className="flex items-center gap-1.5">
-              <ShieldCheck className="size-4 text-emerald-500" />
+              <ShieldCheck className="size-3.5 text-emerald-600 dark:text-emerald-400" />
               100% Vetted Workers
             </span>
             <span className="flex items-center gap-1.5">
-              <Clock className="size-4 text-primary" />
+              <Clock className="size-3.5 text-accent" />
               Standardized Rates
             </span>
             <span className="flex items-center gap-1.5">
-              <Layers className="size-4 text-primary" />
-              Transparent Cooperative Dispatch
+              <Layers className="size-3.5 text-accent" />
+              Direct Guild Dispatch
             </span>
           </div>
         </div>
       </section>
 
       {/* Main Content Area */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
         {/* Urgent Emergency SOS Callout Banner */}
         <EmergencyBanner onTriggerEmergency={() => setIsEmergencyOpen(true)} />
 
         {/* Search & Filters Section */}
-        <section className="sticky top-16 z-20 -mx-4 px-4 py-3 sm:mx-0 sm:px-0 sm:py-0 bg-background/80 backdrop-blur-md transition-all">
+        <section className="sticky top-16 z-20 -mx-4 px-4 py-3 sm:mx-0 sm:px-0 sm:py-3 bg-background border-b border-border/40 transition-all">
           <ServiceSearchFilter
             searchQuery={searchQuery}
             onSearchChange={handleSearchChange}

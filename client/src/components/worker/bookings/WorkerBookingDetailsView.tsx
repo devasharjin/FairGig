@@ -71,11 +71,11 @@ export const WorkerBookingDetailsView: React.FC<WorkerBookingDetailsViewProps> =
   return (
     <div className={cn("space-y-6 max-w-7xl mx-auto pb-16", className)}>
       {/* 1. Hero Header & Quick Controls */}
-      <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-4">
+      <div className="rounded-xl border border-border/80 bg-card p-6 shadow-xs space-y-4">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider bg-muted/60 px-2.5 py-1 rounded-lg border border-border/50">
+              <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider bg-muted/60 px-2.5 py-1 rounded-md border border-border/50">
                 #{job.bookingNumber}
               </span>
               <button
@@ -93,16 +93,16 @@ export const WorkerBookingDetailsView: React.FC<WorkerBookingDetailsViewProps> =
               {getStatusBadge(job.status)}
               {getPaymentStatusBadge(job.paymentStatus)}
               {job.isEmergency && (
-                <Badge variant="destructive" className="rounded-lg text-xs font-black uppercase bg-rose-600 text-white animate-pulse">
+                <Badge variant="destructive" className="rounded-md text-xs font-black uppercase bg-rose-600 text-white animate-pulse">
                   🚨 SOS Emergency Callout
                 </Badge>
               )}
               {job.bookingType === "ON_DEMAND" && !job.isEmergency && (
-                <Badge variant="outline" className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 rounded-lg text-xs font-bold">
+                <Badge variant="outline" className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 rounded-md text-xs font-bold">
                   ⚡ On-Demand
                 </Badge>
               )}
-              <Badge variant="secondary" className="rounded-lg text-xs font-semibold">
+              <Badge variant="secondary" className="rounded-md text-xs font-semibold">
                 {job.category?.name || "Trade Service"}
               </Badge>
             </div>
@@ -120,7 +120,7 @@ export const WorkerBookingDetailsView: React.FC<WorkerBookingDetailsViewProps> =
                   variant="outline"
                   size="sm"
                   onClick={() => onCancelJob(job)}
-                  className="rounded-xl h-10 px-4 text-xs font-semibold text-destructive hover:bg-destructive/10 hover:text-destructive cursor-pointer border-destructive/30"
+                  className="rounded-lg h-10 px-4 text-xs font-semibold text-destructive hover:bg-destructive/10 hover:text-destructive cursor-pointer border-destructive/30"
                 >
                   Cancel Gig
                 </Button>
@@ -129,7 +129,7 @@ export const WorkerBookingDetailsView: React.FC<WorkerBookingDetailsViewProps> =
                   size="sm"
                   onClick={() => onStartJob(job._id)}
                   disabled={isUpdating}
-                  className="rounded-xl h-10 px-5 text-xs font-bold gap-2 cursor-pointer shadow-xs bg-purple-600 hover:bg-purple-700 text-white"
+                  className="rounded-lg h-10 px-5 text-xs font-bold gap-2 cursor-pointer shadow-xs bg-primary hover:bg-primary/90 text-primary-foreground"
                 >
                   <PlayCircle className="size-4" />
                   <span>Start Work (On-Site)</span>
@@ -142,7 +142,7 @@ export const WorkerBookingDetailsView: React.FC<WorkerBookingDetailsViewProps> =
                 size="sm"
                 onClick={() => onCompleteJob(job)}
                 disabled={isUpdating}
-                className="rounded-xl h-10 px-5 text-xs font-bold gap-2 cursor-pointer shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+                className="rounded-lg h-10 px-5 text-xs font-bold gap-2 cursor-pointer shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white"
               >
                 <CheckCircle2 className="size-4" />
                 <span>Complete & Finalize Gig</span>
@@ -167,7 +167,7 @@ export const WorkerBookingDetailsView: React.FC<WorkerBookingDetailsViewProps> =
       {job.status === "COMPLETED" && (
         <div
           className={cn(
-            "p-4 rounded-3xl border flex items-start gap-3.5 text-xs transition-all shadow-xs",
+            "p-4 rounded-xl border flex items-start gap-3.5 text-xs transition-all shadow-xs",
             job.paymentStatus === "PAID"
               ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-950 dark:text-emerald-200"
               : "bg-amber-500/10 border-amber-500/30 text-amber-950 dark:text-amber-200"
@@ -232,7 +232,7 @@ export const WorkerBookingDetailsView: React.FC<WorkerBookingDetailsViewProps> =
           />
 
           {/* Service Specifications Card */}
-          <div className="rounded-3xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="rounded-xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs space-y-4">
             <div className="flex items-center gap-2">
               <Wrench className="size-4 text-primary" />
               <h3 className="text-sm sm:text-base font-bold text-foreground">
@@ -241,7 +241,7 @@ export const WorkerBookingDetailsView: React.FC<WorkerBookingDetailsViewProps> =
             </div>
 
             <div className="space-y-3 text-xs">
-              <div className="p-4 rounded-2xl bg-muted/30 border border-border/50 flex items-start gap-3">
+              <div className="p-4 rounded-lg bg-muted/30 border border-border/50 flex items-start gap-3">
                 <Clock className="size-4 text-primary shrink-0 mt-0.5" />
                 <div>
                   <span className="font-semibold text-foreground block text-sm">
@@ -254,7 +254,7 @@ export const WorkerBookingDetailsView: React.FC<WorkerBookingDetailsViewProps> =
               </div>
 
               {job.service?.description && (
-                <div className="p-4 rounded-2xl bg-card border border-border/60 space-y-1">
+                <div className="p-4 rounded-lg bg-card border border-border/60 space-y-1">
                   <span className="font-semibold text-foreground block text-xs">
                     Scope of Work
                   </span>
@@ -265,7 +265,7 @@ export const WorkerBookingDetailsView: React.FC<WorkerBookingDetailsViewProps> =
               )}
 
               {job.customerNotes && (
-                <div className="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/20 space-y-1">
+                <div className="p-4 rounded-lg bg-amber-500/5 border border-amber-500/20 space-y-1">
                   <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 font-semibold">
                     <FileText className="size-3.5" />
                     <span>Customer Instructions & Access Notes</span>
@@ -286,7 +286,7 @@ export const WorkerBookingDetailsView: React.FC<WorkerBookingDetailsViewProps> =
 
           {/* Customer Review (if rated) */}
           {job.isRated && job.rating && (
-            <div className="rounded-3xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs space-y-3">
+            <div className="rounded-xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold text-foreground">
                   Customer Review & Rating
@@ -298,7 +298,7 @@ export const WorkerBookingDetailsView: React.FC<WorkerBookingDetailsViewProps> =
               </div>
 
               {job.rating.review && (
-                <div className="p-3.5 rounded-2xl bg-muted/30 border border-border/50 text-xs italic text-foreground leading-relaxed">
+                <div className="p-3.5 rounded-lg bg-muted/30 border border-border/50 text-xs italic text-foreground leading-relaxed">
                   "{job.rating.review}"
                 </div>
               )}
@@ -313,7 +313,7 @@ export const WorkerBookingDetailsView: React.FC<WorkerBookingDetailsViewProps> =
           )}
 
           {/* Cooperative Safety & Guidelines */}
-          <div className="rounded-3xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs space-y-3">
+          <div className="rounded-xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs space-y-3">
             <div className="flex items-center gap-2">
               <Shield className="size-4 text-primary" />
               <h3 className="text-sm font-bold text-foreground">

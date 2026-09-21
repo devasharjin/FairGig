@@ -1,235 +1,364 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import {
-    Handshake,
-    ShieldCheck,
-    Heart,
-    Globe,
-    Mail,
-    Phone,
-    MapPin,
-    CircleDot,
-    Wrench,
-    Building2,
-    Landmark,
-    ArrowUpRight,
+  Handshake,
+  ShieldCheck,
+  Heart,
+  Globe,
+  Mail,
+  Phone,
+  MapPin,
+  CircleDot,
+  Wrench,
+  Building2,
+  Landmark,
+  ArrowUpRight,
+  Sparkles,
 } from "lucide-react";
 
-export const Footer = () => {
-    return (
-        <footer className="w-full border-t border-border/50 bg-card/60 backdrop-blur-md relative overflow-hidden transition-colors mt-auto">
-            {/* Ambient subtle background decorative glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-primary/5 rounded-full blur-3xl pointer-events-none -z-10" />
+export const Footer: React.FC = () => {
+  return (
+    <footer className="relative w-full bg-[#0A1624] text-slate-300 overflow-hidden border-t border-slate-800/80 mt-auto select-none">
+      {/* Subtle Top Gradient Highlight Line */}
+      <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[#168C83] to-transparent opacity-80" />
 
-            {/* Top Banner: Value Proposition & Newsletter/Status */}
-            <div className="border-b border-border/40 py-8 px-4 sm:px-8 max-w-7xl mx-auto">
-                <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div className="space-y-1.5 text-center md:text-left">
-                        <div className="flex items-center justify-center md:justify-start gap-2">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
-                                <ShieldCheck className="size-3.5" />
-                                ICA Cooperative Principles Compliant
-                            </span>
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 dark:text-emerald-400">
-                                <CircleDot className="size-2.5 text-emerald-500 animate-pulse" />
-                                Operational
-                            </span>
-                        </div>
-                        <h3 className="text-lg font-bold text-foreground tracking-tight">
-                            Empowering Gig Workers Through Cooperative Ownership
-                        </h3>
-                        <p className="text-xs text-muted-foreground max-w-xl">
-                            100% transparent bidding, guaranteed floor wages, group health insurance, and collective bargaining for skilled tradesmen across India.
-                        </p>
-                    </div>
+      {/* Ambient Radial Background Glows */}
+      <div className="absolute -top-32 -left-32 size-96 rounded-full bg-[#168C83]/10 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 size-96 rounded-full bg-[#17324D]/30 blur-3xl pointer-events-none" />
 
-                    <div className="flex items-center gap-3 shrink-0">
-                        <Link
-                            to="/register/worker"
-                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 transition-all active:scale-98"
-                        >
-                            <Wrench className="size-3.5" />
-                            Join as Worker
-                        </Link>
-                        <Link
-                            to="/register/cooperative"
-                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold border border-border/80 bg-input/20 hover:bg-input/40 text-foreground transition-all active:scale-98"
-                        >
-                            <Building2 className="size-3.5" />
-                            Affiliate Co-op
-                        </Link>
-                    </div>
-                </div>
+      {/* 1. Top Enterprise Callout Bar */}
+      {/* Mobile Compact Trust Strip */}
+      <div className="sm:hidden border-b border-white/[0.07] bg-white/[0.02] px-4 py-2">
+        <div className="flex items-center justify-between text-[11px]">
+          <span className="inline-flex items-center gap-1.5 font-medium text-slate-200">
+            <ShieldCheck className="size-3.5 text-[#5EEAD4]" />
+            ICA Democratic Principles
+          </span>
+          <span className="inline-flex items-center gap-1.5 font-medium text-emerald-400">
+            <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            Live Platform
+          </span>
+        </div>
+      </div>
+
+      {/* Desktop / Tablet Enterprise Callout Bar */}
+      <div className="hidden sm:block border-b border-white/[0.07] bg-white/[0.02]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
+            {/* Left Info & Trust Badges */}
+            <div className="space-y-2 max-w-2xl">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#168C83]/15 text-[#5EEAD4] border border-[#168C83]/30 shadow-xs">
+                  <ShieldCheck className="size-3 text-[#5EEAD4]" />
+                  ICA Cooperative Principles
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
+                  <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Live Platform Operational
+                </span>
+              </div>
+
+              <h3 className="text-base sm:text-lg font-bold tracking-tight text-white">
+                Empowering Trade Professionals Through Democratic Ownership
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                Zero predatory aggregator deductions, guaranteed floor wages, collective welfare reserve funds, and standardized hourly pricing across India.
+              </p>
             </div>
 
-            {/* Main Footer Links Columns */}
-            <div className="py-12 px-4 sm:px-8 max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 lg:gap-10 text-xs">
-                {/* Col 1: Brand & Mission */}
-                <div className="space-y-4 sm:col-span-2 lg:col-span-2">
-                    <Link to="/" className="inline-flex items-center gap-2.5 group select-none">
-                        <div className="size-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shadow-xs">
-                            <Handshake className="size-5" />
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="font-bold text-lg tracking-tight flex items-center leading-none">
-                                <span className="text-foreground">fair</span>
-                                <span className="text-primary font-extrabold ml-0.5">gig</span>
-                            </span>
-                            <span className="text-[10px] text-muted-foreground font-medium tracking-wide">
-                                Cooperative Platform
-                            </span>
-                        </div>
-                    </Link>
-                    <p className="text-muted-foreground leading-relaxed max-w-sm">
-                        FairGig is India's premier multi-stakeholder cooperative network uniting customers, trade professionals, and worker cooperatives for transparent, dignified labor.
-                    </p>
-                    <div className="space-y-2 text-muted-foreground pt-1">
-                        <div className="flex items-center gap-2">
-                            <MapPin className="size-3.5 text-primary shrink-0" />
-                            <span>Cooperative Apex Center, Institutional Area, New Delhi</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Phone className="size-3.5 text-primary shrink-0" />
-                            <span>Toll-free: +91 1800-FAIR-GIG (24/7 Helpline)</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Mail className="size-3.5 text-primary shrink-0" />
-                            <span>secretariat@fairgig.coop</span>
-                        </div>
-                    </div>
-                </div>
+            {/* Right Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto shrink-0 pt-1 lg:pt-0">
+              <Link to="/register/worker" className="w-full sm:w-auto">
+                <button
+                  type="button"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-[#168C83] to-[#13796F] text-white shadow-md shadow-[#168C83]/25 hover:from-[#13796F] hover:to-[#0F635B] transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                >
+                  <Wrench className="size-3.5" />
+                  <span>Join as Worker</span>
+                  <ArrowUpRight className="size-3.5 opacity-80" />
+                </button>
+              </Link>
+              <Link to="/register/cooperative" className="w-full sm:w-auto">
+                <button
+                  type="button"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold border border-white/15 bg-white/5 hover:bg-white/10 text-white transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xs cursor-pointer"
+                >
+                  <Building2 className="size-3.5" />
+                  <span>Affiliate Co-op</span>
+                  <ArrowUpRight className="size-3.5 opacity-80" />
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
 
-                {/* Col 2: Platform Roles & Portals */}
-                <div className="space-y-3">
-                    <h4 className="font-semibold text-sm text-foreground tracking-tight flex items-center gap-1.5">
-                        <Globe className="size-3.5 text-primary" />
-                        Portals & Roles
-                    </h4>
-                    <ul className="space-y-2 text-muted-foreground">
-                        <li>
-                            <Link to="/" className="hover:text-foreground hover:underline transition-colors flex items-center gap-1">
-                                Customer Marketplace
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/register/worker" className="hover:text-foreground hover:underline transition-colors flex items-center gap-1">
-                                Worker Pro Portal
-                                <ArrowUpRight className="size-3 text-muted-foreground" />
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/register/cooperative" className="hover:text-foreground hover:underline transition-colors flex items-center gap-1">
-                                Cooperative Societies
-                                <ArrowUpRight className="size-3 text-muted-foreground" />
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/contact" className="hover:text-foreground hover:underline transition-colors flex items-center gap-1">
-                                Help & Contact Us
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/admin" className="hover:text-foreground hover:underline transition-colors flex items-center gap-1">
-                                Administration Console
-                            </Link>
-                        </li>
-                    </ul>
-                </div>
+      {/* 2. Main Footer Navigation Grid */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-9 lg:py-10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 lg:gap-10">
+          {/* Brand & Contact Overview */}
+          <div className="md:col-span-12 lg:col-span-4 space-y-3">
+            <Link to="/" className="inline-flex items-center gap-2.5 group select-none">
+              <div className="size-8 rounded-xl bg-gradient-to-br from-[#168C83] to-[#17324D] text-white flex items-center justify-center group-hover:scale-105 transition-all duration-200 shadow-md shadow-[#168C83]/20 border border-white/15">
+                <Handshake className="size-4.5 text-[#5EEAD4]" />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-extrabold text-base sm:text-lg tracking-tight flex items-center leading-none">
+                  <span className="text-white">fair</span>
+                  <span className="text-[#5EEAD4] ml-0.5">gig</span>
+                </span>
+                <span className="text-[10px] text-slate-400 font-medium tracking-normal mt-0.5">
+                  Cooperative Gig Platform
+                </span>
+              </div>
+            </Link>
 
-                {/* Col 3: Popular Trade Services */}
-                <div className="space-y-3">
-                    <h4 className="font-semibold text-sm text-foreground tracking-tight flex items-center gap-1.5">
-                        <Wrench className="size-3.5 text-primary" />
-                        Trade Services
-                    </h4>
-                    <ul className="space-y-2 text-muted-foreground">
-                        <li>
-                            <Link to="/categories" className="hover:text-foreground hover:underline transition-colors">
-                                Electrical Installations
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/categories" className="hover:text-foreground hover:underline transition-colors">
-                                Plumbing & Sanitation
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/categories" className="hover:text-foreground hover:underline transition-colors">
-                                Carpentry & Woodwork
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/categories" className="hover:text-foreground hover:underline transition-colors">
-                                Commercial Painting
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/categories" className="hover:text-foreground hover:underline transition-colors">
-                                Solar & Renewable Power
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/categories" className="hover:text-foreground hover:underline transition-colors">
-                                HVAC & Deep Cleaning
-                            </Link>
-                        </li>
-                    </ul>
-                </div>
+            <p className="text-xs text-slate-400 leading-relaxed max-w-md">
+              India&apos;s multi-stakeholder cooperative network uniting customers, trade professionals, and worker cooperatives for transparent, dignified, middleman-free trade services.
+            </p>
 
-                {/* Col 4: Trust, Governance & Standards */}
-                <div className="space-y-3">
-                    <h4 className="font-semibold text-sm text-foreground tracking-tight flex items-center gap-1.5">
-                        <Landmark className="size-3.5 text-primary" />
-                        Governance & Trust
-                    </h4>
-                    <ul className="space-y-2 text-muted-foreground">
-                        <li>
-                            <span className="hover:text-foreground transition-colors cursor-pointer">
-                                Fair Gig Wage Standard
-                            </span>
-                        </li>
-                        <li>
-                            <span className="hover:text-foreground transition-colors cursor-pointer">
-                                Worker Welfare & Insurance
-                            </span>
-                        </li>
-                        <li>
-                            <span className="hover:text-foreground transition-colors cursor-pointer">
-                                Cooperative Dispute Protocol
-                            </span>
-                        </li>
-                        <li>
-                            <span className="hover:text-foreground transition-colors cursor-pointer">
-                                Accreditation & Safety Audits
-                            </span>
-                        </li>
-                        <li>
-                            <span className="hover:text-foreground transition-colors cursor-pointer">
-                                Democratic Member Voting
-                            </span>
-                        </li>
-                    </ul>
-                </div>
+            {/* Mobile Contact Quick-Pills */}
+            <div className="flex sm:hidden flex-wrap items-center gap-2 pt-0.5">
+              <a
+                href="tel:18003247444"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-slate-200 transition-colors border border-white/10"
+              >
+                <Phone className="size-3 text-[#5EEAD4]" />
+                <span>1800-FAIR-GIG</span>
+              </a>
+              <a
+                href="mailto:secretariat@fairgig.coop"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-slate-200 transition-colors border border-white/10"
+              >
+                <Mail className="size-3 text-[#5EEAD4]" />
+                <span>Support</span>
+              </a>
+              <span className="inline-flex items-center gap-1 text-[11px] text-slate-400 ml-1">
+                <MapPin className="size-3 text-[#5EEAD4]/80" />
+                <span>New Delhi</span>
+              </span>
             </div>
 
-            {/* Bottom Bar: Copyright & Legal */}
-            <div className="border-t border-border/40 py-6 px-4 sm:px-8 max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-muted-foreground">
-                <div className="flex items-center gap-1.5 text-center sm:text-left">
-                    <span>© {new Date().getFullYear()} FairGig Cooperative Platform.</span>
-                    <span className="hidden sm:inline">•</span>
-                    <span className="flex items-center gap-1 justify-center">
-                        Empowering trade labor with <Heart className="size-3 text-destructive fill-destructive" /> across India.
-                    </span>
-                </div>
-
-                <div className="flex items-center gap-4 flex-wrap justify-center">
-                    <span className="hover:text-foreground hover:underline cursor-pointer">Privacy Policy</span>
-                    <span className="hover:text-foreground hover:underline cursor-pointer">Terms of Service</span>
-                    <span className="hover:text-foreground hover:underline cursor-pointer">Wage Transparency</span>
-                    <span className="hover:text-foreground hover:underline cursor-pointer">Cooperative Bylaws</span>
-                </div>
+            {/* Desktop / Tablet Contact Info */}
+            <div className="hidden sm:block space-y-2 pt-1 text-xs text-slate-400">
+              <div className="flex items-start gap-2">
+                <MapPin className="size-3.5 text-[#5EEAD4] shrink-0 mt-0.5" />
+                <span>Cooperative Apex Center, Institutional Area, New Delhi 110001</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Phone className="size-3.5 text-[#5EEAD4] shrink-0" />
+                <a
+                  href="tel:18003247444"
+                  className="hover:text-white hover:underline transition-colors font-semibold text-slate-300"
+                >
+                  1800-FAIR-GIG (24/7 Helpline)
+                </a>
+              </div>
+              <div className="flex items-center gap-2">
+                <Mail className="size-3.5 text-[#5EEAD4] shrink-0" />
+                <a
+                  href="mailto:secretariat@fairgig.coop"
+                  className="hover:text-white hover:underline transition-colors text-slate-300"
+                >
+                  secretariat@fairgig.coop
+                </a>
+              </div>
             </div>
-        </footer>
-    );
+          </div>
+
+          {/* Links Section: 2 cols on mobile, 3 cols on tablet/desktop */}
+          <div className="md:col-span-12 lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 pt-4 lg:pt-0 border-t border-white/[0.07] lg:border-0">
+            {/* Column 1: Roles & Portals */}
+            <div className="space-y-2.5">
+              <h4 className="font-bold text-[11px] uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
+                <Globe className="size-3.5 text-[#5EEAD4]" />
+                <span>Portals & Roles</span>
+              </h4>
+              <ul className="space-y-1.5 text-xs">
+                <li>
+                  <Link
+                    to="/"
+                    className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5"
+                  >
+                    Customer Marketplace
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/services"
+                    className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5"
+                  >
+                    All Trade Services
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/register/worker"
+                    className="text-slate-400 hover:text-[#5EEAD4] hover:translate-x-0.5 transition-all inline-flex items-center gap-1 py-0.5 group"
+                  >
+                    <span>Worker Portal</span>
+                    <ArrowUpRight className="size-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/register/cooperative"
+                    className="text-slate-400 hover:text-[#5EEAD4] hover:translate-x-0.5 transition-all inline-flex items-center gap-1 py-0.5 group"
+                  >
+                    <span>Cooperative Society</span>
+                    <ArrowUpRight className="size-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/contact"
+                    className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5"
+                  >
+                    Help & Contact Us
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/admin"
+                    className="text-slate-400 hover:text-[#5EEAD4] hover:translate-x-0.5 transition-all inline-flex items-center gap-1 py-0.5 group"
+                  >
+                    <span>Apex Admin</span>
+                    <ArrowUpRight className="size-3 opacity-60 group-hover:opacity-100 transition-opacity" />
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 2: Trade Domains */}
+            <div className="space-y-2.5">
+              <h4 className="font-bold text-[11px] uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
+                <Wrench className="size-3.5 text-[#5EEAD4]" />
+                <span>Trade Domains</span>
+              </h4>
+              <ul className="space-y-1.5 text-xs">
+                <li>
+                  <Link
+                    to="/services?q=Electrical"
+                    className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5"
+                  >
+                    Electrical & Wiring
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/services?q=Plumbing"
+                    className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5"
+                  >
+                    Plumbing & Pipework
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/services?q=Carpentry"
+                    className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5"
+                  >
+                    Carpentry & Furniture
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/services?q=Painting"
+                    className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5"
+                  >
+                    Wall & Wood Painting
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/services?priceType=hourly"
+                    className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5"
+                  >
+                    Hourly Standard Gigs
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/services?priceType=meters"
+                    className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5"
+                  >
+                    Metered Tariff Jobs
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 3: Cooperative Standards (Hidden on mobile as requested, visible on tablet/desktop) */}
+            <div className="hidden sm:block space-y-2.5">
+              <h4 className="font-bold text-[11px] uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
+                <Landmark className="size-3.5 text-[#5EEAD4]" />
+                <span>Trust & Governance</span>
+              </h4>
+
+              <ul className="space-y-1.5 text-xs">
+                <li>
+                  <span className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5 cursor-pointer">
+                    Fair Floor Wage Standards
+                  </span>
+                </li>
+                <li>
+                  <span className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5 cursor-pointer">
+                    Dispute Ombudsman Protocol
+                  </span>
+                </li>
+                <li>
+                  <span className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5 cursor-pointer">
+                    Trade Guild Certification
+                  </span>
+                </li>
+                <li>
+                  <span className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5 cursor-pointer">
+                    Welfare Fund Transparency
+                  </span>
+                </li>
+                <li>
+                  <span className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5 cursor-pointer">
+                    Democratic General Assembly
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Bottom Legal & Copyright Strip */}
+      <div className="border-t border-white/[0.07] py-3 sm:py-3.5 px-4 sm:px-6 lg:px-8 bg-black/20">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-left text-xs text-slate-400">
+          <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-[11px] sm:text-xs">
+            <span>&copy; {new Date().getFullYear()} FairGig Cooperative Platform.</span>
+            <span className="hidden sm:inline text-slate-600">&bull;</span>
+            <span className="inline-flex items-center gap-1 text-slate-400">
+              Built with <Heart className="size-3 text-rose-500 fill-rose-500 inline" /> for Indian trade workers
+            </span>
+          </div>
+
+          {/* Legal links */}
+          <div className="flex items-center gap-3 sm:gap-4 flex-wrap justify-center text-[11px] sm:text-xs font-medium">
+            <span className="hover:text-white hover:underline transition-colors cursor-pointer">
+              Privacy
+            </span>
+            <span className="text-slate-600">&bull;</span>
+            <span className="hover:text-white hover:underline transition-colors cursor-pointer">
+              Terms
+            </span>
+            <span className="text-slate-600">&bull;</span>
+            <span className="hover:text-white hover:underline transition-colors cursor-pointer">
+              Tariffs
+            </span>
+            <span className="text-slate-600">&bull;</span>
+            <span className="hover:text-white hover:underline transition-colors cursor-pointer">
+              Bylaws
+            </span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
 };
 
 export default Footer;

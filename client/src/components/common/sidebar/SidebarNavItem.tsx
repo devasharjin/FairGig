@@ -21,10 +21,10 @@ export const SidebarNavItem = ({ item, isMobileDrawer = false }: SidebarNavItemP
       title={showCollapsed ? item.title : undefined}
       className={({ isActive }) =>
         cn(
-          "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 outline-none select-none",
+          "group relative flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs sm:text-sm font-medium transition-all duration-150 outline-none select-none",
           isActive
-            ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20 font-semibold"
-            : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+            ? "bg-teal-500/15 text-teal-300 font-semibold border-l-2 border-teal-400 shadow-xs"
+            : "text-slate-300 hover:bg-white/5 hover:text-white",
           showCollapsed && "justify-center px-2"
         )
       }
@@ -34,7 +34,7 @@ export const SidebarNavItem = ({ item, isMobileDrawer = false }: SidebarNavItemP
           <Icon
             className={cn(
               "size-5 shrink-0 transition-transform duration-200 group-hover:scale-105",
-              isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"
+              isActive ? "text-teal-300" : "text-slate-400 group-hover:text-slate-200"
             )}
           />
 
@@ -48,8 +48,8 @@ export const SidebarNavItem = ({ item, isMobileDrawer = false }: SidebarNavItemP
               className={cn(
                 "ml-auto text-[10px] px-1.5 py-0 h-4 min-w-4 flex items-center justify-center font-bold uppercase tracking-wider rounded-md",
                 isActive
-                  ? "bg-primary-foreground/20 text-primary-foreground border-transparent"
-                  : "bg-muted text-muted-foreground border-border/60"
+                  ? "bg-teal-400/20 text-teal-300 border-teal-400/30"
+                  : "bg-white/10 text-slate-300 border-white/10"
               )}
             >
               {item.badge}
@@ -58,10 +58,10 @@ export const SidebarNavItem = ({ item, isMobileDrawer = false }: SidebarNavItemP
 
           {/* Collapsed Tooltip Floating Bubble (Desktop Only) */}
           {showCollapsed && (
-            <div className="pointer-events-none absolute left-full ml-2.5 hidden z-50 rounded-lg bg-popover px-2.5 py-1 text-xs font-semibold text-popover-foreground shadow-lg border border-border/80 whitespace-nowrap group-hover:flex items-center gap-1.5">
+            <div className="pointer-events-none absolute left-full ml-2.5 hidden z-50 rounded-lg bg-[#132235] text-slate-100 px-2.5 py-1 text-xs font-semibold shadow-xl border border-slate-700 whitespace-nowrap group-hover:flex items-center gap-1.5">
               <span>{item.title}</span>
               {item.badge && (
-                <span className="text-[10px] px-1 rounded bg-primary/10 text-primary font-bold">
+                <span className="text-[10px] px-1 rounded bg-teal-500/20 text-teal-300 font-bold">
                   {item.badge}
                 </span>
               )}

@@ -36,12 +36,12 @@ export const WorkerPriorityMission: React.FC<WorkerPriorityMissionProps> = ({
       </div>
 
       {activeJob ? (
-        <div className="rounded-3xl border border-blue-500/30 bg-card p-6 shadow-sm space-y-4">
+        <div className="rounded-xl border border-blue-500/30 bg-card p-5 shadow-xs space-y-4">
           <div className="flex items-start justify-between gap-3">
             <div>
               <Badge
                 variant="outline"
-                className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30 text-[10px] font-semibold gap-1"
+                className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30 text-[10px] font-semibold gap-1 rounded-md px-2 py-0.5"
               >
                 <PlayCircle className="size-3 animate-pulse" />
                 Active Fieldwork
@@ -55,16 +55,16 @@ export const WorkerPriorityMission: React.FC<WorkerPriorityMissionProps> = ({
             </div>
 
             <div className="text-right">
-              <span className="text-lg font-extrabold text-foreground">
+              <span className="text-lg font-bold text-foreground">
                 ₹{activeJob.totalAmount}
               </span>
               <p className="text-[10px] text-muted-foreground">Pay Rate</p>
             </div>
           </div>
 
-          <div className="p-3 rounded-2xl bg-muted/40 border border-border/50 text-xs text-muted-foreground space-y-1.5">
+          <div className="p-3 rounded-lg bg-muted/40 border border-border/50 text-xs text-muted-foreground space-y-1.5">
             <div className="flex items-center gap-2">
-              <MapPin className="size-3.5 text-primary shrink-0" />
+              <MapPin className="size-3.5 text-accent shrink-0" />
               <span>
                 {activeJob.address?.street}
                 {activeJob.address?.city ? `, ${activeJob.address.city}` : ""}
@@ -79,19 +79,19 @@ export const WorkerPriorityMission: React.FC<WorkerPriorityMissionProps> = ({
 
           <div className="flex justify-end pt-2">
             <Link to="/worker/bookings">
-              <Button size="sm" className="rounded-xl h-9 px-4 text-xs font-semibold shadow-xs cursor-pointer">
+              <Button size="sm" className="rounded-lg h-9 px-4 text-xs font-semibold shadow-xs cursor-pointer">
                 Manage Active Job
               </Button>
             </Link>
           </div>
         </div>
       ) : topAvailableGig ? (
-        <div className="rounded-3xl border border-amber-500/30 bg-card p-6 shadow-sm space-y-4">
+        <div className="rounded-xl border border-amber-500/30 bg-card p-5 shadow-xs space-y-4">
           <div className="flex items-start justify-between gap-3">
             <div>
               <Badge
                 variant="outline"
-                className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 text-[10px] font-semibold gap-1"
+                className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 text-[10px] font-semibold gap-1 rounded-md px-2 py-0.5"
               >
                 <Sparkles className="size-3" />
                 Gig Waiting For Pickup
@@ -105,7 +105,7 @@ export const WorkerPriorityMission: React.FC<WorkerPriorityMissionProps> = ({
             </div>
 
             <div className="text-right">
-              <span className="text-lg font-extrabold text-primary font-bold">
+              <span className="text-lg font-bold text-primary">
                 ₹{topAvailableGig.rate}
               </span>
               <p className="text-[10px] text-muted-foreground">
@@ -118,7 +118,7 @@ export const WorkerPriorityMission: React.FC<WorkerPriorityMissionProps> = ({
             <Link to="/worker/jobs">
               <Button
                 size="sm"
-                className="rounded-xl h-9 px-5 text-xs font-semibold shadow-xs bg-primary text-primary-foreground cursor-pointer"
+                className="rounded-lg h-9 px-5 text-xs font-semibold shadow-xs bg-primary text-primary-foreground cursor-pointer"
               >
                 Review & Accept Gig
               </Button>
@@ -126,7 +126,7 @@ export const WorkerPriorityMission: React.FC<WorkerPriorityMissionProps> = ({
           </div>
         </div>
       ) : (
-        <div className="rounded-3xl border border-border/80 bg-card/40 p-8 text-center space-y-2">
+        <div className="rounded-xl border border-border/80 bg-card p-8 text-center space-y-2">
           <Clock className="size-8 text-muted-foreground mx-auto" />
           <h3 className="text-sm font-bold text-foreground">All caught up!</h3>
           <p className="text-xs text-muted-foreground max-w-sm mx-auto">

@@ -64,26 +64,26 @@ export const NavbarUserDropdown = ({
     <DropdownMenu>
       <DropdownMenuTrigger
         className={cn(
-          "flex items-center gap-2 h-10 px-2.5 sm:px-3 rounded-full border border-border/80 bg-input/20 hover:bg-input/40 cursor-pointer transition-all outline-none select-none focus-visible:ring-2 focus-visible:ring-ring",
+          "flex items-center gap-2 h-9 px-2.5 sm:px-3 rounded-lg border border-border bg-card hover:bg-muted/60 cursor-pointer transition-all outline-none select-none focus-visible:ring-2 focus-visible:ring-ring/40 shadow-xs",
           className
         )}
       >
-        <div className="size-7 rounded-full bg-primary/15 text-primary flex items-center justify-center font-semibold text-xs shrink-0">
+        <div className="size-6 rounded-md bg-primary text-primary-foreground flex items-center justify-center font-semibold text-xs shrink-0">
           {user.name ? (
             user.name.charAt(0).toUpperCase()
           ) : (
-            <User className="size-3.5" />
+            <User className="size-3" />
           )}
         </div>
         <span className="text-xs font-medium text-foreground max-w-28 truncate hidden sm:inline-block">
           {user.name || "My Account"}
         </span>
-        <ChevronDown className="size-3.5 text-muted-foreground opacity-70" />
+        <ChevronDown className="size-3 text-muted-foreground opacity-70" />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
         align="end"
-        className="w-64 p-2 rounded-2xl shadow-2xl border-border/80 bg-popover"
+        className="w-64 p-1.5 rounded-xl shadow-lg border border-border/80 bg-popover"
       >
         {/* Profile Summary Header */}
         <div className="px-3 py-2 select-none">

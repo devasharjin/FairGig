@@ -41,51 +41,56 @@ export const CooperativeBenefits: React.FC = () => {
   ];
 
   return (
-    <section className="py-16 sm:py-24 border-b border-border/50 relative overflow-hidden">
-      {/* Decorative Glow */}
-      <div className="absolute top-1/2 left-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none -z-10" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
+    <section className="py-10 sm:py-14 border-b border-border/60">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
         {/* Header */}
-        <div className="text-center space-y-3 max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider">
-            <HeartHandshake className="size-3.5" />
-            <span>The Cooperative Model</span>
+        <div className="text-center space-y-2 max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-accent/10 border border-accent/25 text-accent text-[11px] sm:text-xs font-semibold uppercase tracking-wider">
+            <HeartHandshake className="size-3 sm:size-3.5" />
+            <span>The Cooperative Advantage</span>
           </div>
-          <h2 className="text-2xl sm:text-4xl font-black text-foreground tracking-tight">
-            Why Customers & Workers Choose FairGig
+          <h2 className="text-xl sm:text-3xl font-bold text-foreground tracking-tight">
+            Why Customers & Workers Trust FairGig
           </h2>
-          <p className="text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed">
-            By shifting ownership from corporate platform middlemen to registered worker cooperatives,
-            we deliver better service quality at fairer rates for everyone.
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+            By shifting governance from corporate platform middlemen to registered worker cooperatives,
+            we deliver better service quality at democratic, standardized rates.
           </p>
         </div>
 
-        {/* Benefits Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Benefits Grid: 2 columns on mobile, 4 on desktop */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-5">
           {benefits.map((b) => {
             const Icon = b.icon;
             return (
               <div
                 key={b.title}
-                className="flex flex-col justify-between p-6 sm:p-7 rounded-3xl bg-card border border-border/80 shadow-xs hover:shadow-xl hover:border-primary/40 transition-all duration-300"
+                className="flex flex-col justify-between p-3 sm:p-5 rounded-xl bg-card border border-border/80 shadow-xs hover:shadow-md hover:border-accent/60 transition-all duration-200"
               >
-                <div>
-                  <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary border border-primary/20 shadow-xs mb-5">
-                    <Icon className="size-6" />
+                <div className="flex flex-col flex-1">
+                  {/* Mobile: Logo and Header in one line | Desktop: Stacked vertically as before */}
+                  <div className="flex sm:flex-col items-start gap-2 sm:gap-0 mb-2 sm:mb-0">
+                    <div className="flex shrink-0 size-8 sm:size-10 items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/20 shadow-xs mt-0.5 sm:mt-0 sm:mb-3.5">
+                      <Icon className="size-4 sm:size-5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <span className="text-[9px] sm:text-[10px] font-bold text-accent uppercase tracking-wider block mb-0.5 sm:mb-1 truncate">
+                        {b.tag}
+                      </span>
+                      <h3 className="text-xs sm:text-base font-bold text-foreground leading-snug sm:leading-tight sm:mb-1.5">
+                        {b.title}
+                      </h3>
+                    </div>
                   </div>
-                  <span className="text-[10px] font-bold text-primary uppercase tracking-wider block mb-1">
-                    {b.tag}
-                  </span>
-                  <h3 className="text-lg font-bold text-foreground mb-2">{b.title}</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+
+                  <p className="text-[11px] sm:text-xs text-muted-foreground leading-relaxed flex-1 text-justify">
                     {b.description}
                   </p>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-border/40 flex items-center gap-1.5 text-xs font-semibold text-foreground/80">
-                  <CheckCircle2 className="size-3.5 text-emerald-500" />
-                  <span>Cooperative Standard</span>
+                <div className="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-border/40 flex items-center gap-1.5 text-[10px] sm:text-xs font-semibold text-foreground/80">
+                  <CheckCircle2 className="size-3 sm:size-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <span className="truncate">Verified Standard</span>
                 </div>
               </div>
             );

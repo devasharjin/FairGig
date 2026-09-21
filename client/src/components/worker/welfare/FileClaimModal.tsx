@@ -149,10 +149,10 @@ export const FileClaimModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto p-6 rounded-3xl">
+      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto p-6 rounded-xl">
         <DialogHeader>
           <div className="flex items-center gap-2.5 mb-1">
-            <div className="size-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+            <div className="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
               <ShieldAlert className="size-5" />
             </div>
             <div>
@@ -173,7 +173,7 @@ export const FileClaimModal = ({
                 value={claimType}
                 onValueChange={(val) => setClaimType(val as WelfareClaimType)}
               >
-                <SelectTrigger className="rounded-xl h-10 text-xs">
+                <SelectTrigger className="rounded-lg h-10 text-xs">
                   <SelectValue placeholder="Select claim type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -192,7 +192,7 @@ export const FileClaimModal = ({
                 value={urgency}
                 onValueChange={(val) => setUrgency(val as WelfareUrgency)}
               >
-                <SelectTrigger className="rounded-xl h-10 text-xs">
+                <SelectTrigger className="rounded-lg h-10 text-xs">
                   <SelectValue placeholder="Select urgency" />
                 </SelectTrigger>
                 <SelectContent>
@@ -205,7 +205,7 @@ export const FileClaimModal = ({
           </div>
 
           {/* Policy Limit Banner */}
-          <div className="p-3 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-between text-xs">
+          <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 flex items-center justify-between text-xs">
             <span className="text-muted-foreground font-medium">Category Maximum Cover:</span>
             <span className="font-bold text-primary flex items-center gap-0.5">
               <IndianRupee className="size-3.5" />
@@ -220,7 +220,7 @@ export const FileClaimModal = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Wrist fracture during electrical repair"
-              className="rounded-xl h-10 text-xs"
+              className="rounded-lg h-10 text-xs"
               required
             />
           </div>
@@ -236,7 +236,7 @@ export const FileClaimModal = ({
                 type="date"
                 value={incidentDate}
                 onChange={(e) => setIncidentDate(e.target.value)}
-                className="rounded-xl h-10 text-xs"
+                className="rounded-lg h-10 text-xs"
                 required
               />
             </div>
@@ -253,7 +253,7 @@ export const FileClaimModal = ({
                 value={amountRequested}
                 onChange={(e) => setAmountRequested(e.target.value)}
                 placeholder={`Max ₹${maxLimit}`}
-                className="rounded-xl h-10 text-xs font-mono font-bold"
+                className="rounded-lg h-10 text-xs font-mono font-bold"
                 required
               />
             </div>
@@ -267,7 +267,7 @@ export const FileClaimModal = ({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe what occurred, hospital or clinic visited, police report if any, or specific assistance required..."
               rows={3}
-              className="rounded-xl text-xs resize-none"
+              className="rounded-lg text-xs resize-none"
               required
             />
           </div>
@@ -284,20 +284,20 @@ export const FileClaimModal = ({
                 value={docTitle}
                 onChange={(e) => setDocTitle(e.target.value)}
                 placeholder="Doc name (e.g. Hospital Discharge Bill)"
-                className="rounded-xl h-9 text-xs flex-1"
+                className="rounded-lg h-9 text-xs flex-1"
               />
               <Input
                 value={docUrl}
                 onChange={(e) => setDocUrl(e.target.value)}
                 placeholder="URL / Cloud Link"
-                className="rounded-xl h-9 text-xs flex-1"
+                className="rounded-lg h-9 text-xs flex-1"
               />
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 onClick={handleAddDocument}
-                className="rounded-xl h-9 shrink-0 text-xs"
+                className="rounded-lg h-9 shrink-0 text-xs cursor-pointer"
               >
                 <Plus className="size-3.5 mr-1" />
                 Add
@@ -309,7 +309,7 @@ export const FileClaimModal = ({
                 {documents.map((doc, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center justify-between p-2 rounded-xl bg-muted/60 text-xs border border-border/50"
+                    className="flex items-center justify-between p-2 rounded-lg bg-muted/60 text-xs border border-border/50"
                   >
                     <div className="flex items-center gap-2 truncate">
                       <FileText className="size-3.5 text-primary shrink-0" />
@@ -335,7 +335,7 @@ export const FileClaimModal = ({
               type="button"
               variant="outline"
               onClick={onClose}
-              className="rounded-xl text-xs"
+              className="rounded-lg text-xs cursor-pointer"
               disabled={isSubmitting}
             >
               Cancel
@@ -343,7 +343,7 @@ export const FileClaimModal = ({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="rounded-xl text-xs font-bold gap-1.5 shadow-xs"
+              className="rounded-lg text-xs font-bold gap-1.5 shadow-xs cursor-pointer bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               {isSubmitting ? (
                 <span>Submitting Claim...</span>

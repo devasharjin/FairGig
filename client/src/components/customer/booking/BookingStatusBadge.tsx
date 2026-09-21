@@ -54,11 +54,11 @@ export const BookingStatusBadge: React.FC<BookingStatusBadgeProps> = ({
         <Badge
           variant="outline"
           className={cn(
-            "gap-1.5 py-1 px-2.5 bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30 font-medium",
+            "gap-1.5 py-0.5 px-2 bg-accent/10 text-accent border-accent/30 font-medium rounded-md",
             className
           )}
         >
-          {showIcon && <PlayCircle className="size-3.5 text-purple-500 animate-pulse" />}
+          {showIcon && <PlayCircle className="size-3 text-accent animate-pulse" />}
           <span>In Progress</span>
         </Badge>
       );

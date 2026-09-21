@@ -103,13 +103,13 @@ export const WorkerJobs: React.FC = () => {
 
       {/* Emergency SOS Radar Notification Banner */}
       {emergencyCount > 0 && (
-        <div className="p-4 sm:p-5 rounded-3xl border border-rose-500/50 bg-gradient-to-r from-rose-500/20 via-rose-500/10 to-card flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-pulse shadow-lg shadow-rose-500/10">
+        <div className="p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
           <div className="flex items-start sm:items-center gap-3.5">
-            <div className="size-11 rounded-2xl bg-rose-600 text-white flex items-center justify-center shrink-0 shadow-md shadow-rose-600/30">
-              <AlertTriangle className="size-6 animate-bounce" />
+            <div className="size-10 rounded-lg bg-rose-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+              <AlertTriangle className="size-5 animate-bounce" />
             </div>
             <div className="space-y-0.5">
-              <h4 className="text-sm sm:text-base font-black text-foreground flex items-center gap-2">
+              <h4 className="text-sm sm:text-base font-bold text-foreground flex items-center gap-2">
                 <span>🚨 {emergencyCount} Critical Emergency SOS Request{emergencyCount > 1 ? "s" : ""} in Radar!</span>
               </h4>
               <p className="text-xs text-muted-foreground leading-relaxed">
@@ -121,7 +121,7 @@ export const WorkerJobs: React.FC = () => {
           <Button
             size="sm"
             onClick={() => setQuickFilter("EMERGENCY")}
-            className="rounded-xl h-10 px-5 text-xs font-black bg-rose-600 hover:bg-rose-700 text-white shrink-0 cursor-pointer shadow-md shadow-rose-600/25 self-start sm:self-auto"
+            className="rounded-lg h-9 px-4 text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white shrink-0 cursor-pointer shadow-xs self-start sm:self-auto"
           >
             Review Emergency Gigs
           </Button>
@@ -138,7 +138,7 @@ export const WorkerJobs: React.FC = () => {
           <Button
             variant="outline"
             size="sm"
-            className="rounded-xl h-9 px-3.5 gap-2 text-xs font-semibold border-border/80 hover:bg-muted cursor-pointer"
+            className="rounded-lg h-9 px-3.5 gap-2 text-xs font-semibold border-border/80 hover:bg-muted cursor-pointer shadow-xs"
           >
             <Briefcase className="size-3.5 text-primary" />
             <span>My Bookings ({stats?.activeJobs ?? 0})</span>
@@ -166,14 +166,14 @@ export const WorkerJobs: React.FC = () => {
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="p-6 rounded-3xl border border-border/60 bg-card/40 animate-pulse space-y-4"
+              className="p-6 rounded-xl border border-border/60 bg-card/40 animate-pulse space-y-4"
             >
               <div className="flex justify-between">
-                <div className="h-5 bg-muted/60 rounded-xl w-1/3" />
-                <div className="h-5 bg-muted/40 rounded-xl w-1/4" />
+                <div className="h-5 bg-muted/60 rounded-lg w-1/3" />
+                <div className="h-5 bg-muted/40 rounded-lg w-1/4" />
               </div>
-              <div className="h-8 bg-muted/50 rounded-xl w-2/3" />
-              <div className="h-16 bg-muted/30 rounded-2xl" />
+              <div className="h-8 bg-muted/50 rounded-lg w-2/3" />
+              <div className="h-16 bg-muted/30 rounded-lg" />
             </div>
           ))}
         </div>
@@ -181,9 +181,9 @@ export const WorkerJobs: React.FC = () => {
 
       {/* Empty Radar State */}
       {!isLoading && filteredGigs.length === 0 && (
-        <div className="p-12 sm:p-16 text-center rounded-3xl border border-dashed border-border/80 bg-card/30 max-w-md mx-auto my-10 space-y-4">
-          <div className="relative size-16 rounded-3xl bg-primary/10 text-primary flex items-center justify-center mx-auto">
-            <Compass className="size-8 animate-pulse" />
+        <div className="p-10 sm:p-12 text-center rounded-xl border border-dashed border-border/80 bg-card max-w-md mx-auto my-10 space-y-4 shadow-xs">
+          <div className="relative size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center mx-auto">
+            <Compass className="size-6 animate-pulse" />
           </div>
           <div className="space-y-1.5">
             <h3 className="text-base font-bold text-foreground">Radar Clear • No Gigs in Queue</h3>
@@ -200,7 +200,7 @@ export const WorkerJobs: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setSearchQuery("")}
-                className="rounded-xl h-9 text-xs cursor-pointer"
+                className="rounded-lg h-8 text-xs cursor-pointer shadow-xs"
               >
                 Clear Search
               </Button>
@@ -209,7 +209,7 @@ export const WorkerJobs: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={() => refetch()}
-              className="rounded-xl h-9 text-xs cursor-pointer gap-1.5"
+              className="rounded-lg h-8 text-xs cursor-pointer gap-1.5 shadow-xs"
             >
               <RotateCcw className="size-3.5" />
               Scan Again

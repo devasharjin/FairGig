@@ -14,9 +14,9 @@ interface ServiceAreaCardProps {
 
 export const ServiceAreaCard: React.FC<ServiceAreaCardProps> = ({ location }) => {
   return (
-    <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-4">
+    <div className="rounded-xl border border-border/80 bg-card p-6 shadow-xs space-y-4">
       <div className="flex items-center gap-3">
-        <div className="size-10 rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
+        <div className="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
           <MapPin className="size-5" />
         </div>
         <div>
@@ -29,7 +29,7 @@ export const ServiceAreaCard: React.FC<ServiceAreaCardProps> = ({ location }) =>
         </div>
       </div>
 
-      <div className="p-4 rounded-2xl bg-muted/40 border border-border/50 text-xs space-y-2">
+      <div className="p-4 rounded-lg bg-muted/40 border border-border/50 text-xs space-y-2">
         <div className="flex justify-between">
           <span className="text-muted-foreground">Address:</span>
           <span className="font-medium text-foreground text-right max-w-[180px]">

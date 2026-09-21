@@ -8,9 +8,9 @@ export const WorkerGuidelinesCard: React.FC = () => {
         Cooperative Standards
       </h2>
 
-      <div className="rounded-3xl border border-border/80 bg-card p-5 space-y-3.5 text-xs shadow-xs">
+      <div className="rounded-xl border border-border/80 bg-card p-5 space-y-3.5 text-xs shadow-xs">
         <div className="flex items-start gap-3">
-          <div className="size-7 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+          <div className="size-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
             <Clock className="size-3.5" />
           </div>
           <div>
@@ -24,7 +24,7 @@ export const WorkerGuidelinesCard: React.FC = () => {
         </div>
 
         <div className="flex items-start gap-3">
-          <div className="size-7 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0 mt-0.5">
+          <div className="size-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
             <ShieldCheck className="size-3.5" />
           </div>
           <div>
@@ -38,7 +38,7 @@ export const WorkerGuidelinesCard: React.FC = () => {
         </div>
 
         <div className="flex items-start gap-3">
-          <div className="size-7 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0 mt-0.5">
+          <div className="size-7 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
             <Star className="size-3.5 text-amber-500" />
           </div>
           <div>

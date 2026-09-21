@@ -119,27 +119,27 @@ export default function CooperativePayments() {
     switch (status) {
       case "PAID":
         return (
-          <Badge className="bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 gap-1 font-medium text-xs px-2 py-0.5">
+          <Badge className="bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 gap-1 font-semibold text-[11px] px-2 py-0.5 rounded-md">
             <CheckCircle2 className="size-3" />
             Settled
           </Badge>
         );
       case "CREATED":
         return (
-          <Badge className="bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 gap-1 font-medium text-xs px-2 py-0.5">
+          <Badge className="bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 gap-1 font-semibold text-[11px] px-2 py-0.5 rounded-md">
             <Clock className="size-3" />
             Pending
           </Badge>
         );
       case "FAILED":
         return (
-          <Badge className="bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30 gap-1 font-medium text-xs px-2 py-0.5">
+          <Badge className="bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30 gap-1 font-semibold text-[11px] px-2 py-0.5 rounded-md">
             <XCircle className="size-3" />
             Failed
           </Badge>
         );
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="outline" className="rounded-md text-[11px]">{status}</Badge>;
     }
   };
 
@@ -151,16 +151,16 @@ export default function CooperativePayments() {
           <div className="flex items-center gap-2 mb-1.5">
             <Badge
               variant="secondary"
-              className="rounded-full px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider bg-primary/10 text-primary border-primary/20"
+              className="rounded-md px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider bg-accent/10 text-accent border-accent/20"
             >
               <Wallet className="size-3.5 mr-1" />
               Society Financials
             </Badge>
             <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-              <Building2 className="size-3 text-primary" /> {societyName}
+              <Building2 className="size-3 text-accent" /> {societyName}
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             Payments & Member Payouts
           </h1>
           <p className="text-sm text-muted-foreground mt-1 max-w-2xl">
@@ -174,10 +174,10 @@ export default function CooperativePayments() {
             size="sm"
             onClick={handleRefresh}
             disabled={isFetchingPayments || isLoadingStats}
-            className="rounded-xl gap-2 font-medium"
+            className="rounded-lg gap-2 font-medium h-9 text-xs shadow-xs"
           >
             <RotateCcw
-              className={`size-3.5 ${isFetchingPayments ? "animate-spin" : ""}`}
+              className={`size-3.5 ${isFetchingPayments ? "animate-spin text-accent" : ""}`}
             />
             Refresh
           </Button>
@@ -191,11 +191,11 @@ export default function CooperativePayments() {
           return (
             <Card
               key={stat.title}
-              className={`border ${stat.border} bg-card/85 shadow-sm rounded-2xl overflow-hidden backdrop-blur-sm`}
+              className={`border ${stat.border} bg-card shadow-xs rounded-xl overflow-hidden`}
             >
               <CardContent className="p-4 sm:p-5 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-medium text-muted-foreground">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     {stat.title}
                   </p>
                   <p className="text-2xl font-bold tracking-tight text-foreground mt-1">
@@ -206,7 +206,7 @@ export default function CooperativePayments() {
                   </p>
                 </div>
                 <div
-                  className={`size-10 sm:size-11 rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center shrink-0`}
+                  className={`size-10 rounded-lg ${stat.bg} ${stat.color} flex items-center justify-center shrink-0`}
                 >
                   <Icon className="size-5" />
                 </div>
@@ -217,7 +217,7 @@ export default function CooperativePayments() {
       </div>
 
       {/* Search & Status Filters */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-card/60 p-3 rounded-2xl border">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-card p-3 rounded-xl border border-border/80 shadow-xs">
         {/* Filter Tabs */}
         <div className="flex items-center gap-1 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           {filterTabs.map((tab) => (
@@ -227,9 +227,9 @@ export default function CooperativePayments() {
                 setStatusFilter(tab.key);
                 setCurrentPage(1);
               }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
                 statusFilter === tab.key
-                  ? "bg-primary text-primary-foreground shadow-sm"
+                  ? "bg-primary text-primary-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
               }`}
             >
@@ -248,7 +248,7 @@ export default function CooperativePayments() {
               setSearchQuery(e.target.value);
               setCurrentPage(1);
             }}
-            className="pl-9 pr-8 h-9 text-xs rounded-xl bg-background/80"
+            className="pl-9 pr-8 h-9 text-xs rounded-lg bg-background"
           />
           {searchQuery && (
             <button
@@ -262,11 +262,11 @@ export default function CooperativePayments() {
       </div>
 
       {/* Transactions & Payouts Table */}
-      <Card className="rounded-2xl border shadow-sm overflow-hidden bg-card/85">
+      <Card className="rounded-xl border border-border/80 shadow-xs overflow-hidden bg-card">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm border-collapse">
+          <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b bg-muted/40 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              <tr className="border-b border-border/60 bg-muted/50 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                 <th className="py-3 px-4">Booking / Service</th>
                 <th className="py-3 px-4">Member Worker</th>
                 <th className="py-3 px-4">Customer</th>

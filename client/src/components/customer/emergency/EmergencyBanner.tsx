@@ -14,55 +14,51 @@ export const EmergencyBanner: React.FC<EmergencyBannerProps> = ({
 }) => {
   return (
     <div
-      className={`relative overflow-hidden rounded-3xl border border-rose-500/40 bg-gradient-to-r from-rose-500/15 via-card to-card p-5 sm:p-6 shadow-lg shadow-rose-500/5 ring-1 ring-rose-500/20 ${className}`}
+      className={`relative overflow-hidden rounded-xl border border-destructive/30 bg-card p-4 sm:p-5 shadow-sm ${className}`}
     >
-      {/* Background glow effects */}
-      <div className="absolute -right-10 -bottom-10 size-48 rounded-full bg-rose-500/10 blur-3xl pointer-events-none" />
-      <div className="absolute left-1/3 top-0 size-32 rounded-full bg-amber-500/10 blur-2xl pointer-events-none" />
-
-      <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
-        <div className="space-y-2 max-w-2xl">
+      <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="space-y-1.5 max-w-2xl">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="relative flex size-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
-              <span className="relative inline-flex rounded-full size-3 bg-rose-500" />
+            <span className="relative flex size-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75" />
+              <span className="relative inline-flex rounded-full size-2.5 bg-destructive" />
             </span>
             <Badge
               variant="destructive"
-              className="text-[11px] font-black uppercase tracking-wider bg-rose-600 text-white shadow-xs"
+              className="text-[10px] font-bold uppercase tracking-wider"
             >
-              🚨 24/7 Cooperative Emergency SOS
+              24/7 Cooperative Emergency SOS
             </Badge>
             <span className="text-xs text-muted-foreground font-medium">
-              Average arrival time: ~25-35 mins
+              Average response: ~25-35 mins
             </span>
           </div>
 
-          <h3 className="text-lg sm:text-xl font-black text-foreground tracking-tight">
-            Urgent Household Hazard or Breakdown?
+          <h3 className="text-base sm:text-lg font-bold text-foreground tracking-tight">
+            Urgent Household Hazard or System Breakdown?
           </h3>
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-            Plumbing pipe burst, electrical spark, lockout, or dangerous fault? Dispatched immediately with top-of-queue priority to verified cooperative responders in your sector.
+            Plumbing pipe burst, electrical spark, lockout, or dangerous fault? Immediate priority dispatch to verified cooperative emergency technicians in your sector.
           </p>
         </div>
 
-        <div className="flex items-center gap-3 shrink-0 flex-wrap">
+        <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
           <a
             href="tel:1800123456"
-            className="inline-flex items-center gap-2 h-11 px-4 rounded-2xl border border-border/80 bg-card hover:bg-muted text-xs font-bold text-foreground transition"
+            className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border bg-card hover:bg-muted text-xs font-semibold text-foreground transition shadow-xs"
             title="Call 24/7 Helpline"
           >
-            <PhoneCall className="size-4 text-rose-500" />
+            <PhoneCall className="size-3.5 text-destructive" />
             <span>Co-op Hotline</span>
           </a>
 
           <Button
             onClick={onTriggerEmergency}
-            className="h-11 px-6 rounded-2xl text-xs font-black gap-2 shadow-md bg-rose-600 hover:bg-rose-700 text-white cursor-pointer shadow-rose-600/25 transition-all hover:scale-[1.02]"
+            className="h-10 px-4 gap-2 rounded-md bg-red-600 text-white text-sm font-medium shadow-sm hover:bg-red-700 hover:shadow transition-all active:scale-[0.98] cursor-pointer"
           >
-            <AlertTriangle className="size-4 animate-bounce" />
-            <span>Request Emergency SOS</span>
-            <ArrowRight className="size-3.5 ml-0.5" />
+            <AlertTriangle className="size-4" />
+            <span>Emergency SOS</span>
+            <ArrowRight className="size-4" />
           </Button>
         </div>
       </div>

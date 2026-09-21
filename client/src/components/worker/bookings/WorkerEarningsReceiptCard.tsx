@@ -108,7 +108,7 @@ export const WorkerEarningsReceiptCard: React.FC<WorkerEarningsReceiptCardProps>
   return (
     <div
       className={cn(
-        "rounded-3xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs space-y-5",
+        "rounded-xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs space-y-5",
         className
       )}
     >
@@ -140,16 +140,16 @@ export const WorkerEarningsReceiptCard: React.FC<WorkerEarningsReceiptCardProps>
         ) : (
           <Badge
             variant="outline"
-            className="bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30 gap-1 text-[11px] font-semibold"
+            className="bg-accent/10 text-accent border-accent/30 gap-1 text-[11px] font-semibold"
           >
-            <Sparkles className="size-3.5 text-purple-500" />
+            <Sparkles className="size-3.5 text-accent" />
             In Progress / Active
           </Badge>
         )}
       </div>
 
       {/* 2. Dispatch / Duration Tracking Block */}
-      <div className="p-4 rounded-2xl bg-muted/40 border border-border/60 space-y-2.5 text-xs">
+      <div className="p-4 rounded-lg bg-muted/40 border border-border/60 space-y-2.5 text-xs">
         <div className="flex items-center justify-between text-muted-foreground font-medium pb-2 border-b border-border/50">
           <span className="flex items-center gap-1.5 text-foreground font-semibold">
             <Calendar className="size-3.5 text-primary" />
@@ -208,7 +208,7 @@ export const WorkerEarningsReceiptCard: React.FC<WorkerEarningsReceiptCardProps>
         </div>
 
         {/* Gross Service Earnings */}
-        <div className="flex justify-between items-center py-1.5 px-3 rounded-xl bg-muted/30 border border-border/50">
+        <div className="flex justify-between items-center py-1.5 px-3 rounded-lg bg-muted/30 border border-border/50">
           <span className="font-bold text-foreground">Gross Service Amount</span>
           <span className="font-black text-foreground text-sm">
             ₹{serviceAmount}
@@ -252,7 +252,7 @@ export const WorkerEarningsReceiptCard: React.FC<WorkerEarningsReceiptCardProps>
         </div>
 
         {/* 4. Worker Net Take-Home Pay (Prominent Box) */}
-        <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex justify-between items-baseline">
+        <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex justify-between items-baseline">
           <div>
             <span className="text-xs font-black text-emerald-800 dark:text-emerald-300 uppercase tracking-wider block">
               Worker Net Take-Home Pay
@@ -285,7 +285,7 @@ export const WorkerEarningsReceiptCard: React.FC<WorkerEarningsReceiptCardProps>
       </div>
 
       {/* 5. Cooperative Protection Card */}
-      <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/60 text-[11px] text-muted-foreground flex items-start gap-2 leading-relaxed">
+      <div className="p-3.5 rounded-lg bg-muted/40 border border-border/60 text-[11px] text-muted-foreground flex items-start gap-2 leading-relaxed">
         <ShieldCheck className="size-4 text-primary shrink-0 mt-0.5" />
         <span>
           <strong>Cooperative Protection Guarantee:</strong> The fixed ₹30 transport fee is never deducted from your earnings. Deductions only apply to the base service amount to fund cooperative management and your insurance coverage.

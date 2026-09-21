@@ -131,19 +131,19 @@ export const WorkerWelfare = () => {
   return (
     <div className="space-y-6 pb-12">
       {/* Top Banner: Policy Hero */}
-      <div className="relative overflow-hidden rounded-3xl bg-linear-to-r from-primary/15 via-emerald-500/10 to-transparent p-6 sm:p-8 border border-primary/25 shadow-xs">
+      <div className="relative overflow-hidden rounded-xl bg-linear-to-r from-primary/15 via-emerald-500/10 to-transparent p-6 sm:p-8 border border-primary/25 shadow-xs">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2 max-w-2xl">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-primary text-primary-foreground shadow-xs">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-primary text-primary-foreground shadow-xs">
                 <ShieldCheck className="size-3.5" />
                 {overview?.policy?.tier || "Cooperative Gold Shield"}
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-600 border border-emerald-500/30 dark:text-emerald-400">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold bg-emerald-500/15 text-emerald-600 border border-emerald-500/30 dark:text-emerald-400">
                 <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
                 Active & 100% Insured
               </span>
-              <span className="text-xs font-mono font-bold text-foreground px-2 py-0.5 rounded-lg bg-background/80 border border-border">
+              <span className="text-xs font-mono font-bold text-foreground px-2 py-0.5 rounded-md bg-background/80 border border-border">
                 {overview?.policy?.policyNumber || "FG-WLF-ACTIVE"}
               </span>
             </div>
@@ -162,7 +162,7 @@ export const WorkerWelfare = () => {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full lg:w-auto">
             <Button
               onClick={() => setIsFileModalOpen(true)}
-              className="rounded-2xl gap-2 font-bold shadow-md h-11 text-xs"
+              className="rounded-lg gap-2 font-bold shadow-xs h-10 text-xs bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer"
             >
               <Plus className="size-4" />
               File Welfare / Insurance Claim
@@ -170,7 +170,7 @@ export const WorkerWelfare = () => {
             <Button
               variant="outline"
               onClick={fetchData}
-              className="rounded-2xl gap-1.5 text-xs h-11"
+              className="rounded-lg gap-1.5 text-xs h-10 cursor-pointer"
               disabled={isLoading}
             >
               <RefreshCw className={`size-3.5 ${isLoading ? "animate-spin" : ""}`} />
@@ -182,7 +182,7 @@ export const WorkerWelfare = () => {
 
       {/* Coverage Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-        <Card className="rounded-2xl border-border/70 hover:border-primary/40 transition">
+        <Card className="rounded-xl border-border/70 hover:border-primary/40 transition">
           <CardHeader className="p-4 pb-1">
             <CardDescription className="text-[11px] font-semibold flex items-center justify-between">
               <span>Personal Accident</span>
@@ -197,7 +197,7 @@ export const WorkerWelfare = () => {
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl border-border/70 hover:border-primary/40 transition">
+        <Card className="rounded-xl border-border/70 hover:border-primary/40 transition">
           <CardHeader className="p-4 pb-1">
             <CardDescription className="text-[11px] font-semibold flex items-center justify-between">
               <span>Hospitalization</span>
@@ -212,11 +212,11 @@ export const WorkerWelfare = () => {
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl border-border/70 hover:border-primary/40 transition">
+        <Card className="rounded-xl border-border/70 hover:border-primary/40 transition">
           <CardHeader className="p-4 pb-1">
             <CardDescription className="text-[11px] font-semibold flex items-center justify-between">
               <span>Distress Relief</span>
-              <HeartHandshake className="size-3.5 text-purple-500" />
+              <HeartHandshake className="size-3.5 text-accent" />
             </CardDescription>
             <CardTitle className="text-lg font-extrabold text-foreground">
               ₹{(overview?.policy?.coverage?.emergencyHardshipMax || 25000).toLocaleString("en-IN")}
@@ -227,11 +227,11 @@ export const WorkerWelfare = () => {
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl border-border/70 hover:border-primary/40 transition">
+        <Card className="rounded-xl border-border/70 hover:border-primary/40 transition">
           <CardHeader className="p-4 pb-1">
             <CardDescription className="text-[11px] font-semibold flex items-center justify-between">
               <span>Tool Protection</span>
-              <Wrench className="size-3.5 text-blue-500" />
+              <Wrench className="size-3.5 text-primary" />
             </CardDescription>
             <CardTitle className="text-lg font-extrabold text-foreground">
               ₹{(overview?.policy?.coverage?.toolEquipmentLossMax || 15000).toLocaleString("en-IN")}
@@ -242,7 +242,7 @@ export const WorkerWelfare = () => {
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl border-border/70 hover:border-primary/40 transition">
+        <Card className="rounded-xl border-border/70 hover:border-primary/40 transition">
           <CardHeader className="p-4 pb-1">
             <CardDescription className="text-[11px] font-semibold flex items-center justify-between">
               <span>Annual Health</span>
@@ -260,8 +260,8 @@ export const WorkerWelfare = () => {
 
       {/* Welfare Accrual & Activity Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="p-5 rounded-3xl bg-card border border-border/80 flex items-center gap-4">
-          <div className="size-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+        <div className="p-5 rounded-xl bg-card border border-border/80 flex items-center gap-4">
+          <div className="size-12 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
             <IndianRupee className="size-6" />
           </div>
           <div>
@@ -275,8 +275,8 @@ export const WorkerWelfare = () => {
           </div>
         </div>
 
-        <div className="p-5 rounded-3xl bg-card border border-border/80 flex items-center gap-4">
-          <div className="size-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+        <div className="p-5 rounded-xl bg-card border border-border/80 flex items-center gap-4">
+          <div className="size-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
             <FileText className="size-6" />
           </div>
           <div>
@@ -291,8 +291,8 @@ export const WorkerWelfare = () => {
           </div>
         </div>
 
-        <div className="p-5 rounded-3xl bg-card border border-border/80 flex items-center gap-4">
-          <div className="size-12 rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
+        <div className="p-5 rounded-xl bg-card border border-border/80 flex items-center gap-4">
+          <div className="size-12 rounded-lg bg-accent/10 text-accent flex items-center justify-center shrink-0">
             <Award className="size-6" />
           </div>
           <div>
@@ -316,13 +316,13 @@ export const WorkerWelfare = () => {
           </div>
 
           {/* Filter tabs */}
-          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-muted/60 text-xs overflow-x-auto max-w-full">
+          <div className="flex items-center gap-1.5 p-1 rounded-lg bg-muted/60 text-xs overflow-x-auto max-w-full">
             {["ALL", "SUBMITTED", "UNDER_REVIEW", "APPROVED", "DISBURSED", "REJECTED"].map((status) => (
               <button
                 key={status}
                 type="button"
                 onClick={() => setSelectedStatus(status)}
-                className={`px-3 py-1.5 rounded-xl font-semibold transition cursor-pointer text-[11px] shrink-0 ${
+                className={`px-3 py-1.5 rounded-md font-semibold transition cursor-pointer text-[11px] shrink-0 ${
                   selectedStatus === status
                     ? "bg-background text-foreground shadow-xs"
                     : "text-muted-foreground hover:text-foreground"
@@ -335,21 +335,21 @@ export const WorkerWelfare = () => {
         </div>
 
         {claims.length === 0 ? (
-          <div className="text-center py-16 px-4 rounded-3xl border border-dashed border-border/80 bg-card/40">
-            <div className="size-12 mx-auto mb-3 flex items-center justify-center rounded-2xl bg-primary/10 text-primary">
+          <div className="text-center py-16 px-4 rounded-xl border border-dashed border-border/80 bg-card/40">
+            <div className="size-12 mx-auto mb-3 flex items-center justify-center rounded-lg bg-primary/10 text-primary">
               <ShieldCheck className="size-6" />
             </div>
             <h4 className="text-sm font-bold text-foreground">No Claims Found</h4>
             <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-1 mb-4">
               {selectedStatus === "ALL"
-                ? "You have not filed any welfare or insurance claims yet. You are fully protected under your active policy."
+                 ? "You have not filed any welfare or insurance claims yet. You are fully protected under your active policy."
                 : `No claims currently marked as ${selectedStatus}.`}
             </p>
             <Button
               onClick={() => setIsFileModalOpen(true)}
               variant="outline"
               size="sm"
-              className="rounded-xl text-xs gap-1.5"
+              className="rounded-lg text-xs gap-1.5 cursor-pointer"
             >
               <Plus className="size-3.5" />
               File a Claim
@@ -361,10 +361,10 @@ export const WorkerWelfare = () => {
               <div
                 key={claim._id}
                 onClick={() => setSelectedClaimDetails(claim)}
-                className="p-4 rounded-2xl bg-card border border-border/80 hover:border-primary/40 hover:shadow-xs transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 cursor-pointer"
+                className="p-4 rounded-xl bg-card border border-border/80 hover:border-primary/40 hover:shadow-xs transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 cursor-pointer"
               >
                 <div className="flex items-start gap-3.5">
-                  <div className="size-10 rounded-xl bg-muted flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="size-10 rounded-lg bg-muted flex items-center justify-center shrink-0 mt-0.5">
                     {getClaimTypeIcon(claim.claimType)}
                   </div>
                   <div className="space-y-1">
@@ -419,9 +419,9 @@ export const WorkerWelfare = () => {
       </div>
 
       {/* 24/7 Helpline Card */}
-      <div className="p-5 rounded-3xl bg-muted/40 border border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="p-5 rounded-xl bg-muted/40 border border-border flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3 text-center sm:text-left">
-          <div className="size-11 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+          <div className="size-11 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
             <PhoneCall className="size-5" />
           </div>
           <div>
@@ -439,7 +439,7 @@ export const WorkerWelfare = () => {
           onClick={() => {
             window.location.href = "tel:18003247444";
           }}
-          className="rounded-xl text-xs gap-1.5 shrink-0"
+          className="rounded-lg text-xs gap-1.5 shrink-0 cursor-pointer"
         >
           <PhoneCall className="size-3.5 text-primary" />
           Call Support
@@ -463,7 +463,7 @@ export const WorkerWelfare = () => {
       {/* Claim Details View Modal */}
       {selectedClaimDetails && (
         <Dialog open={!!selectedClaimDetails} onOpenChange={() => setSelectedClaimDetails(null)}>
-          <DialogContent className="max-w-lg p-6 rounded-3xl max-h-[85vh] overflow-y-auto">
+          <DialogContent className="max-w-lg p-6 rounded-xl max-h-[85vh] overflow-y-auto">
             <DialogHeader>
               <div className="flex items-center justify-between gap-2 mb-1">
                 <span className="text-xs font-mono font-bold text-muted-foreground">
@@ -478,20 +478,20 @@ export const WorkerWelfare = () => {
             </DialogHeader>
 
             <div className="space-y-4 pt-2 text-xs">
-              <div className="p-3 rounded-2xl bg-muted/60 space-y-1">
+              <div className="p-3 rounded-lg bg-muted/60 space-y-1">
                 <div className="text-muted-foreground font-semibold">Incident Details:</div>
                 <p className="text-foreground leading-relaxed">{selectedClaimDetails.description}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 rounded-2xl border border-border/80">
+                <div className="p-3 rounded-lg border border-border/80">
                   <div className="text-muted-foreground">Requested:</div>
                   <div className="text-base font-extrabold text-foreground mt-0.5">
                     ₹{selectedClaimDetails.amountRequested.toLocaleString("en-IN")}
                   </div>
                 </div>
 
-                <div className="p-3 rounded-2xl border border-border/80">
+                <div className="p-3 rounded-lg border border-border/80">
                   <div className="text-muted-foreground">Approved:</div>
                   <div className="text-base font-extrabold text-emerald-600 mt-0.5">
                     {selectedClaimDetails.amountApproved
@@ -502,21 +502,21 @@ export const WorkerWelfare = () => {
               </div>
 
               {selectedClaimDetails.reviewNotes && (
-                <div className="p-3 rounded-2xl bg-primary/5 border border-primary/20 space-y-1">
+                <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 space-y-1">
                   <div className="font-semibold text-primary">Committee Review Notes:</div>
                   <p className="text-foreground">{selectedClaimDetails.reviewNotes}</p>
                 </div>
               )}
 
               {selectedClaimDetails.rejectionReason && (
-                <div className="p-3 rounded-2xl bg-destructive/10 border border-destructive/20 space-y-1 text-destructive">
+                <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 space-y-1 text-destructive">
                   <div className="font-semibold">Reason for Decline:</div>
                   <p>{selectedClaimDetails.rejectionReason}</p>
                 </div>
               )}
 
               {selectedClaimDetails.disbursementTxnId && (
-                <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300">
+                <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300">
                   <div className="font-semibold">Disbursement Transaction ID:</div>
                   <div className="font-mono font-bold mt-0.5">{selectedClaimDetails.disbursementTxnId}</div>
                   {selectedClaimDetails.disbursedAt && (

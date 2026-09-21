@@ -10,65 +10,65 @@ import { Badge } from "@/components/ui/badge";
 export default function LoginShowcase() {
   return (
     <div className="hidden lg:flex lg:col-span-5 flex-col justify-between space-y-8 pr-4">
-      <div className="space-y-4">
+      <div className="space-y-3">
         <Badge
           variant="outline"
-          className="gap-1.5 px-3 py-1 text-xs font-semibold bg-primary/5 border-primary/20 text-primary rounded-full shadow-xs"
+          className="gap-1.5 px-2.5 py-0.5 text-xs font-semibold bg-accent/10 border-accent/25 text-accent rounded-md shadow-xs"
         >
           <Sparkles className="size-3.5" />
           Cooperative Gig Network
         </Badge>
 
-        <h1 className="text-3xl xl:text-4xl font-extrabold tracking-tight text-foreground leading-tight">
-          Welcome back to your trusted community.
+        <h1 className="text-2xl xl:text-3xl font-bold tracking-tight text-foreground leading-tight">
+          Welcome back to your trusted cooperative community.
         </h1>
 
-        <p className="text-muted-foreground text-sm leading-relaxed">
+        <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
           Sign in to manage your active bookings, coordinate with verified cooperative
-          workers, and access your personalized dashboard with seamless transparency.
+          workers, and access your personalized dashboard with complete transparency.
         </p>
       </div>
 
       {/* Feature Highlights */}
-      <div className="space-y-4">
-        <div className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-card/60 border border-border/60 shadow-xs backdrop-blur-xs">
-          <div className="p-2 rounded-xl bg-primary/10 text-primary shrink-0">
+      <div className="space-y-3">
+        <div className="flex items-start gap-3 p-3 rounded-xl bg-card border border-border/80 shadow-xs">
+          <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
             <Shield className="size-4" />
           </div>
           <div className="space-y-0.5">
-            <h2 className="text-xs font-semibold text-foreground">
+            <h2 className="text-xs font-bold text-foreground">
               Verified & Vetted Network
             </h2>
             <p className="text-xs text-muted-foreground">
-              Every guild member and artisan is authenticated with verified credentials.
+              Every guild member and artisan is authenticated with verified government and trade credentials.
             </p>
           </div>
         </div>
 
-        <div className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-card/60 border border-border/60 shadow-xs backdrop-blur-xs">
-          <div className="p-2 rounded-xl bg-primary/10 text-primary shrink-0">
+        <div className="flex items-start gap-3 p-3 rounded-xl bg-card border border-border/80 shadow-xs">
+          <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
             <CheckCircle2 className="size-4" />
           </div>
           <div className="space-y-0.5">
-            <h2 className="text-xs font-semibold text-foreground">
-              Direct Fair-Trade Services
+            <h2 className="text-xs font-bold text-foreground">
+              Direct Fair-Trade Tariffs
             </h2>
             <p className="text-xs text-muted-foreground">
-              Zero middleman markup, ensuring competitive pricing and fair compensation.
+              Zero middleman markup, ensuring standardized pricing and dignified floor wages.
             </p>
           </div>
         </div>
 
-        <div className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-card/60 border border-border/60 shadow-xs backdrop-blur-xs">
-          <div className="p-2 rounded-xl bg-primary/10 text-primary shrink-0">
+        <div className="flex items-start gap-3 p-3 rounded-xl bg-card border border-border/80 shadow-xs">
+          <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
             <Users className="size-4" />
           </div>
           <div className="space-y-0.5">
-            <h2 className="text-xs font-semibold text-foreground">
-              Protected Escrow & Real-Time Tracking
+            <h2 className="text-xs font-bold text-foreground">
+              Community Health & Welfare Protection
             </h2>
             <p className="text-xs text-muted-foreground">
-              Secure milestone releases and instant dispute arbitration when you need it.
+              Emergency health relief, trade insurance, and transparent cooperative oversight.
             </p>
           </div>
         </div>

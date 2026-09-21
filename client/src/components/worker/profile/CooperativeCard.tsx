@@ -18,10 +18,10 @@ export const CooperativeCard: React.FC<CooperativeCardProps> = ({
   cooperative,
 }) => {
   return (
-    <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-4">
+    <div className="rounded-xl border border-border/80 bg-card p-6 shadow-xs space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="size-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+          <div className="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
             <Building2 className="size-5" />
           </div>
           <div>
@@ -35,14 +35,14 @@ export const CooperativeCard: React.FC<CooperativeCardProps> = ({
         </div>
 
         {cooperative && (
-          <Badge variant="outline" className="text-xs">
+          <Badge variant="outline" className="text-xs rounded-md">
             ID: {cooperative._id?.slice(-6) || "COOP"}
           </Badge>
         )}
       </div>
 
       {cooperative ? (
-        <div className="rounded-2xl bg-muted/40 p-4 border border-border/50 space-y-2 text-xs">
+        <div className="rounded-lg bg-muted/40 p-4 border border-border/50 space-y-2 text-xs">
           <div className="flex justify-between items-center">
             <span className="text-muted-foreground">Cooperative Name:</span>
             <span className="font-bold text-foreground">
@@ -69,15 +69,15 @@ export const CooperativeCard: React.FC<CooperativeCardProps> = ({
           )}
         </div>
       ) : (
-        <div className="text-xs text-muted-foreground bg-muted/30 p-4 rounded-2xl">
+        <div className="text-xs text-muted-foreground bg-muted/30 p-4 rounded-lg">
           Associated with the Central Cooperative Federation network. Standard rates and insurance apply to all dispatches.
         </div>
       )}
 
       {/* Insurance & Welfare Guarantee Bar */}
-      <div className="rounded-2xl bg-emerald-500/10 p-3.5 border border-emerald-500/20 flex items-center justify-between gap-3 text-xs">
+      <div className="rounded-lg bg-emerald-500/10 p-3.5 border border-emerald-500/20 flex items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-2.5">
-          <div className="size-8 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+          <div className="size-8 rounded-lg bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
             <ShieldCheck className="size-4" />
           </div>
           <div>

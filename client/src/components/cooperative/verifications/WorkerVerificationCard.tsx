@@ -43,12 +43,12 @@ export const WorkerVerificationCard: React.FC<WorkerVerificationCardProps> = ({
       : null;
 
   return (
-    <Card className="border border-border/70 bg-card/90 shadow-sm hover:shadow-md transition-all rounded-3xl overflow-hidden">
-      <CardContent className="p-5 sm:p-6 space-y-4">
+    <Card className="border border-border/80 bg-card shadow-xs hover:border-border transition-all rounded-xl overflow-hidden">
+      <CardContent className="p-5 space-y-4">
         {/* Top Row: User Header & Status Badge */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="size-11 sm:size-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center font-bold text-base shrink-0 border border-primary/20">
+            <div className="size-11 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-base shrink-0 border border-primary/20">
               {user?.name?.[0]?.toUpperCase() || "W"}
             </div>
             <div>
@@ -69,7 +69,7 @@ export const WorkerVerificationCard: React.FC<WorkerVerificationCardProps> = ({
                 ? "destructive"
                 : "secondary"
             }
-            className={`rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide uppercase border ${
+            className={`rounded-md px-2.5 py-0.5 text-[11px] font-semibold tracking-wide uppercase border ${
               isApproved
                 ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
                 : isPending
@@ -82,13 +82,13 @@ export const WorkerVerificationCard: React.FC<WorkerVerificationCardProps> = ({
         </div>
 
         {/* Contact Info Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-muted-foreground bg-muted/20 p-3 rounded-2xl border border-border/50">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-muted-foreground bg-muted/30 p-2.5 rounded-lg border border-border/60">
           <div className="flex items-center gap-2 text-foreground font-medium truncate">
-            <Phone className="size-3.5 text-primary shrink-0" />
+            <Phone className="size-3.5 text-accent shrink-0" />
             <span className="truncate">{user?.phone || "No phone"}</span>
           </div>
           <div className="flex items-center gap-2 text-foreground font-medium truncate">
-            <Mail className="size-3.5 text-primary shrink-0" />
+            <Mail className="size-3.5 text-accent shrink-0" />
             <span className="truncate">{user?.email || "No email"}</span>
           </div>
         </div>
@@ -100,7 +100,7 @@ export const WorkerVerificationCard: React.FC<WorkerVerificationCardProps> = ({
               Trade Category & Services
             </p>
             {categoryName && (
-              <Badge variant="default" className="bg-primary/15 text-primary border-primary/25 text-xs font-semibold">
+              <Badge variant="default" className="bg-primary/10 text-primary border-primary/20 text-xs font-semibold rounded-md">
                 {categoryName}
               </Badge>
             )}
@@ -110,7 +110,7 @@ export const WorkerVerificationCard: React.FC<WorkerVerificationCardProps> = ({
               {worker.skills.map((skill) => (
                 <span
                   key={skill._id}
-                  className="px-2.5 py-0.5 rounded-lg text-xs font-medium bg-muted/60 text-muted-foreground border border-border/60"
+                  className="px-2 py-0.5 rounded-md text-xs font-medium bg-muted text-muted-foreground border border-border/60"
                 >
                   {skill.name}
                 </span>
@@ -149,16 +149,16 @@ export const WorkerVerificationCard: React.FC<WorkerVerificationCardProps> = ({
             Documents:
           </span>
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-muted/40 text-[11px] text-foreground font-medium border border-border/60">
-            <FileText className="size-3 text-primary" /> ID Proof
+            <FileText className="size-3 text-accent" /> ID Proof
           </span>
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-muted/40 text-[11px] text-foreground font-medium border border-border/60">
-            <ShieldCheck className="size-3 text-primary" /> Trade Cert
+            <ShieldCheck className="size-3 text-accent" /> Trade Cert
           </span>
         </div>
 
         {/* Rejection Note banner if rejected */}
         {isRejected && (
-          <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-600 dark:text-rose-400 flex items-start gap-1.5">
+          <div className="p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-xs text-rose-600 dark:text-rose-400 flex items-start gap-1.5">
             <AlertCircle className="size-3.5 shrink-0 mt-0.5" />
             <span className="truncate">
               Reason: {worker.verificationDocuments?.identity?.rejectionReason || "Requirements not met"}
@@ -173,7 +173,7 @@ export const WorkerVerificationCard: React.FC<WorkerVerificationCardProps> = ({
             variant="outline"
             size="sm"
             onClick={() => onReview(worker)}
-            className="rounded-xl text-xs h-9 gap-1.5 border-border/80 cursor-pointer"
+            className="rounded-lg text-xs h-8 gap-1.5 border-border/80 cursor-pointer shadow-xs"
           >
             <Eye className="size-3.5" />
             Review Documents
@@ -186,7 +186,7 @@ export const WorkerVerificationCard: React.FC<WorkerVerificationCardProps> = ({
                 variant="destructive"
                 size="sm"
                 onClick={() => onQuickReject(worker)}
-                className="rounded-xl text-xs h-9 px-3 gap-1 cursor-pointer"
+                className="rounded-lg text-xs h-8 px-3 gap-1 cursor-pointer shadow-xs"
               >
                 <XCircle className="size-3.5" />
                 Reject
@@ -196,7 +196,7 @@ export const WorkerVerificationCard: React.FC<WorkerVerificationCardProps> = ({
                 type="button"
                 size="sm"
                 onClick={() => onQuickApprove(worker._id)}
-                className="rounded-xl text-xs h-9 px-3.5 gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs font-semibold cursor-pointer"
+                className="rounded-lg text-xs h-8 px-3.5 gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs font-semibold cursor-pointer"
               >
                 <CheckCircle2 className="size-3.5" />
                 Approve
@@ -216,7 +216,7 @@ export const WorkerVerificationCard: React.FC<WorkerVerificationCardProps> = ({
               size="sm"
               variant="outline"
               onClick={() => onQuickApprove(worker._id)}
-              className="rounded-xl text-xs h-9 gap-1 text-emerald-600 hover:bg-emerald-500/10 border-emerald-500/30 cursor-pointer"
+              className="rounded-lg text-xs h-8 gap-1 text-emerald-600 hover:bg-emerald-500/10 border-emerald-500/30 cursor-pointer shadow-xs"
             >
               Re-approve
             </Button>

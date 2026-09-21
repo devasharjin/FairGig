@@ -41,7 +41,7 @@ export const EditProfileDialog: React.FC<EditProfileDialogProps> = ({
 }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg rounded-3xl">
+      <DialogContent className="sm:max-w-lg rounded-xl">
         <DialogHeader>
           <DialogTitle className="text-lg font-bold">
             Edit Worker Profile
@@ -62,7 +62,7 @@ export const EditProfileDialog: React.FC<EditProfileDialogProps> = ({
                 value={formData.name}
                 onChange={(e) => onChange("name", e.target.value)}
                 placeholder="Your Full Name"
-                className="rounded-xl h-9 text-xs"
+                className="rounded-lg h-9 text-xs"
                 required
               />
             </div>
@@ -76,7 +76,7 @@ export const EditProfileDialog: React.FC<EditProfileDialogProps> = ({
                 value={formData.phone}
                 onChange={(e) => onChange("phone", e.target.value)}
                 placeholder="+91 98765 43210"
-                className="rounded-xl h-9 text-xs"
+                className="rounded-lg h-9 text-xs"
                 required
               />
             </div>
@@ -95,7 +95,7 @@ export const EditProfileDialog: React.FC<EditProfileDialogProps> = ({
                 value={formData.experience}
                 onChange={(e) => onChange("experience", e.target.value)}
                 placeholder="e.g. 5"
-                className="rounded-xl h-9 text-xs"
+                className="rounded-lg h-9 text-xs"
               />
             </div>
 
@@ -109,7 +109,7 @@ export const EditProfileDialog: React.FC<EditProfileDialogProps> = ({
                 onChange={(e) =>
                   onChange("availability", e.target.value as "Full-Time" | "Part-Time")
                 }
-                className="w-full rounded-xl border border-input bg-background h-9 px-3 text-xs focus:ring-1 focus:ring-ring focus:outline-none"
+                className="w-full rounded-lg border border-input bg-background h-9 px-3 text-xs focus:ring-1 focus:ring-ring focus:outline-none"
               >
                 <option value="Full-Time">Full-Time</option>
                 <option value="Part-Time">Part-Time</option>
@@ -126,7 +126,7 @@ export const EditProfileDialog: React.FC<EditProfileDialogProps> = ({
               value={formData.address}
               onChange={(e) => onChange("address", e.target.value)}
               placeholder="Street address or workshop location"
-              className="rounded-xl h-9 text-xs"
+              className="rounded-lg h-9 text-xs"
             />
           </div>
 
@@ -140,7 +140,7 @@ export const EditProfileDialog: React.FC<EditProfileDialogProps> = ({
                 value={formData.city}
                 onChange={(e) => onChange("city", e.target.value)}
                 placeholder="City"
-                className="rounded-xl h-9 text-xs"
+                className="rounded-lg h-9 text-xs"
               />
             </div>
 
@@ -153,7 +153,7 @@ export const EditProfileDialog: React.FC<EditProfileDialogProps> = ({
                 value={formData.state}
                 onChange={(e) => onChange("state", e.target.value)}
                 placeholder="State"
-                className="rounded-xl h-9 text-xs"
+                className="rounded-lg h-9 text-xs"
               />
             </div>
 
@@ -166,7 +166,7 @@ export const EditProfileDialog: React.FC<EditProfileDialogProps> = ({
                 value={formData.pincode}
                 onChange={(e) => onChange("pincode", e.target.value)}
                 placeholder="600001"
-                className="rounded-xl h-9 text-xs"
+                className="rounded-lg h-9 text-xs"
               />
             </div>
           </div>
@@ -176,14 +176,14 @@ export const EditProfileDialog: React.FC<EditProfileDialogProps> = ({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="rounded-xl text-xs font-semibold cursor-pointer"
+              className="rounded-lg text-xs font-semibold cursor-pointer"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isPending}
-              className="rounded-xl text-xs font-semibold cursor-pointer bg-primary text-primary-foreground"
+              className="rounded-lg text-xs font-semibold cursor-pointer bg-primary text-primary-foreground"
             >
               {isPending ? "Saving Changes..." : "Save Changes"}
             </Button>

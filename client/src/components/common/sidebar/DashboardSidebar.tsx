@@ -30,42 +30,42 @@ export const DashboardSidebar = ({
   const BrandIcon = branding.icon;
 
   const sidebarContent = (isMobile = false) => (
-    <div className="flex flex-col h-full select-none">
+    <div className="flex flex-col h-full select-none bg-[#0F2338] text-slate-200">
       {/* Sidebar Header / Logo */}
       <div
         className={cn(
-          "h-16 flex items-center px-4 border-b border-sidebar-border shrink-0 transition-all",
+          "h-16 flex items-center px-4 border-b border-[#1F364D] shrink-0 transition-all",
           isCollapsed && !isMobile ? "justify-center px-2" : "justify-between"
         )}
       >
         <Link
           to={branding.homePath}
-          className="flex items-center gap-3 group outline-none overflow-hidden"
+          className="flex items-center gap-2.5 group outline-none overflow-hidden"
           title={`${branding.title || "fairgig"} - ${branding.subtitle || ""}`}
           onClick={() => isMobile && setMobileOpen(false)}
         >
-          <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shadow-xs shrink-0">
-            <BrandIcon className="size-5" />
+          <div className="size-8 rounded-lg bg-teal-600 text-white flex items-center justify-center transition-all duration-200 shadow-xs shrink-0 group-hover:bg-teal-500">
+            <BrandIcon className="size-4" />
           </div>
 
           {(!isCollapsed || isMobile) && (
-            <div className="flex flex-col overflow-hidden leading-none pr-6">
+            <div className="flex flex-col overflow-hidden leading-none pr-4">
               <div className="flex items-center gap-1.5">
-                <span className="font-bold text-lg tracking-tight flex items-center">
-                  <span className="text-foreground">fair</span>
-                  <span className="text-primary font-extrabold ml-0.5">gig</span>
+                <span className="font-bold text-base tracking-tight flex items-center">
+                  <span className="text-white">fair</span>
+                  <span className="text-teal-400 font-bold ml-0.5">gig</span>
                 </span>
                 {branding.badge && (
                   <Badge
                     variant="outline"
-                    className="text-[10px] px-1.5 py-0 font-bold uppercase tracking-wider bg-primary/10 text-primary border-primary/25"
+                    className="text-[9px] px-1.5 py-0 font-bold uppercase tracking-wider bg-teal-500/15 text-teal-300 border-teal-400/30"
                   >
                     {branding.badge}
                   </Badge>
                 )}
               </div>
               {branding.subtitle && (
-                <span className="text-[11px] text-muted-foreground font-medium truncate mt-1">
+                <span className="text-[10px] text-slate-400 font-medium truncate mt-0.5">
                   {branding.subtitle}
                 </span>
               )}
@@ -86,23 +86,23 @@ export const DashboardSidebar = ({
       </div>
 
       {/* Sidebar Footer / User Context Card */}
-      <div className="p-3 border-t border-sidebar-border shrink-0 bg-sidebar/50">
+      <div className="p-3 border-t border-[#1F364D] shrink-0 bg-[#0B1A2B]/60">
         <div
           className={cn(
-            "flex items-center gap-3 p-2 rounded-xl transition-colors bg-muted/40",
+            "flex items-center gap-3 p-2 rounded-xl transition-colors bg-[#17324D]/60 border border-[#1F364D]/80",
             isCollapsed && !isMobile && "justify-center p-1.5"
           )}
         >
-          <div className="size-8 rounded-full bg-primary/15 text-primary flex items-center justify-center font-semibold text-xs shrink-0">
+          <div className="size-8 rounded-full bg-teal-500/20 text-teal-300 flex items-center justify-center font-bold text-xs shrink-0 border border-teal-500/30">
             {user?.name ? user.name.charAt(0).toUpperCase() : <UserIcon className="size-4" />}
           </div>
 
           {(!isCollapsed || isMobile) && (
             <div className="flex flex-col min-w-0 flex-1">
-              <span className="text-xs font-semibold text-foreground truncate">
+              <span className="text-xs font-semibold text-white truncate">
                 {user?.name || "My Account"}
               </span>
-              <span className="text-[10px] text-muted-foreground truncate uppercase font-medium">
+              <span className="text-[10px] text-slate-400 truncate uppercase font-medium">
                 {branding.badge || "User"}
               </span>
             </div>
@@ -115,7 +115,7 @@ export const DashboardSidebar = ({
             type="button"
             onClick={toggleCollapse}
             className={cn(
-              "mt-2 w-full hidden lg:flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all cursor-pointer",
+              "mt-2 w-full hidden lg:flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-all cursor-pointer",
               isCollapsed && "justify-center px-0"
             )}
             title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -139,7 +139,7 @@ export const DashboardSidebar = ({
       {/* Desktop Sticky Sidebar */}
       <aside
         className={cn(
-          "hidden lg:flex flex-col sticky top-0 h-screen border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-all duration-300 shrink-0 z-30",
+          "hidden lg:flex flex-col sticky top-0 h-screen border-r border-[#1F364D] bg-[#0F2338] text-slate-200 transition-all duration-300 shrink-0 z-30",
           isCollapsed ? "w-20" : "w-64",
           className
         )}
@@ -151,7 +151,7 @@ export const DashboardSidebar = ({
       <Sheet open={isMobileOpen} onOpenChange={setMobileOpen}>
         <SheetContent
           side="left"
-          className="p-0 w-72 sm:w-80 bg-sidebar text-sidebar-foreground border-sidebar-border flex flex-col gap-0 outline-none"
+          className="p-0 w-72 sm:w-80 bg-[#0F2338] text-slate-200 border-[#1F364D] flex flex-col gap-0 outline-none"
           showCloseButton={true}
         >
           <SheetHeader className="sr-only">

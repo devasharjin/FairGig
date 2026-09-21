@@ -38,81 +38,77 @@ export const ServiceSearchFilter: React.FC<ServiceSearchFilterProps> = ({
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
         {/* Search Input */}
         <div className="relative flex-1">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
           <Input
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search gig services (e.g. Electrical, plumbing, cleaning)..."
-            className="h-11 sm:h-12 pl-10 pr-10 rounded-2xl bg-card border-border/80 text-sm shadow-xs focus-visible:ring-primary/30"
+            placeholder="Search services (e.g. Wiring, Tap Repair, Cleaning)..."
+            className="h-10 pl-9 pr-9 rounded-lg bg-card border border-border text-xs sm:text-sm shadow-xs focus-visible:ring-accent/30"
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => onSearchChange("")}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 size-5 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/80 transition"
+              className="absolute right-3 top-1/2 -translate-y-1/2 size-4 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition"
               title="Clear search"
             >
-              <X className="size-3.5" />
+              <X className="size-3" />
             </button>
           )}
         </div>
 
         {/* Pricing Type Filter Segment */}
-        <div className="flex items-center gap-1 p-1 rounded-2xl bg-muted/40 border border-border/70 shrink-0 self-start sm:self-auto overflow-x-auto w-full sm:w-auto">
+        <div className="flex items-center gap-1 p-1 rounded-lg bg-muted/50 border border-border shrink-0 self-start sm:self-auto overflow-x-auto w-full sm:w-auto">
           <button
             type="button"
             onClick={() => onSelectPriceType("all")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer shrink-0 ${
-              selectedPriceType === "all"
-                ? "bg-card text-foreground shadow-xs border border-border/80"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition cursor-pointer shrink-0 ${selectedPriceType === "all"
+                ? "bg-card text-foreground shadow-xs border border-border"
                 : "text-muted-foreground hover:text-foreground"
-            }`}
+              }`}
           >
-            <SlidersHorizontal className="size-3.5" />
+            <SlidersHorizontal className="size-3" />
             <span>All Rates</span>
           </button>
 
           <button
             type="button"
             onClick={() => onSelectPriceType("hourly")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer shrink-0 ${
-              selectedPriceType === "hourly"
-                ? "bg-card text-foreground shadow-xs border border-border/80"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition cursor-pointer shrink-0 ${selectedPriceType === "hourly"
+                ? "bg-card text-foreground shadow-xs border border-border"
                 : "text-muted-foreground hover:text-foreground"
-            }`}
+              }`}
           >
-            <Clock className="size-3.5" />
+            <Clock className="size-3" />
             <span>Hourly</span>
           </button>
 
           <button
             type="button"
             onClick={() => onSelectPriceType("meters")}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer shrink-0 ${
-              selectedPriceType === "meters"
-                ? "bg-card text-foreground shadow-xs border border-border/80"
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition cursor-pointer shrink-0 ${selectedPriceType === "meters"
+                ? "bg-card text-foreground shadow-xs border border-border"
                 : "text-muted-foreground hover:text-foreground"
-            }`}
+              }`}
           >
-            <Ruler className="size-3.5" />
+            <Ruler className="size-3" />
             <span>Metered</span>
           </button>
         </div>
       </div>
 
       {/* Categories Horizontal Scroll / Pills */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1.5 pt-0.5 no-scrollbar scroll-smooth">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 pt-0.5 custom-scrollbar scroll-smooth">
         {/* All Categories Chip */}
         <button
           type="button"
           onClick={() => onSelectCategory("all")}
-          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl text-xs font-semibold whitespace-nowrap transition cursor-pointer shrink-0 border ${
-            selectedCategoryId === "all" || !selectedCategoryId
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold whitespace-nowrap transition cursor-pointer shrink-0 border ${selectedCategoryId === "all" || !selectedCategoryId
               ? "bg-primary text-primary-foreground border-primary shadow-xs"
-              : "bg-card text-muted-foreground hover:text-foreground border-border/80 hover:border-primary/40"
-          }`}
+              : "bg-card text-muted-foreground hover:text-foreground border-border hover:border-accent/40"
+            }`}
         >
-          <Layers className="size-3.5" />
+          <Layers className="size-3" />
           <span>All Categories</span>
         </button>
 
@@ -124,19 +120,18 @@ export const ServiceSearchFilter: React.FC<ServiceSearchFilterProps> = ({
               key={cat._id}
               type="button"
               onClick={() => onSelectCategory(cat._id)}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-2xl text-xs font-semibold whitespace-nowrap transition cursor-pointer shrink-0 border ${
-                isSelected
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold whitespace-nowrap transition cursor-pointer shrink-0 border ${isSelected
                   ? "bg-primary text-primary-foreground border-primary shadow-xs"
-                  : "bg-card text-muted-foreground hover:text-foreground border-border/80 hover:border-primary/40"
-              }`}
+                  : "bg-card text-muted-foreground hover:text-foreground border-border hover:border-accent/40"
+                }`}
             >
               {cat.icon ? (
                 <span
-                  className="size-4 flex items-center justify-center text-xs"
+                  className="size-3.5 flex items-center justify-center text-xs"
                   dangerouslySetInnerHTML={{ __html: cat.icon }}
                 />
               ) : (
-                <span className="size-2 rounded-full bg-primary/40" />
+                <span className="size-1.5 rounded-full bg-accent" />
               )}
               <span>{cat.name}</span>
             </button>

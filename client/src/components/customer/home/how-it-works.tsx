@@ -29,44 +29,44 @@ export const HowItWorks: React.FC = () => {
   ];
 
   return (
-    <section className="py-16 sm:py-24 border-b border-border/50 bg-muted/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
+    <section className="py-10 sm:py-14 border-b border-border/60 bg-muted/20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
         {/* Section Header */}
-        <div className="text-center space-y-3 max-w-2xl mx-auto">
-          <span className="text-xs font-bold text-primary tracking-wider uppercase">
-            Simple & Transparent
+        <div className="text-center space-y-2 max-w-2xl mx-auto">
+          <span className="text-xs font-bold text-accent tracking-wider uppercase">
+            Transparent Workflow
           </span>
-          <h2 className="text-2xl sm:text-4xl font-black text-foreground tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
             How FairGig Works
           </h2>
-          <p className="text-xs sm:text-sm md:text-base text-muted-foreground leading-relaxed">
-            Three simple steps to secure expert trade services with community trust.
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+            Three simple steps to secure certified trade services with community trust.
           </p>
         </div>
 
         {/* Steps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 relative">
           {steps.map((step) => {
             const Icon = step.icon;
             return (
               <div
                 key={step.number}
-                className="relative flex flex-col p-6 sm:p-8 rounded-3xl bg-card border border-border/80 shadow-xs hover:shadow-lg transition-all"
+                className="relative flex flex-col p-5 sm:p-6 rounded-xl bg-card border border-border/80 shadow-xs hover:shadow-md transition-all"
               >
-                {/* Step Number Watermark */}
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex size-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
-                    <Icon className="size-6" />
+                {/* Step Number */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex size-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-xs">
+                    <Icon className="size-5" />
                   </div>
-                  <span className="text-3xl font-black text-muted-foreground/30 font-mono">
+                  <span className="text-2xl font-bold text-muted-foreground/30 font-mono">
                     {step.number}
                   </span>
                 </div>
 
-                <h3 className="text-lg sm:text-xl font-bold text-foreground mb-2">
+                <h3 className="text-base font-bold text-foreground mb-1.5">
                   {step.title}
                 </h3>
-                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                <p className="text-xs text-muted-foreground leading-relaxed">
                   {step.description}
                 </p>
               </div>
@@ -78,8 +78,8 @@ export const HowItWorks: React.FC = () => {
         <div className="flex justify-center pt-2">
           <Link to="/services">
             <Button
-              size="lg"
-              className="rounded-2xl h-12 px-7 font-bold gap-2 cursor-pointer shadow-sm"
+              size="default"
+              className="rounded-lg h-10 px-5 font-semibold gap-2 cursor-pointer shadow-xs"
             >
               <span>Explore Services Now</span>
               <ArrowRight className="size-4" />

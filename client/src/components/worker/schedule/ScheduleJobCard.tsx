@@ -39,7 +39,7 @@ export const ScheduleJobCard: React.FC<ScheduleJobCardProps> = ({ job }) => {
 
   return (
     <div
-      className={`group relative rounded-2xl border p-4 sm:p-5 transition-all shadow-xs ${
+      className={`group relative rounded-xl border p-4 sm:p-5 transition-all shadow-xs ${
         isInProgress
           ? "border-blue-500/40 bg-blue-500/5 dark:bg-blue-500/10 shadow-blue-500/5"
           : isCompleted
@@ -53,7 +53,7 @@ export const ScheduleJobCard: React.FC<ScheduleJobCardProps> = ({ job }) => {
         {/* Left Column: Time & Job Info */}
         <div className="space-y-1.5 flex-1 min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="flex items-center gap-1.5 text-xs font-bold text-foreground bg-muted px-2.5 py-1 rounded-lg">
+            <span className="flex items-center gap-1.5 text-xs font-bold text-foreground bg-muted px-2.5 py-1 rounded-md">
               <Clock className="size-3.5 text-primary" />
               {formatTime(job.scheduledDate)}
             </span>
@@ -125,7 +125,7 @@ export const ScheduleJobCard: React.FC<ScheduleJobCardProps> = ({ job }) => {
           </div>
 
           {job.customerNotes && (
-            <p className="text-[11px] text-muted-foreground/90 italic bg-muted/40 px-2.5 py-1.5 rounded-lg border border-border/40 mt-1 max-w-xl">
+            <p className="text-[11px] text-muted-foreground/90 italic bg-muted/40 px-2.5 py-1.5 rounded-md border border-border/40 mt-1 max-w-xl">
               "{job.customerNotes}"
             </p>
           )}
@@ -149,7 +149,7 @@ export const ScheduleJobCard: React.FC<ScheduleJobCardProps> = ({ job }) => {
               <a
                 href={`tel:${job.customer.phone}`}
                 title={`Call ${job.customer.name}`}
-                className="p-2 rounded-xl bg-muted hover:bg-muted/80 text-foreground transition-colors cursor-pointer border border-border/70"
+                className="p-2 rounded-lg bg-muted hover:bg-muted/80 text-foreground transition-colors cursor-pointer border border-border/70"
               >
                 <Phone className="size-3.5 text-primary" />
               </a>
@@ -160,7 +160,7 @@ export const ScheduleJobCard: React.FC<ScheduleJobCardProps> = ({ job }) => {
               target="_blank"
               rel="noreferrer"
               title="Get Directions"
-              className="p-2 rounded-xl bg-muted hover:bg-muted/80 text-foreground transition-colors cursor-pointer border border-border/70"
+              className="p-2 rounded-lg bg-muted hover:bg-muted/80 text-foreground transition-colors cursor-pointer border border-border/70"
             >
               <Navigation className="size-3.5 text-blue-500" />
             </a>
@@ -169,7 +169,7 @@ export const ScheduleJobCard: React.FC<ScheduleJobCardProps> = ({ job }) => {
               <Button
                 size="sm"
                 variant="outline"
-                className="h-8 px-2.5 text-xs font-semibold rounded-xl gap-1"
+                className="h-8 px-2.5 text-xs font-semibold rounded-lg gap-1"
               >
                 <span>Manage</span>
                 <ExternalLink className="size-3" />

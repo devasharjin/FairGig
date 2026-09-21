@@ -31,7 +31,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
       open={Boolean(selectedJob)}
       onOpenChange={(open) => !open && onClose()}
     >
-      <DialogContent className="max-w-lg rounded-3xl p-6 border border-border/80 shadow-2xl bg-card max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-lg rounded-xl p-6 border border-border/80 shadow-2xl bg-card max-h-[90vh] overflow-y-auto">
         {selectedJob && (
           <>
             <DialogHeader>
@@ -51,7 +51,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
 
             <div className="space-y-4 pt-3 text-xs">
               {/* Progress Stepper */}
-              <div className="p-4 rounded-2xl bg-muted/30 border border-border/50 space-y-2">
+              <div className="p-4 rounded-lg bg-muted/30 border border-border/50 space-y-2">
                 <h4 className="font-semibold text-foreground">Job Status Progression</h4>
                 <div className="flex items-center justify-between text-[11px] pt-2">
                   <div className="flex flex-col items-center gap-1">
@@ -106,7 +106,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
               </div>
 
               {/* Customer Contact */}
-              <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/60 space-y-1.5">
+              <div className="p-3.5 rounded-lg bg-muted/40 border border-border/60 space-y-1.5">
                 <h4 className="font-semibold text-foreground">Customer Contact</h4>
                 <p className="text-foreground font-bold">{selectedJob.customer?.name}</p>
                 <p className="text-muted-foreground">
@@ -119,14 +119,14 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
 
               {/* Instructions */}
               {selectedJob.customerNotes && (
-                <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/60 space-y-1">
+                <div className="p-3.5 rounded-lg bg-muted/40 border border-border/60 space-y-1">
                   <h4 className="font-semibold text-foreground">Customer Instructions</h4>
                   <p className="italic text-foreground">"{selectedJob.customerNotes}"</p>
                 </div>
               )}
 
               {/* Payment Breakdown */}
-              <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/60 space-y-1.5">
+              <div className="p-3.5 rounded-lg bg-muted/40 border border-border/60 space-y-1.5">
                 <h4 className="font-semibold text-foreground">Payment Summary</h4>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Price Type:</span>
@@ -153,7 +153,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="rounded-xl h-10 px-4 text-xs cursor-pointer gap-1.5"
+                  className="rounded-lg h-10 px-4 text-xs cursor-pointer gap-1.5"
                 >
                   <ExternalLink className="size-3.5" />
                   <span>Full Details Page</span>
@@ -165,7 +165,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
                   type="button"
                   variant="outline"
                   onClick={onClose}
-                  className="rounded-xl h-10 px-4 text-xs cursor-pointer"
+                  className="rounded-lg h-10 px-4 text-xs cursor-pointer"
                 >
                   Close
                 </Button>
@@ -173,7 +173,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
                 {(selectedJob.status === "CONFIRMED" || selectedJob.status === "ASSIGNED") && (
                   <Button
                     onClick={() => onStartJob(selectedJob._id)}
-                    className="rounded-xl h-10 px-5 text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white cursor-pointer"
+                    className="rounded-lg h-10 px-5 text-xs font-bold bg-primary hover:bg-primary/90 text-primary-foreground cursor-pointer"
                   >
                     Start Job Now
                   </Button>
@@ -182,7 +182,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
                 {selectedJob.status === "IN_PROGRESS" && (
                   <Button
                     onClick={() => onCompleteJob(selectedJob)}
-                    className="rounded-xl h-10 px-5 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer"
+                    className="rounded-lg h-10 px-5 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer"
                   >
                     Finish Work
                   </Button>

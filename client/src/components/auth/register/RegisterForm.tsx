@@ -124,7 +124,7 @@ export default function RegisterForm() {
 
   return (
     <div className="lg:col-span-7 w-full max-w-lg mx-auto lg:max-w-none">
-      <Card className="border border-border/70 bg-card/85 shadow-2xl backdrop-blur-xl rounded-2xl sm:rounded-3xl overflow-hidden transition-all">
+      <Card className="border border-border/70 bg-card/85 shadow-2xl backdrop-blur-xl rounded-xl overflow-hidden transition-all">
         {/* Header - responsive padding & typography */}
         <CardHeader className="space-y-1.5 sm:space-y-2 pb-3 pt-6 sm:pt-8 px-4 sm:px-7 md:px-9">
           <div className="flex items-center justify-between">

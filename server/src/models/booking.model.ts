@@ -259,12 +259,8 @@ const bookingSchema = new Schema<IBooking>(
     },
 
     emergencyDetails: {
-      hazardType: { type: String, trim: true, default: "" },
-      severity: {
-        type: String,
-        enum: ["CRITICAL", "HIGH", "MEDIUM"],
-        default: "HIGH",
-      },
+      hazardType: { type: String, trim: true },
+      severity: { type: String, trim: true },
       immediateContact: { type: String, trim: true, default: "" },
       notes: { type: String, trim: true, default: "" },
     },

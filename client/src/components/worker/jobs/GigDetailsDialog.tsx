@@ -188,8 +188,8 @@ export const GigDetailsDialog: React.FC<GigDetailsDialogProps> = ({
               isEmergency
                 ? "bg-rose-600 hover:bg-rose-700 shadow-rose-600/30"
                 : isOnDemand
-                ? "bg-amber-600 hover:bg-amber-700 shadow-amber-600/30"
-                : "bg-primary text-primary-foreground hover:bg-primary/90"
+                  ? "bg-amber-600 hover:bg-amber-700 shadow-amber-600/30"
+                  : "bg-primary text-primary-foreground hover:bg-primary/90"
             )}
           >
             <Check className="size-3.5" />
@@ -197,10 +197,10 @@ export const GigDetailsDialog: React.FC<GigDetailsDialogProps> = ({
               {isAccepting
                 ? "Claiming..."
                 : isEmergency
-                ? "Claim Emergency SOS Mission"
-                : isOnDemand
-                ? "Claim On-Demand Dispatch"
-                : "Accept Assignment"}
+                  ? "Claim Emergency SOS Mission"
+                  : isOnDemand
+                    ? "Claim On-Demand Dispatch"
+                    : "Accept Assignment"}
             </span>
           </Button>
         </div>

@@ -117,21 +117,23 @@ export default function LoginForm() {
 
   return (
     <div className="lg:col-span-7 w-full max-w-lg mx-auto lg:max-w-none">
-      <Card className="border border-border/80 bg-card/90 shadow-2xl backdrop-blur-xl rounded-3xl overflow-hidden transition-all">
-        <CardHeader className="space-y-2 pb-6">
+      <Card className="border border-border/80 bg-card shadow-lg rounded-xl overflow-hidden transition-all">
+        <CardHeader className="space-y-1 pb-4">
           <div className="flex items-center justify-between">
             <Badge
-              variant="secondary"
-              className="rounded-full px-3 py-1 text-[11px] font-semibold tracking-wide uppercase gap-1"
+              variant="outline"
+              className="rounded-md px-2.5 py-0.5 text-[11px] font-semibold tracking-wide uppercase gap-1 bg-accent/10 text-accent border-accent/25"
             >
-              <Sparkles className="size-3 text-primary" />
+              <Sparkles className="size-3" />
               Sign In
             </Badge>
           </div>
+          <CardTitle className="text-xl font-bold text-foreground">Account Login</CardTitle>
+          <CardDescription className="text-xs text-muted-foreground">Enter your credentials to access your cooperative portal</CardDescription>
         </CardHeader>
 
-        <CardContent className="space-y-5">
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <CardContent className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3.5">
             {/* Email Address */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
@@ -145,7 +147,7 @@ export default function LoginForm() {
                 )}
               </div>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
                   <Mail className="size-4" />
                 </div>
                 <Input
@@ -157,7 +159,7 @@ export default function LoginForm() {
                   placeholder="alex@example.com"
                   required
                   autoComplete="email"
-                  className={`h-11 pl-10 pr-4 rounded-xl text-sm transition-all ${
+                  className={`h-10 pl-9 pr-3 rounded-lg text-sm transition-all ${
                     touched.email && !isEmailValid
                       ? "border-destructive focus-visible:ring-destructive/30"
                       : ""
@@ -180,7 +182,7 @@ export default function LoginForm() {
                 </Label>
               </div>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted-foreground">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-muted-foreground">
                   <Lock className="size-4" />
                 </div>
                 <Input
@@ -192,7 +194,7 @@ export default function LoginForm() {
                   placeholder="Enter your password"
                   required
                   autoComplete="current-password"
-                  className={`h-11 pl-10 pr-10 rounded-xl text-sm transition-all ${
+                  className={`h-10 pl-9 pr-9 rounded-lg text-sm transition-all ${
                     touched.password && !isPasswordValid
                       ? "border-destructive focus-visible:ring-destructive/30"
                       : ""
@@ -201,7 +203,7 @@ export default function LoginForm() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
@@ -223,7 +225,7 @@ export default function LoginForm() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-11 rounded-xl text-sm font-semibold shadow-md shadow-primary/20 hover:shadow-primary/30 transition-all cursor-pointer mt-2"
+              className="w-full h-10 rounded-lg text-sm font-semibold shadow-xs hover:bg-primary/90 transition-all cursor-pointer mt-2"
             >
               {isLoading ? (
                 <>

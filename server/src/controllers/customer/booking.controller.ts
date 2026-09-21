@@ -75,11 +75,23 @@ export async function createBooking(req: Request, res: Response) {
       : new Date();
 
   // Extract service benchmark rates
-  const firstHourRate = service.firstHourRate ?? service.hourlyPrice ?? 0;
-  const additionalHourRate = service.additionalHourRate ?? service.firstHourRate ?? service.hourlyPrice ?? 0;
+  const baseFirstHourRate = service.firstHourRate ?? service.hourlyPrice ?? 0;
+  const baseAdditionalHourRate = service.additionalHourRate ?? service.firstHourRate ?? service.hourlyPrice ?? 0;
   const transportFee = FIXED_TRANSPORT_FEE;
   const cooperativePercentage = service.cooperativeShare ?? 10;
   const insurancePercentage = service.insuranceShare ?? 5;
+
+  // Surge / Priority multiplier:
+  // 10% higher for demand (ON_DEMAND), 20% higher for emergency (EMERGENCY)
+  const rateMultiplier =
+    finalBookingType === BookingType.EMERGENCY || finalIsEmergency
+      ? 1.20
+      : finalBookingType === BookingType.ON_DEMAND
+      ? 1.10
+      : 1.0;
+
+  const firstHourRate = Math.round(baseFirstHourRate * rateMultiplier);
+  const additionalHourRate = Math.round(baseAdditionalHourRate * rateMultiplier);
 
   // Initial estimate calculation for first billable hour
   const initialCalc = BillingService.calculateBillingAndDistribution(60, {
@@ -106,13 +118,6 @@ export async function createBooking(req: Request, res: Response) {
   }
 
   const finalEmergencyDetails = {
-    hazardType:
-      typeof emergencyDetails?.hazardType === "string"
-        ? emergencyDetails.hazardType.trim()
-        : finalIsEmergency
-        ? "Urgent Emergency Callout"
-        : "",
-    severity: emergencyDetails?.severity || (finalIsEmergency ? "CRITICAL" : "MEDIUM"),
     immediateContact:
       typeof emergencyDetails?.immediateContact === "string"
         ? emergencyDetails.immediateContact.trim()

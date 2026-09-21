@@ -77,7 +77,7 @@ export const WorkerBookingTimelineStepper: React.FC<
   return (
     <div
       className={cn(
-        "rounded-3xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs space-y-4",
+        "rounded-xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs space-y-4",
         className
       )}
     >
@@ -92,8 +92,8 @@ export const WorkerBookingTimelineStepper: React.FC<
         </div>
 
         {isInProgress && (
-          <span className="flex items-center gap-1.5 text-xs font-bold text-purple-600 dark:text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20">
-            <PlayCircle className="size-3.5 animate-pulse text-purple-500" />
+          <span className="flex items-center gap-1.5 text-xs font-bold text-accent bg-accent/10 px-2.5 py-1 rounded-full border border-accent/20">
+            <PlayCircle className="size-3.5 animate-pulse text-accent" />
             Active Fieldwork
           </span>
         )}
@@ -110,13 +110,13 @@ export const WorkerBookingTimelineStepper: React.FC<
                 <div className="flex flex-col items-center text-center flex-1 z-10">
                   <div
                     className={cn(
-                      "size-8 sm:size-9 rounded-2xl flex items-center justify-center font-bold text-xs transition-all shadow-xs",
+                      "size-8 sm:size-9 rounded-lg flex items-center justify-center font-bold text-xs transition-all shadow-xs",
                       step.isCancelled
                         ? "bg-rose-500 text-white shadow-rose-500/20"
                         : step.isCompleted
                         ? "bg-emerald-500 text-white shadow-emerald-500/20"
                         : step.isCurrent
-                        ? "bg-purple-600 text-white ring-4 ring-purple-500/20 animate-pulse"
+                        ? "bg-primary text-primary-foreground ring-4 ring-primary/20 animate-pulse"
                         : "bg-muted/80 text-muted-foreground border border-border"
                     )}
                   >
@@ -183,13 +183,13 @@ export const WorkerBookingTimelineStepper: React.FC<
               <div className="flex flex-col items-center">
                 <div
                   className={cn(
-                    "size-7 rounded-xl flex items-center justify-center text-[11px] font-bold shrink-0",
+                    "size-7 rounded-lg flex items-center justify-center text-[11px] font-bold shrink-0",
                     step.isCancelled
                       ? "bg-rose-500 text-white"
                       : step.isCompleted
                       ? "bg-emerald-500 text-white"
                       : step.isCurrent
-                      ? "bg-purple-600 text-white ring-2 ring-purple-500/20"
+                      ? "bg-primary text-primary-foreground ring-2 ring-primary/20"
                       : "bg-muted text-muted-foreground"
                   )}
                 >
