@@ -24,10 +24,12 @@ export const HeroSection: React.FC = () => {
   };
 
   const quickTags = [
-    { label: "Electrical Wiring", query: "Electrical" },
-    { label: "Plumbing Repairs", query: "Plumbing" },
-    { label: "Carpentry & Furniture", query: "Carpentry" },
-    { label: "Hourly Rates", priceType: "hourly" },
+    { label: "Plumber", query: "Plumber" },
+    { label: "Electrician", query: "Electrician" },
+    { label: "Gardener", query: "Gardener" },
+    { label: "Carpenter", query: "Carpenter" },
+    { label: "Painter", query: "Painter" },
+    { label: "House Cleaner", query: "House Cleaner" },
   ];
 
   return (
@@ -50,7 +52,7 @@ export const HeroSection: React.FC = () => {
 
           {/* Subtitle */}
           <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl">
-            Book verified electricians, plumbers, carpenters, and technicians from certified
+            Book verified plumbers, electricians, gardeners, carpenters, and technicians from certified
             worker cooperatives. Transparent rates, zero predatory commissions, and genuine community accountability.
           </p>
 
@@ -63,7 +65,7 @@ export const HeroSection: React.FC = () => {
               <Search className="absolute left-3.5 size-4 text-muted-foreground pointer-events-none" />
               <Input
                 type="text"
-                placeholder="What service do you need today? (e.g. Wiring, Tap Repair, Carpentry)..."
+                placeholder="What service do you need today? (e.g. Plumber, Electrician, Gardener)..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="h-11 pl-10 pr-3 border-0 bg-transparent text-sm focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none"
@@ -87,13 +89,7 @@ export const HeroSection: React.FC = () => {
                 key={tag.label}
                 type="button"
                 onClick={() => {
-                  if (tag.query) {
-                    navigate(`/services?q=${encodeURIComponent(tag.query)}`);
-                  } else if (tag.priceType) {
-                    navigate(`/services?priceType=${encodeURIComponent(tag.priceType)}`);
-                  } else {
-                    navigate("/services");
-                  }
+                  navigate(`/services?trade=${encodeURIComponent(tag.query)}`);
                 }}
                 className="px-2.5 py-1 rounded-md bg-card hover:bg-muted text-foreground border border-border/80 hover:border-accent/40 transition cursor-pointer text-xs"
               >

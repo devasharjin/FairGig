@@ -3,8 +3,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import { workerRegister, getMe, getCooperatives } from "@/features/auth/api";
-import { getCustomerCategories } from "@/features/customer/categories/api";
-import type { Category } from "@/features/customer/categories/types";
+import { getCustomerServices } from "@/features/customer/services/api";
 import { useAuthStore } from "@/features/auth/store";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import type { CooperativeOption } from "@/features/auth/types";
@@ -15,13 +14,15 @@ import { LocationStep } from "./LocationStep";
 import { DocumentsStep } from "./DocumentsStep";
 import { compressImageFile, formatBytes } from "@/lib/imageCompressor";
 
-const DEFAULT_CATEGORIES: Category[] = [
-  { _id: "65f0a1b2c3d4e5f6a7b8c001", name: "Electrical Services", slug: "electrical-services", description: "Wiring, switchboards, fixtures, and power installations", isActive: true, createdAt: "", updatedAt: "" },
-  { _id: "65f0a1b2c3d4e5f6a7b8c002", name: "Plumbing Services", slug: "plumbing-services", description: "Pipes, leakage repairs, bathroom fixtures, and drainage", isActive: true, createdAt: "", updatedAt: "" },
-  { _id: "65f0a1b2c3d4e5f6a7b8c003", name: "Carpentry & Woodwork", slug: "carpentry-woodwork", description: "Furniture fabrication, repairs, doors, and custom woodwork", isActive: true, createdAt: "", updatedAt: "" },
-  { _id: "65f0a1b2c3d4e5f6a7b8c004", name: "HVAC & Air Conditioning", slug: "hvac-air-conditioning", description: "AC servicing, installation, gas refill, and cooling systems", isActive: true, createdAt: "", updatedAt: "" },
-  { _id: "65f0a1b2c3d4e5f6a7b8c005", name: "Painting & Renovation", slug: "painting-renovation", description: "Interior & exterior wall painting, waterproof coating", isActive: true, createdAt: "", updatedAt: "" },
-  { _id: "65f0a1b2c3d4e5f6a7b8c006", name: "Appliance Repair", slug: "appliance-repair", description: "Refrigerators, washing machines, microwaves, and electronics", isActive: true, createdAt: "", updatedAt: "" },
+const DEFAULT_TRADES: any[] = [
+  { _id: "trade_plumber", name: "Plumber", icon: "🚰", description: "Pipes, leakage repairs, bathroom fixtures, and drainage", isActive: true },
+  { _id: "trade_electrician", name: "Electrician", icon: "⚡", description: "Wiring, switchboards, fixtures, fans, and power diagnostics", isActive: true },
+  { _id: "trade_gardener", name: "Gardener", icon: "🌱", description: "Lawn mowing, landscaping, hedge trimming, and plant care", isActive: true },
+  { _id: "trade_carpenter", name: "Carpenter", icon: "🪚", description: "Furniture fabrication, woodwork repairs, and door fixtures", isActive: true },
+  { _id: "trade_painter", name: "Painter", icon: "🎨", description: "Interior & exterior wall painting, waterproof coating", isActive: true },
+  { _id: "trade_cleaner", name: "House Cleaner", icon: "🧹", description: "Deep cleaning, kitchen sanitation, and floor polishing", isActive: true },
+  { _id: "trade_appliance", name: "Appliance Technician", icon: "🔧", description: "Refrigerators, washing machines, and electronics repair", isActive: true },
+  { _id: "trade_mason", name: "Mason", icon: "🧱", description: "Brickwork, plastering, ceramic tile alignment, and masonry", isActive: true },
 ];
 
 export default function WorkerRegisterForm() {
@@ -40,8 +41,8 @@ export default function WorkerRegisterForm() {
   // Step state
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
 
-  // Step 1: Category & Work settings
-  const [categoriesList, setCategoriesList] = useState<Category[]>(DEFAULT_CATEGORIES);
+  // Step 1: Trade Service & Work settings
+  const [categoriesList, setCategoriesList] = useState<any[]>(DEFAULT_TRADES);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [availability, setAvailability] = useState<"Full-Time" | "Part-Time">("Full-Time");
@@ -69,11 +70,11 @@ export default function WorkerRegisterForm() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Fetch real categories and cooperatives
+  // Fetch real services and cooperatives
   useEffect(() => {
     let isMounted = true;
 
-    getCustomerCategories({ isActive: true })
+    getCustomerServices({ isActive: true })
       .then((data) => {
         if (isMounted && Array.isArray(data) && data.length > 0) {
           setCategoriesList(data);
@@ -89,7 +90,6 @@ export default function WorkerRegisterForm() {
       .then((data) => {
         if (isMounted && Array.isArray(data)) {
           setCooperativesList(data);
-          // If cooperatives exist and none selected yet, optionally select the first one
           if (data.length > 0 && !cooperativeId) {
             setCooperativeId(data[0]._id);
           }
@@ -272,6 +272,10 @@ export default function WorkerRegisterForm() {
 
     try {
       const formData = new FormData();
+      formData.append("services", JSON.stringify([selectedCategoryId]));
+      formData.append("serviceIds", JSON.stringify([selectedCategoryId]));
+      formData.append("skills", JSON.stringify([selectedCategoryId]));
+      formData.append("trades", JSON.stringify([selectedCategoryId]));
       formData.append("category", selectedCategoryId);
       formData.append("categoryId", selectedCategoryId);
       formData.append("categories", JSON.stringify([selectedCategoryId]));

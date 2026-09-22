@@ -6,7 +6,8 @@ export type ServicePriceType = "hourly" | "meters";
 export interface IService extends Document {
   name: string;
   description: string;
-  category: Types.ObjectId;
+  category?: Types.ObjectId;
+  icon?: string;
   priceType: ServicePriceType;
   firstHourRate: number;
   additionalHourRate: number;
@@ -30,6 +31,7 @@ const serviceSchema = new Schema<IService>(
       trim: true,
       minlength: [2, "Service name must be at least 2 characters"],
       maxlength: [100, "Service name cannot exceed 100 characters"],
+      unique: true,
     },
 
     description: {
@@ -42,8 +44,14 @@ const serviceSchema = new Schema<IService>(
     category: {
       type: Schema.Types.ObjectId,
       ref: "Category",
-      required: [true, "Service category is required"],
+      required: false,
       index: true,
+    },
+
+    icon: {
+      type: String,
+      trim: true,
+      default: "",
     },
 
     priceType: {
@@ -133,12 +141,6 @@ serviceSchema.pre("validate", function () {
     throw new Error("Combined cooperative and insurance share cannot exceed 100%");
   }
 });
-
-// Prevent duplicate service names within the same category
-serviceSchema.index(
-  { category: 1, name: 1 },
-  { unique: true }
-);
 
 const Service: Model<IService> =
   mongoose.models.Service || mongoose.model<IService>("Service", serviceSchema);

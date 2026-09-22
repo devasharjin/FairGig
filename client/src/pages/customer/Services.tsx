@@ -4,17 +4,15 @@ import {
   Sparkles,
   ShieldCheck,
   Clock,
-  Layers,
+  Wrench,
   AlertCircle,
   RefreshCw,
   X,
 } from "lucide-react";
-import { useCustomerCategories } from "@/features/customer/categories/hooks";
 import { useCustomerServices } from "@/features/customer/services/hooks";
-import type { Category } from "@/features/customer/categories/types";
 import type { CustomerService, ServicePriceType } from "@/features/customer/services/types";
 import { ServiceSearchFilter } from "@/components/customer/services/service-search-filter";
-import { CategoryServiceGroup } from "@/components/customer/services/category-service-group";
+import { ServiceCard } from "@/components/customer/services/service-card";
 import { ServicesEmptyState } from "@/components/customer/services/services-empty-state";
 import { ServicesSkeleton } from "@/components/customer/services/services-skeleton";
 import { ServiceBookingDialog } from "@/components/customer/services/service-booking-dialog";
@@ -28,12 +26,12 @@ export const CustomerServices: React.FC = () => {
 
   // Read initial params from URL
   const urlQuery = searchParams.get("q") || searchParams.get("search") || "";
-  const urlCategory = searchParams.get("category") || "all";
+  const urlTrade = searchParams.get("trade") || searchParams.get("category") || "all";
   const urlPriceType = (searchParams.get("priceType") as ServicePriceType) || "all";
 
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState(urlQuery);
-  const [selectedCategoryId, setSelectedCategoryId] = useState(urlCategory);
+  const [selectedTrade, setSelectedTrade] = useState(urlTrade);
   const [selectedPriceType, setSelectedPriceType] = useState<ServicePriceType | "all">(urlPriceType);
 
   // Booking Dialog State
@@ -41,52 +39,39 @@ export const CustomerServices: React.FC = () => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isEmergencyOpen, setIsEmergencyOpen] = useState(false);
 
-  // TanStack Query: Fetch active categories
+  // TanStack Query: Fetch active services
   const {
-    data: categories = [],
-    isLoading: isLoadingCategories,
-    isError: isCategoriesError,
-    refetch: refetchCategories,
-  } = useCustomerCategories({ isActive: true });
+    data: services = [],
+    isLoading,
+    isError,
+    refetch: refetchServices,
+  } = useCustomerServices({
+    isActive: true,
+  });
 
-  // Sync state whenever URL search params change (e.g. navigation from home, back/forward buttons)
+  // Sync state whenever URL search params change
   useEffect(() => {
     const q = searchParams.get("q") || searchParams.get("search") || "";
-    const cat = searchParams.get("category") || "all";
+    const trade = searchParams.get("trade") || searchParams.get("category") || "all";
     const pt = (searchParams.get("priceType") as ServicePriceType) || "all";
 
     setSearchQuery(q);
-    setSelectedCategoryId(cat);
+    setSelectedTrade(trade);
     setSelectedPriceType(pt);
   }, [searchParams]);
-
-  // Resolve category ID (supports passing category slug or _id in URL)
-  const resolvedCategoryId = useMemo(() => {
-    if (!selectedCategoryId || selectedCategoryId === "all") return "all";
-    const matched = categories.find(
-      (c) => c._id === selectedCategoryId || c.slug === selectedCategoryId
-    );
-    return matched ? matched._id : selectedCategoryId;
-  }, [selectedCategoryId, categories]);
-
-  // Active Category object for display
-  const activeCategoryObj = useMemo(() => {
-    if (resolvedCategoryId === "all") return null;
-    return categories.find((c) => c._id === resolvedCategoryId) || null;
-  }, [resolvedCategoryId, categories]);
 
   // Helper to sync local filter changes to the URL search params
   const updateUrlParams = (
     newSearch: string,
-    newCat: string,
+    newTrade: string,
     newPriceType: ServicePriceType | "all"
   ) => {
     const nextParams: Record<string, string> = {};
     if (newSearch.trim()) {
       nextParams.q = newSearch.trim();
     }
-    if (newCat && newCat !== "all") {
-      nextParams.category = newCat;
+    if (newTrade && newTrade !== "all") {
+      nextParams.trade = newTrade;
     }
     if (newPriceType && newPriceType !== "all") {
       nextParams.priceType = newPriceType;
@@ -96,60 +81,44 @@ export const CustomerServices: React.FC = () => {
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
-    updateUrlParams(value, selectedCategoryId, selectedPriceType);
+    updateUrlParams(value, selectedTrade, selectedPriceType);
   };
 
-  const handleSelectCategory = (catId: string) => {
-    setSelectedCategoryId(catId);
-    updateUrlParams(searchQuery, catId, selectedPriceType);
+  const handleSelectTrade = (trade: string) => {
+    setSelectedTrade(trade);
+    updateUrlParams(searchQuery, trade, selectedPriceType);
   };
 
   const handleSelectPriceType = (priceType: ServicePriceType | "all") => {
     setSelectedPriceType(priceType);
-    updateUrlParams(searchQuery, selectedCategoryId, priceType);
+    updateUrlParams(searchQuery, selectedTrade, priceType);
   };
 
   const handleResetFilters = () => {
     setSearchQuery("");
-    setSelectedCategoryId("all");
+    setSelectedTrade("all");
     setSelectedPriceType("all");
     setSearchParams({}, { replace: true });
   };
 
-  const handleClearCategory = () => {
-    handleSelectCategory("all");
+  const handleClearTrade = () => {
+    handleSelectTrade("all");
   };
 
   const handleClearSearch = () => {
     handleSearchChange("");
   };
 
-  // TanStack Query: Fetch active services
-  const {
-    data: services = [],
-    isLoading: isLoadingServices,
-    isError: isServicesError,
-    refetch: refetchServices,
-  } = useCustomerServices({
-    isActive: true,
-    category: resolvedCategoryId !== "all" ? resolvedCategoryId : undefined,
-    priceType: selectedPriceType !== "all" ? selectedPriceType : undefined,
-    search: searchQuery.trim() || undefined,
-  });
-
-  const isLoading = isLoadingCategories || isLoadingServices;
-  const isError = isCategoriesError || isServicesError;
-
   // Filter services locally for instant real-time response
   const filteredServices = useMemo(() => {
     return services.filter((svc) => {
-      // Category filter
-      if (resolvedCategoryId !== "all") {
-        const catId =
-          typeof svc.category === "object" && svc.category !== null
-            ? svc.category._id
-            : svc.category;
-        if (catId !== resolvedCategoryId) return false;
+      // Trade filter (matches service name e.g. "Plumber", "Electrician", "Gardener")
+      if (selectedTrade !== "all") {
+        const tradeLower = selectedTrade.toLowerCase();
+        const nameLower = svc.name.toLowerCase();
+        if (!nameLower.includes(tradeLower)) {
+          return false;
+        }
       }
 
       // Price type filter
@@ -162,75 +131,15 @@ export const CustomerServices: React.FC = () => {
         const query = searchQuery.toLowerCase().trim();
         const matchesName = svc.name.toLowerCase().includes(query);
         const matchesDesc = (svc.description || "").toLowerCase().includes(query);
-        const categoryName =
-          typeof svc.category === "object" && svc.category !== null
-            ? svc.category.name.toLowerCase()
-            : "";
-        const matchesCategory = categoryName.includes(query);
-        if (!matchesName && !matchesDesc && !matchesCategory) return false;
+        if (!matchesName && !matchesDesc) return false;
       }
 
       return true;
     });
-  }, [services, resolvedCategoryId, selectedPriceType, searchQuery]);
-
-  // Group services by Category (display category name first and then their services)
-  const groupedCategories = useMemo(() => {
-    const groupMap = new Map<string, { category: Category; services: CustomerService[] }>();
-
-    // Pre-populate with known active categories
-    categories.forEach((cat) => {
-      groupMap.set(cat._id, {
-        category: cat,
-        services: [],
-      });
-    });
-
-    // Populate services into groups
-    filteredServices.forEach((svc) => {
-      const catObj =
-        typeof svc.category === "object" && svc.category !== null
-          ? (svc.category as Category)
-          : null;
-      const catId = catObj ? catObj._id : (svc.category as string);
-
-      if (groupMap.has(catId)) {
-        groupMap.get(catId)!.services.push(svc);
-      } else if (catObj) {
-        groupMap.set(catId, {
-          category: catObj,
-          services: [svc],
-        });
-      } else {
-        const fallbackId = "other";
-        if (!groupMap.has(fallbackId)) {
-          groupMap.set(fallbackId, {
-            category: {
-              _id: fallbackId,
-              name: "General Services",
-              slug: "general-services",
-              isActive: true,
-              createdAt: "",
-              updatedAt: "",
-            },
-            services: [],
-          });
-        }
-        groupMap.get(fallbackId)!.services.push(svc);
-      }
-    });
-
-    // When filtered to a specific category, return only that category's group
-    return Array.from(groupMap.values()).filter((group) => {
-      if (resolvedCategoryId !== "all") {
-        return group.category._id === resolvedCategoryId && group.services.length > 0;
-      }
-      return group.services.length > 0;
-    });
-  }, [categories, filteredServices, resolvedCategoryId]);
+  }, [services, selectedTrade, selectedPriceType, searchQuery]);
 
   const hasActiveFilters = Boolean(
-    searchQuery.trim() || resolvedCategoryId !== "all" || selectedPriceType !== "all"
+    searchQuery.trim() || selectedTrade !== "all" || selectedPriceType !== "all"
   );
 
   const handleBookService = (service: CustomerService) => {
@@ -251,9 +160,9 @@ export const CustomerServices: React.FC = () => {
 
           {/* Heading */}
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground tracking-tight">
-            {activeCategoryObj ? (
+            {selectedTrade !== "all" ? (
               <>
-                <span className="text-accent">{activeCategoryObj.name}</span> Services
+                Verified <span className="text-accent">{selectedTrade}</span> Services
               </>
             ) : searchQuery ? (
               <>
@@ -261,30 +170,28 @@ export const CustomerServices: React.FC = () => {
               </>
             ) : (
               <>
-                Discover Verified <span className="text-accent">Cooperative Services</span>
+                Direct Trade Services: <span className="text-accent">Plumber, Electrician, Gardener & More</span>
               </>
             )}
           </h1>
 
           {/* Subtitle */}
           <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            {activeCategoryObj?.description
-              ? activeCategoryObj.description
-              : "Transparent hourly and metered pricing backed by verified local cooperative trade workers. Reliable service dispatched directly to your location."}
+            Transparent hourly pricing without middleman commissions. Book certified local plumbers, electricians, gardeners, carpenters, and technicians directly from registered worker cooperatives.
           </p>
 
           {/* Trust Highlights */}
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 pt-1 text-xs font-medium text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="size-3.5 text-emerald-600 dark:text-emerald-400" />
-              100% Vetted Workers
+              100% Vetted Guild Workers
             </span>
             <span className="flex items-center gap-1.5">
               <Clock className="size-3.5 text-accent" />
-              Standardized Rates
+              Standardized Benchmark Rates
             </span>
             <span className="flex items-center gap-1.5">
-              <Layers className="size-3.5 text-accent" />
+              <Wrench className="size-3.5 text-accent" />
               Direct Guild Dispatch
             </span>
           </div>
@@ -297,37 +204,35 @@ export const CustomerServices: React.FC = () => {
         <EmergencyBanner onTriggerEmergency={() => setIsEmergencyOpen(true)} />
 
         {/* Search & Filters Section */}
-        <section className="sticky top-16 z-20 -mx-4 px-4 py-3 sm:mx-0 sm:px-0 sm:py-3 bg-background border-b border-border/40 transition-all">
+        <section className="sticky top-16 z-20 -mx-4 px-4 py-3 sm:mx-0 sm:px-0 sm:py-3 bg-background/95 backdrop-blur-sm border-b border-border/40 transition-all">
           <ServiceSearchFilter
             searchQuery={searchQuery}
             onSearchChange={handleSearchChange}
-            selectedCategoryId={resolvedCategoryId}
-            onSelectCategory={handleSelectCategory}
             selectedPriceType={selectedPriceType}
             onSelectPriceType={handleSelectPriceType}
-            categories={categories}
+            selectedTrade={selectedTrade}
+            onSelectTrade={handleSelectTrade}
             totalServicesCount={filteredServices.length}
-            totalCategoriesCount={groupedCategories.length}
             onResetFilters={handleResetFilters}
             hasActiveFilters={hasActiveFilters}
           />
 
           {/* Active Filter Breadcrumbs / Tags */}
-          {(resolvedCategoryId !== "all" || searchQuery.trim()) && (
+          {(selectedTrade !== "all" || searchQuery.trim()) && (
             <div className="flex flex-wrap items-center gap-2 pt-3">
               <span className="text-xs text-muted-foreground font-semibold">Active filters:</span>
 
-              {activeCategoryObj && (
+              {selectedTrade !== "all" && (
                 <Badge
                   variant="secondary"
                   className="pl-2.5 pr-1.5 py-1 rounded-xl text-xs flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/20"
                 >
-                  <span>Category: {activeCategoryObj.name}</span>
+                  <span>Trade: {selectedTrade}</span>
                   <button
                     type="button"
-                    onClick={handleClearCategory}
+                    onClick={handleClearTrade}
                     className="p-0.5 rounded-full hover:bg-primary/20 transition cursor-pointer"
-                    title="Remove category filter"
+                    title="Remove trade filter"
                   >
                     <X className="size-3" />
                   </button>
@@ -375,10 +280,7 @@ export const CustomerServices: React.FC = () => {
               There was an issue connecting to the cooperative service server. Please try refreshing.
             </p>
             <Button
-              onClick={() => {
-                refetchCategories();
-                refetchServices();
-              }}
+              onClick={() => refetchServices()}
               variant="outline"
               className="mt-2 rounded-2xl gap-2 font-semibold cursor-pointer"
             >
@@ -386,20 +288,19 @@ export const CustomerServices: React.FC = () => {
               <span>Retry</span>
             </Button>
           </div>
-        ) : groupedCategories.length === 0 ? (
+        ) : filteredServices.length === 0 ? (
           <ServicesEmptyState
             searchQuery={searchQuery}
             hasFilters={hasActiveFilters}
             onResetFilters={handleResetFilters}
           />
         ) : (
-          /* Grouped Services: Displays Category Name first and then their services */
-          <div className="space-y-12 sm:space-y-16">
-            {groupedCategories.map((group) => (
-              <CategoryServiceGroup
-                key={group.category._id}
-                category={group.category}
-                services={group.services}
+          /* Direct Services Grid: Clean, Spacious, 3-Column Premium Layout */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
+            {filteredServices.map((service) => (
+              <ServiceCard
+                key={service._id}
+                service={service}
                 onBookService={handleBookService}
               />
             ))}

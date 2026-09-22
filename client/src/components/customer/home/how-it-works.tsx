@@ -1,5 +1,14 @@
 import React from "react";
-import { Search, Send, CheckCircle, ArrowRight } from "lucide-react";
+import {
+  Search,
+  Calculator,
+  Users,
+  MapPin,
+  ShieldCheck,
+  HeartHandshake,
+  ArrowRight,
+  Sparkles,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -8,80 +17,132 @@ export const HowItWorks: React.FC = () => {
     {
       number: "01",
       icon: Search,
-      title: "Browse & Select Service",
+      title: "Select Your Trade Service",
       description:
-        "Select your required gig service from categorized trade domains. Review transparent hourly or per-meter pricing before booking.",
+        "Choose certified plumbers, electricians, gardeners, carpenters, or cleaners with standardized guild qualifications.",
+      highlight: "Verified Skills",
     },
     {
       number: "02",
-      icon: Send,
-      title: "Cooperative Dispatch",
+      icon: Calculator,
+      title: "Transparent Benchmark Rates",
       description:
-        "Your request is routed directly to the nearest affiliated trade cooperative. A certified technician is promptly assigned to your location.",
+        "See transparent hourly rates and fixed transport fees upfront with zero surge markups or hidden platform fees.",
+      highlight: "No Surge Pricing",
     },
     {
       number: "03",
-      icon: CheckCircle,
-      title: "Quality Work & Fair Pay",
+      icon: Users,
+      title: "Democratic Co-op Dispatch",
       description:
-        "Technician delivers standard-compliant service. Confirm work satisfaction and pay transparently with full cooperative receipt.",
+        "Your request is routed directly to the nearest local trade cooperative guild. An insured, vetted artisan is assigned.",
+      highlight: "Guild Assigned",
+    },
+    {
+      number: "04",
+      icon: MapPin,
+      title: "Real-Time Tracking & Verification",
+      description:
+        "Track artisan arrival in real time, view verified cooperative credentials, and coordinate instructions securely.",
+      highlight: "Live GPS & Badge",
+    },
+    {
+      number: "05",
+      icon: ShieldCheck,
+      title: "Standardized & Insured Work",
+      description:
+        "Service is delivered adhering to state-certified safety protocols and backed by ₹5 Lakh comprehensive insurance protection.",
+      highlight: "₹5L Protected",
+    },
+    {
+      number: "06",
+      icon: HeartHandshake,
+      title: "Zero-Commission Fair Pay",
+      description:
+        "Confirm work satisfaction and pay seamlessly. 100% of the wage goes directly to the worker-owner, ensuring dignified labor.",
+      highlight: "100% Worker Wage",
     },
   ];
 
   return (
-    <section className="py-10 sm:py-14 border-b border-border/60 bg-muted/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
+    <section className="py-14 sm:py-20 border-b border-border/60 bg-gradient-to-b from-background via-muted/20 to-background relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-12">
         {/* Section Header */}
-        <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <span className="text-xs font-bold text-accent tracking-wider uppercase">
-            Transparent Workflow
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
+        <div className="text-center space-y-3 max-w-2xl mx-auto">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-semibold">
+            <Sparkles className="size-3.5" />
+            <span>Transparent 6-Step Framework</span>
+          </div>
+
+          <h2 className="text-2xl sm:text-4xl font-bold text-foreground tracking-tight">
             How FairGig Works
           </h2>
+
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-            Three simple steps to secure certified trade services with community trust.
+            A complete 6-step cooperative model designed for complete transparency, guaranteed artisan quality, and dignified fair wages.
           </p>
         </div>
 
-        {/* Steps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 relative">
+        {/* 6 Steps Responsive Grid (1 col mobile, 2 col tablet, 3 col desktop) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative">
           {steps.map((step) => {
             const Icon = step.icon;
             return (
               <div
                 key={step.number}
-                className="relative flex flex-col p-5 sm:p-6 rounded-xl bg-card border border-border/80 shadow-xs hover:shadow-md transition-all"
+                className="group relative flex flex-col justify-between p-6 rounded-2xl bg-card border border-border/80 hover:border-accent/60 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
               >
-                {/* Step Number */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-xs">
+                {/* Accent top pill */}
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-105 transition-all duration-300 shadow-xs">
                     <Icon className="size-5" />
                   </div>
-                  <span className="text-2xl font-bold text-muted-foreground/30 font-mono">
-                    {step.number}
-                  </span>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-semibold text-accent bg-accent/10 px-2 py-0.5 rounded-md border border-accent/20">
+                      {step.highlight}
+                    </span>
+                    <span className="text-2xl font-extrabold text-muted-foreground/25 font-mono">
+                      {step.number}
+                    </span>
+                  </div>
                 </div>
 
-                <h3 className="text-base font-bold text-foreground mb-1.5">
-                  {step.title}
-                </h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  {step.description}
-                </p>
+                {/* Content */}
+                <div className="space-y-2">
+                  <h3 className="text-base sm:text-lg font-bold text-foreground group-hover:text-accent transition-colors">
+                    {step.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                    {step.description}
+                  </p>
+                </div>
+
+                {/* Bottom Step Indicator */}
+                <div className="mt-5 pt-3 border-t border-border/40 flex items-center justify-between text-xs text-muted-foreground">
+                  <span className="font-medium">Step {step.number} of 06</span>
+                  <div className="h-1.5 w-16 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className="h-full bg-accent rounded-full transition-all duration-500"
+                      style={{
+                        width: `${(parseInt(step.number, 10) / 6) * 100}%`,
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
             );
           })}
         </div>
 
-        {/* Action Button */}
-        <div className="flex justify-center pt-2">
+        {/* Action Callout */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
           <Link to="/services">
             <Button
-              size="default"
-              className="rounded-lg h-10 px-5 font-semibold gap-2 cursor-pointer shadow-xs"
+              size="lg"
+              className="rounded-xl h-11 px-6 font-semibold gap-2 cursor-pointer shadow-md hover:shadow-lg transition-all"
             >
-              <span>Explore Services Now</span>
+              <span>Explore All Trade Services</span>
               <ArrowRight className="size-4" />
             </Button>
           </Link>
@@ -90,3 +151,5 @@ export const HowItWorks: React.FC = () => {
     </section>
   );
 };
+
+export default HowItWorks;

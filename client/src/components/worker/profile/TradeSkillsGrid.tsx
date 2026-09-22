@@ -33,10 +33,10 @@ export const TradeSkillsGrid: React.FC<TradeSkillsGridProps> = ({ skills, catego
           </div>
           <div>
             <h3 className="text-base font-bold text-foreground">
-              Verified Trade Category & Rate Card
+              Verified Trade Services & Rate Card
             </h3>
             <p className="text-xs text-muted-foreground">
-              Authorized category and services under platform cooperative dispatch
+              Authorized trade services (Plumber, Electrician, Gardener, etc.) under platform cooperative dispatch
             </p>
           </div>
         </div>

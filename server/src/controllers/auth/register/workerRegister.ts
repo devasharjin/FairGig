@@ -88,7 +88,26 @@ export const workerRegister = async (
     skillList = skills;
   }
 
-  // Resolve valid Categories
+  // Support direct trade services / skills
+  let directServiceInputs: any[] = [];
+  const rawDirect = req.body.services || req.body.serviceIds || req.body.trades;
+  if (rawDirect) {
+    if (typeof rawDirect === "string") {
+      try {
+        const parsed = JSON.parse(rawDirect);
+        if (Array.isArray(parsed)) directServiceInputs.push(...parsed);
+        else directServiceInputs.push(rawDirect);
+      } catch {
+        directServiceInputs.push(
+          ...rawDirect.split(",").map((s: string) => s.trim()).filter(Boolean)
+        );
+      }
+    } else if (Array.isArray(rawDirect)) {
+      directServiceInputs.push(...rawDirect);
+    }
+  }
+
+  // Resolve valid Categories (for backwards compatibility if passed)
   let validCategoryObjectIds: Types.ObjectId[] = [];
   const candidateCatIds = [...new Set(rawCategories)]
     .map((c) => (typeof c === "object" && c?._id ? String(c._id) : String(c).trim()))
@@ -101,39 +120,43 @@ export const workerRegister = async (
     validCategoryObjectIds = existingCats.map((c) => c._id as Types.ObjectId);
   }
 
-  // Fallback: If no category provided but legacy skills were provided, derive categories from services
-  if (validCategoryObjectIds.length === 0 && skillList.length > 0) {
-    const validSkillIds = skillList
-      .filter((s) => mongoose.Types.ObjectId.isValid(s))
-      .map((s) => new Types.ObjectId(s));
-    if (validSkillIds.length > 0) {
-      const services = await Service.find({ _id: { $in: validSkillIds } }).select("category");
-      const derived = [...new Set(services.map((s) => s.category?.toString()).filter(Boolean))];
-      validCategoryObjectIds = derived.map((id) => new Types.ObjectId(id));
-    }
+  // Resolve candidate skills from direct service inputs or skillList
+  const allCandidateSkillIds = [
+    ...new Set([
+      ...directServiceInputs.map((s) => (typeof s === "object" && s?._id ? String(s._id) : String(s).trim())),
+      ...skillList.map((s) => (typeof s === "object" && s?._id ? String(s._id) : String(s).trim())),
+    ]),
+  ].filter((id) => mongoose.Types.ObjectId.isValid(id));
+
+  let resolvedServices = [];
+  if (allCandidateSkillIds.length > 0) {
+    resolvedServices = await Service.find({
+      _id: { $in: allCandidateSkillIds.map((id) => new Types.ObjectId(id)) },
+      isActive: true,
+    }).select("_id category");
   }
 
-  if (validCategoryObjectIds.length === 0) {
+  // Also include category services if category was provided
+  if (validCategoryObjectIds.length > 0) {
+    const categoryServices = await Service.find({
+      category: { $in: validCategoryObjectIds },
+      isActive: true,
+    }).select("_id");
+    resolvedServices.push(...categoryServices);
+  }
+
+  const skillObjectIds: Types.ObjectId[] = [
+    ...new Set(resolvedServices.map((s) => s._id.toString())),
+  ].map((id) => new Types.ObjectId(id));
+
+  if (skillObjectIds.length === 0 && validCategoryObjectIds.length === 0) {
     return fail(
       res,
-      "Please select at least one valid trade category (e.g. Electrical Services, Plumbing, etc.).",
+      "Please select at least one trade service (e.g. Plumber, Electrician, Gardener).",
       null,
       400
     );
   }
-
-  // Automatically associate all active services under the chosen categories into worker's skills
-  const categoryServices = await Service.find({
-    category: { $in: validCategoryObjectIds },
-    isActive: true,
-  }).select("_id");
-
-  const skillObjectIds = [
-    ...new Set([
-      ...categoryServices.map((s) => s._id.toString()),
-      ...skillList.filter((s) => mongoose.Types.ObjectId.isValid(s)),
-    ]),
-  ].map((id) => new Types.ObjectId(id));
 
   // Parse availability
   if (
@@ -299,8 +322,8 @@ export const workerRegister = async (
   const worker: any = await Worker.create({
     userId,
     cooperativeId: validCoopId,
-    category: validCategoryObjectIds[0],
-    categories: validCategoryObjectIds,
+    category: validCategoryObjectIds[0] || undefined,
+    categories: validCategoryObjectIds.length > 0 ? validCategoryObjectIds : undefined,
     skills: skillObjectIds,
     availability: workerAvailability,
     verificationStatus: VerificationStatus.PENDING,

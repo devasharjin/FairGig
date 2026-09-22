@@ -67,7 +67,7 @@ const WorkerSchema = new Schema<IWorker>(
     category: {
       type: Schema.Types.ObjectId,
       ref: "Category",
-      required: [true, "Trade category is required"],
+      required: false,
       index: true,
     },
     categories: [

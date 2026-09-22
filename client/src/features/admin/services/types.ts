@@ -37,7 +37,8 @@ export interface Service {
   _id: string;
   name: string;
   description: string;
-  category: Category | string;
+  category?: Category | string;
+  icon?: string;
   priceType: ServicePriceType;
   firstHourRate?: number;
   additionalHourRate?: number;
@@ -54,7 +55,8 @@ export interface Service {
 export interface CreateServicePayload {
   name: string;
   description: string;
-  category: string;
+  category?: string;
+  icon?: string;
   priceType?: ServicePriceType;
   firstHourRate: number;
   additionalHourRate: number;
@@ -70,6 +72,7 @@ export interface UpdateServicePayload {
   name?: string;
   description?: string;
   category?: string;
+  icon?: string;
   priceType?: ServicePriceType;
   firstHourRate?: number;
   additionalHourRate?: number;

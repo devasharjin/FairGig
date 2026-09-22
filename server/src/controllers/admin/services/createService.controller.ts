@@ -10,6 +10,7 @@ export async function createService(req: Request, res: Response) {
     name,
     description,
     category,
+    icon,
     priceType = "hourly",
     firstHourRate,
     additionalHourRate,
@@ -38,8 +39,12 @@ export async function createService(req: Request, res: Response) {
     return fail(res, "Service description cannot exceed 1000 characters", null, 400);
   }
 
-  if (!category || typeof category !== "string" || !mongoose.Types.ObjectId.isValid(category)) {
-    return fail(res, "A valid category ID is required", null, 400);
+  let validCategoryId: mongoose.Types.ObjectId | undefined;
+  if (category && typeof category === "string" && mongoose.Types.ObjectId.isValid(category)) {
+    const categoryExists = await Category.findById(category);
+    if (categoryExists) {
+      validCategoryId = categoryExists._id as mongoose.Types.ObjectId;
+    }
   }
 
   if (!priceType || !["hourly", "meters"].includes(priceType)) {
@@ -71,12 +76,11 @@ export async function createService(req: Request, res: Response) {
     }
     resolvedAdditionalHourRate = parsed;
   } else {
-    // Default additional hour rate to first hour rate if not explicitly specified
-    resolvedAdditionalHourRate = resolvedFirstHourRate ?? 0;
+    resolvedAdditionalHourRate = resolvedFirstHourRate;
   }
 
   if (priceType === "hourly" && resolvedFirstHourRate === undefined) {
-    return fail(res, "First hour rate is required for hourly gig services", null, 400);
+    return fail(res, "A valid first hour rate is required for hourly services", null, 400);
   }
 
   const parsedMetersPrice =
@@ -108,28 +112,22 @@ export async function createService(req: Request, res: Response) {
     );
   }
 
-  // Verify category exists
-  const categoryExists = await Category.findById(category);
-  if (!categoryExists) {
-    return fail(res, "Category not found", null, 404);
-  }
-
-  // Check for duplicate service name within the same category (case-insensitive)
+  // Check for duplicate service name (case-insensitive)
   const escapedName = trimmedName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const existingService = await Service.findOne({
-    category,
     name: { $regex: new RegExp(`^${escapedName}$`, "i") },
   });
 
   if (existingService) {
-    return fail(res, "Service with this name already exists in this category", null, 409);
+    return fail(res, "A service with this name already exists", null, 409);
   }
 
   try {
     const newService = await Service.create({
       name: trimmedName,
       description: description.trim(),
-      category,
+      category: validCategoryId,
+      icon: icon ? String(icon).trim() : "",
       priceType,
       firstHourRate: resolvedFirstHourRate ?? 0,
       additionalHourRate: resolvedAdditionalHourRate ?? resolvedFirstHourRate ?? 0,

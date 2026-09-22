@@ -1,7 +1,12 @@
-import React, { useState } from "react";
-import { Clock, ArrowRight, ShieldCheck, CheckCircle2, Truck, Info, HeartHandshake } from "lucide-react";
+import React from "react";
+import {
+  Clock,
+  ArrowRight,
+  ShieldCheck,
+  Truck,
+  CheckCircle2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { CustomerService } from "@/features/customer/services/types";
 
@@ -16,127 +21,97 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
   onBookService,
   className,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
   const firstHourRate = service.firstHourRate ?? service.hourlyPrice ?? 0;
-  const additionalHourRate = service.additionalHourRate ?? service.firstHourRate ?? service.hourlyPrice ?? 0;
+  const additionalHourRate =
+    service.additionalHourRate ?? service.firstHourRate ?? service.hourlyPrice ?? 0;
   const transportFee = service.transportFee ?? 30;
-  const estimatedInitialTotal = firstHourRate + transportFee;
-
-  // Truncate logic
-  const description = service.description || "";
-  const isLongDescription = description.length > 110;
-  const displayDescription =
-    isExpanded || !isLongDescription
-      ? description
-      : `${description.slice(0, 110)}...`;
 
   return (
     <div
       className={cn(
-        "group relative flex flex-col justify-between p-5 rounded-xl bg-card border border-border/80 hover:border-accent/60 shadow-xs hover:shadow-md transition-all duration-200",
+        "group relative flex flex-col justify-between rounded-2xl bg-card/95 border border-border/70 backdrop-blur-xs",
+        "p-6 shadow-xs hover:shadow-xl hover:shadow-primary/5 hover:border-primary/50 hover:-translate-y-1",
+        "transition-all duration-300 ease-out",
         className
       )}
     >
-      <div>
-        {/* Top: Category & Price Highlight */}
-        <div className="flex items-start justify-between gap-3 mb-2.5">
-          <Badge
-            variant="outline"
-            className="text-[10px] font-semibold bg-muted text-foreground px-2 py-0.5 rounded-md border border-border/80"
-          >
-            {typeof service.category === "object" ? service.category.name : "Cooperative Service"}
-          </Badge>
+      <div className="space-y-4">
+        {/* Top Bar: Service Icon */}
+        <div className="flex items-center justify-between">
+          <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 via-primary/8 to-accent/10 border border-primary/20 text-3xl shadow-xs group-hover:scale-105 transition-transform duration-300">
+            {service.icon ? (
+              <span role="img" aria-label={service.name}>
+                {service.icon}
+              </span>
+            ) : (
+              <ShieldCheck className="size-6 text-primary" />
+            )}
+          </div>
+        </div>
 
-          {/* Pricing Highlight */}
-          <div className="text-right shrink-0">
-            <div className="flex items-baseline justify-end gap-1">
+        {/* Title & Description */}
+        <div className="space-y-1.5">
+          <h3 className="text-lg font-bold text-foreground tracking-tight group-hover:text-accent transition-colors line-clamp-1">
+            {service.name}
+          </h3>
+          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+            {service.description ||
+              "Certified trade artisan dispatched directly by the local cooperative. Standard tariff protected with full quality warranty."}
+          </p>
+        </div>
+
+        {/* Premium Pricing Highlight Banner */}
+        <div className="p-3.5 rounded-xl bg-muted/40 border border-border/60 space-y-2.5">
+          <div className="flex items-baseline justify-between">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Benchmark Rate
+            </span>
+            <div className="flex items-baseline gap-1">
               <span className="text-xs font-semibold text-muted-foreground">₹</span>
-              <span className="text-xl font-bold text-foreground tracking-tight">
+              <span className="text-2xl font-extrabold text-foreground tracking-tight">
                 {firstHourRate}
               </span>
-              <span className="text-[11px] font-medium text-muted-foreground">/1st hr</span>
+              <span className="text-xs font-medium text-muted-foreground">/ 1st hr</span>
             </div>
-            <span className="text-[10px] text-muted-foreground block">
-              +₹{additionalHourRate}/addl hr &bull; +₹{transportFee} transport
-            </span>
+          </div>
+
+          {/* Micro Rate Details Row */}
+          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/50 text-[11px]">
+            <div className="flex items-center gap-1 text-muted-foreground">
+              <Clock className="size-3 text-accent shrink-0" />
+              <span>Add'l:</span>
+              <strong className="text-foreground font-semibold">₹{additionalHourRate}/hr</strong>
+            </div>
+
+            <div className="flex items-center justify-end gap-1 text-muted-foreground">
+              <Truck className="size-3 text-accent shrink-0" />
+              <span>Travel:</span>
+              <strong className="text-foreground font-semibold">₹{transportFee}</strong>
+            </div>
           </div>
         </div>
 
-        {/* Service Name */}
-        <h3 className="text-base font-bold text-foreground group-hover:text-accent transition-colors line-clamp-2">
-          {service.name}
-        </h3>
-
-        {/* Service Description */}
-        <p className="mt-1.5 text-xs text-muted-foreground leading-relaxed">
-          {displayDescription}
-          {isLongDescription && (
-            <button
-              type="button"
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="ml-1 text-xs font-semibold text-accent hover:underline cursor-pointer"
-            >
-              {isExpanded ? "Show less" : "Read more"}
-            </button>
-          )}
-        </p>
-
-        {/* Transparent Rates Grid */}
-        <div className="mt-3.5 p-2.5 rounded-lg bg-muted/40 border border-border/60 space-y-1 text-xs">
-          <div className="flex justify-between items-center text-[11px]">
-            <span className="text-muted-foreground">First 60 mins:</span>
-            <span className="font-semibold text-foreground">₹{firstHourRate}</span>
-          </div>
-          <div className="flex justify-between items-center text-[11px]">
-            <span className="text-muted-foreground">Additional hourly rate:</span>
-            <span className="font-medium text-foreground">₹{additionalHourRate} / hr</span>
-          </div>
-          <div className="flex justify-between items-center text-[11px]">
-            <span className="text-muted-foreground flex items-center gap-1">
-              <Truck className="size-3 text-accent" /> Fixed Transport Fee:
-            </span>
-            <span className="font-medium text-foreground">₹{transportFee}</span>
-          </div>
-          <div className="pt-1.5 border-t border-border/50 flex justify-between items-baseline">
-            <span className="font-semibold text-foreground text-[11px]">Estimated (1st Hour):</span>
-            <span className="font-bold text-accent text-xs">₹{estimatedInitialTotal}</span>
-          </div>
-        </div>
-
-        {/* Platform Transparency Notice */}
-        <div className="mt-2 flex items-start gap-1 text-[10px] text-muted-foreground leading-tight">
-          <Info className="size-3 text-muted-foreground shrink-0 mt-0.5" />
-          <span>
-            Standardized cooperative rates. No surge markups or hidden fees.
-          </span>
-        </div>
-
-        {/* Value Highlights */}
-        <div className="mt-3 flex flex-wrap gap-2 pt-2 border-t border-border/50 text-[11px] text-muted-foreground">
-          <span className="inline-flex items-center gap-1">
-            <CheckCircle2 className="size-3 text-emerald-600 dark:text-emerald-400" />
-            Verified Artisan
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <ShieldCheck className="size-3 text-accent" />
-            Tariff Protected
-          </span>
+        {/* Cooperative Trust Guarantees */}
+        <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1">
           <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
-            <HeartHandshake className="size-3" />
-            Insured (₹5L)
+            <CheckCircle2 className="size-3.5" />
+            100% Vetted Artisan
+          </span>
+          <span className="inline-flex items-center gap-1 font-medium">
+            <ShieldCheck className="size-3.5 text-accent" />
+            ₹5L Protected
           </span>
         </div>
       </div>
 
-      {/* Bottom Action */}
-      <div className="mt-4 pt-2">
+      {/* Book Action Button */}
+      <div className="mt-5 pt-3 border-t border-border/40">
         <Button
           onClick={() => onBookService(service)}
-          className="w-full h-9 rounded-lg font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+          className="w-full h-11 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer shadow-xs hover:shadow-md transition-all group/btn"
         >
-          <span>Book Now</span>
-          <ArrowRight className="size-3.5" />
+          <span>Book Service</span>
+          <ArrowRight className="size-4 group-hover/btn:translate-x-1 transition-transform" />
         </Button>
       </div>
     </div>

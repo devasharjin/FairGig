@@ -6,7 +6,8 @@ export interface CustomerService {
   _id: string;
   name: string;
   description: string;
-  category: Category | string;
+  category?: Category | string;
+  icon?: string;
   priceType: ServicePriceType;
   firstHourRate?: number;
   additionalHourRate?: number;

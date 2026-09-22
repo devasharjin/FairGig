@@ -21,6 +21,7 @@ export async function updateService(req: Request, res: Response) {
     name,
     description,
     category,
+    icon,
     priceType,
     firstHourRate,
     additionalHourRate,
@@ -31,7 +32,9 @@ export async function updateService(req: Request, res: Response) {
     isActive,
   } = req.body;
 
-  const targetCategory = category ? category : service.category;
+  if (icon !== undefined) {
+    service.icon = typeof icon === "string" ? icon.trim() : "";
+  }
 
   if (name !== undefined) {
     if (typeof name !== "string" || !name.trim()) {
@@ -47,12 +50,11 @@ export async function updateService(req: Request, res: Response) {
     const escapedName = trimmedName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const existingService = await Service.findOne({
       _id: { $ne: id },
-      category: targetCategory,
       name: { $regex: new RegExp(`^${escapedName}$`, "i") },
     });
 
     if (existingService) {
-      return fail(res, "Service with this name already exists in this category", null, 409);
+      return fail(res, "Service with this name already exists", null, 409);
     }
 
     service.name = trimmedName;
@@ -71,16 +73,12 @@ export async function updateService(req: Request, res: Response) {
   }
 
   if (category !== undefined) {
-    if (!category || typeof category !== "string" || !mongoose.Types.ObjectId.isValid(category)) {
-      return fail(res, "A valid category ID is required", null, 400);
+    if (category && typeof category === "string" && mongoose.Types.ObjectId.isValid(category)) {
+      const categoryExists = await Category.findById(category);
+      if (categoryExists) {
+        service.category = new mongoose.Types.ObjectId(category);
+      }
     }
-
-    const categoryExists = await Category.findById(category);
-    if (!categoryExists) {
-      return fail(res, "Category not found", null, 404);
-    }
-
-    service.category = new mongoose.Types.ObjectId(category);
   }
 
   const effectivePriceType = priceType !== undefined ? priceType : service.priceType;

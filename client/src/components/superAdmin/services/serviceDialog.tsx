@@ -12,11 +12,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import {
-  useAdminCategories,
   useCreateAdminService,
   useUpdateAdminService,
 } from "@/features/admin/services/hooks";
-import type { Category, Service } from "@/features/admin/services/types";
+import type { Service } from "@/features/admin/services/types";
 import {
   Briefcase,
   Coins,
@@ -36,16 +35,14 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
   open,
   onOpenChange,
   serviceToEdit,
-  defaultCategoryId,
 }) => {
   const isEditing = Boolean(serviceToEdit);
-  const { data: categories = [], isLoading: isLoadingCategories } = useAdminCategories();
   const createMutation = useCreateAdminService();
   const updateMutation = useUpdateAdminService();
 
   const [name, setName] = useState("");
+  const [icon, setIcon] = useState("");
   const [description, setDescription] = useState("");
-  const [categoryId, setCategoryId] = useState("");
 
   // Pricing & Salary Distribution state
   const [firstHourRate, setFirstHourRate] = useState<string>("");
@@ -56,7 +53,6 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
   const [errors, setErrors] = useState<{
     name?: string;
     description?: string;
-    category?: string;
     firstHourRate?: string;
     additionalHourRate?: string;
     cooperativeShare?: string;
@@ -67,12 +63,8 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
   useEffect(() => {
     if (serviceToEdit) {
       setName(serviceToEdit.name || "");
+      setIcon(serviceToEdit.icon || "");
       setDescription(serviceToEdit.description || "");
-      const catId =
-        typeof serviceToEdit.category === "object"
-          ? (serviceToEdit.category as Category)._id
-          : serviceToEdit.category;
-      setCategoryId(catId || "");
 
       const fRate =
         serviceToEdit.firstHourRate !== undefined
@@ -99,21 +91,20 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
       );
     } else {
       setName("");
+      setIcon("");
       setDescription("");
-      setCategoryId(defaultCategoryId || (categories[0]?._id ?? ""));
       setFirstHourRate("");
       setAdditionalHourRate("");
       setCooperativeShare("10");
       setInsuranceShare("5");
     }
     setErrors({});
-  }, [serviceToEdit, defaultCategoryId, open, categories]);
+  }, [serviceToEdit, open]);
 
   const validate = () => {
     const nextErrors: {
       name?: string;
       description?: string;
-      category?: string;
       firstHourRate?: string;
       additionalHourRate?: string;
       cooperativeShare?: string;
@@ -123,7 +114,7 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
 
     const trimmedName = name.trim();
     if (!trimmedName) {
-      nextErrors.name = "Service name is required";
+      nextErrors.name = "Service name is required (e.g. Plumber, Electrician)";
     } else if (trimmedName.length < 2 || trimmedName.length > 100) {
       nextErrors.name = "Service name must be between 2 and 100 characters";
     }
@@ -132,10 +123,6 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
       nextErrors.description = "Service description is required";
     } else if (description.trim().length > 1000) {
       nextErrors.description = "Description cannot exceed 1000 characters";
-    }
-
-    if (!categoryId) {
-      nextErrors.category = "Please select a category";
     }
 
     const fRate = parseFloat(firstHourRate);
@@ -183,8 +170,8 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
           id: serviceToEdit._id,
           payload: {
             name: name.trim(),
+            icon: icon.trim(),
             description: description.trim(),
-            category: categoryId,
             priceType: "hourly",
             firstHourRate: parsedFirst,
             additionalHourRate: parsedAddl,
@@ -198,8 +185,8 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
       } else {
         await createMutation.mutateAsync({
           name: name.trim(),
+          icon: icon.trim(),
           description: description.trim(),
-          category: categoryId,
           priceType: "hourly",
           firstHourRate: parsedFirst,
           additionalHourRate: parsedAddl,
@@ -230,27 +217,27 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
             </div>
             <div>
               <DialogTitle className="text-base font-bold text-foreground">
-                {isEditing ? "Edit Service & Pricing Model" : "Add New Gig Service"}
+                {isEditing ? "Edit Trade Service & Pricing" : "Add Direct Trade Service"}
               </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground line-clamp-1">
                 {isEditing
                   ? "Update hourly rate tiers, transport fee benchmark, and salary deductions."
-                  : "Define a standardized gig service with hourly ceiling rates and cooperative distributions."}
+                  : "Define a direct trade service (e.g. Plumber, Electrician, Gardener) with hourly ceiling rates."}
               </DialogDescription>
             </div>
           </div>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-3 pt-1">
-          {/* Service Name & Category Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-1">
+          {/* Service Name & Icon */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="sm:col-span-2 space-y-1">
               <Label htmlFor="service-name" className="text-xs font-semibold text-foreground">
-                Service Name <span className="text-destructive">*</span>
+                Trade Service Name <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="service-name"
-                placeholder="e.g. Ceiling Fan Repair & Electrician"
+                placeholder="e.g. Plumber, Electrician, Gardener"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 disabled={isPending}
@@ -262,37 +249,17 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
             </div>
 
             <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="service-category" className="text-xs font-semibold text-foreground">
-                  Category <span className="text-destructive">*</span>
-                </Label>
-                {categories.length === 0 && !isLoadingCategories && (
-                  <span className="text-[10px] text-amber-500 font-medium">
-                    No categories found
-                  </span>
-                )}
-              </div>
-              <select
-                id="service-category"
-                value={categoryId}
-                onChange={(e) => setCategoryId(e.target.value)}
-                disabled={isPending || isLoadingCategories}
-                className={`w-full h-9 px-3 rounded-lg border bg-input/20 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition cursor-pointer ${
-                  errors.category ? "border-destructive ring-destructive/30" : "border-input"
-                }`}
-              >
-                <option value="" disabled className="bg-popover text-muted-foreground">
-                  {isLoadingCategories ? "Loading categories..." : "Select parent category..."}
-                </option>
-                {categories.map((cat) => (
-                  <option key={cat._id} value={cat._id} className="bg-popover text-foreground">
-                    {cat.name} {!cat.isActive ? "(Inactive)" : ""}
-                  </option>
-                ))}
-              </select>
-              {errors.category && (
-                <p className="text-[11px] font-medium text-destructive">{errors.category}</p>
-              )}
+              <Label htmlFor="service-icon" className="text-xs font-semibold text-foreground">
+                Icon / Emoji
+              </Label>
+              <Input
+                id="service-icon"
+                placeholder="e.g. 🚰, ⚡, 🌱, 🪚"
+                value={icon}
+                onChange={(e) => setIcon(e.target.value)}
+                disabled={isPending}
+                className="h-9 text-xs"
+              />
             </div>
           </div>
 
@@ -331,7 +298,7 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
                     type="number"
                     min="0"
                     step="1"
-                    placeholder="300"
+                    placeholder="250"
                     value={firstHourRate}
                     onChange={(e) => setFirstHourRate(e.target.value)}
                     disabled={isPending}
@@ -346,8 +313,8 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
               {/* Additional Hour Rate */}
               <div className="space-y-1">
                 <Label htmlFor="addl-hour-rate" className="text-[11px] font-semibold text-foreground flex items-center justify-between">
-                  <span>Add'l Hr (₹) <span className="text-destructive">*</span></span>
-                  <span className="text-[10px] text-muted-foreground font-normal">+60m</span>
+                  <span>Addl Hr (₹) <span className="text-destructive">*</span></span>
+                  <span className="text-[10px] text-muted-foreground font-normal">Per Hr</span>
                 </Label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-muted-foreground">
@@ -358,7 +325,7 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
                     type="number"
                     min="0"
                     step="1"
-                    placeholder="150"
+                    placeholder="180"
                     value={additionalHourRate}
                     onChange={(e) => setAdditionalHourRate(e.target.value)}
                     disabled={isPending}
@@ -373,8 +340,8 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
               {/* Cooperative Share */}
               <div className="space-y-1">
                 <Label htmlFor="coop-share" className="text-[11px] font-semibold text-foreground flex items-center justify-between">
-                  <span>Coop (%) <span className="text-destructive">*</span></span>
-                  <span className="text-[10px] text-purple-600 dark:text-purple-400 font-normal">Admin</span>
+                  <span>Co-op Admin</span>
+                  <span className="text-[10px] text-muted-foreground font-mono font-bold">10%</span>
                 </Label>
                 <div className="relative">
                   <Input
@@ -382,27 +349,24 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
                     type="number"
                     min="0"
                     max="100"
-                    step="0.5"
+                    step="1"
                     placeholder="10"
                     value={cooperativeShare}
                     onChange={(e) => setCooperativeShare(e.target.value)}
                     disabled={isPending}
-                    className={`h-8 text-xs font-mono font-bold pr-6 ${errors.cooperativeShare ? "border-destructive" : ""}`}
+                    className="h-8 text-xs font-mono pr-6"
                   />
-                  <div className="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none text-muted-foreground font-bold text-xs">
+                  <div className="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none text-muted-foreground text-xs font-mono">
                     %
                   </div>
                 </div>
-                {errors.cooperativeShare && (
-                  <p className="text-[10px] font-medium text-destructive">{errors.cooperativeShare}</p>
-                )}
               </div>
 
               {/* Insurance Share */}
               <div className="space-y-1">
                 <Label htmlFor="ins-share" className="text-[11px] font-semibold text-foreground flex items-center justify-between">
-                  <span>Insurance (%) <span className="text-destructive">*</span></span>
-                  <span className="text-[10px] text-blue-600 dark:text-blue-400 font-normal">Pool</span>
+                  <span>Welfare/Ins</span>
+                  <span className="text-[10px] text-muted-foreground font-mono font-bold">5%</span>
                 </Label>
                 <div className="relative">
                   <Input
@@ -410,69 +374,50 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
                     type="number"
                     min="0"
                     max="100"
-                    step="0.5"
+                    step="1"
                     placeholder="5"
                     value={insuranceShare}
                     onChange={(e) => setInsuranceShare(e.target.value)}
                     disabled={isPending}
-                    className={`h-8 text-xs font-mono font-bold pr-6 ${errors.insuranceShare ? "border-destructive" : ""}`}
+                    className="h-8 text-xs font-mono pr-6"
                   />
-                  <div className="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none text-muted-foreground font-bold text-xs">
+                  <div className="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none text-muted-foreground text-xs font-mono">
                     %
                   </div>
                 </div>
-                {errors.insuranceShare && (
-                  <p className="text-[10px] font-medium text-destructive">{errors.insuranceShare}</p>
-                )}
               </div>
             </div>
 
-            {errors.combinedShares && (
-              <p className="text-[11px] font-medium text-destructive">{errors.combinedShares}</p>
-            )}
-
-            {/* Visual allocation pill & transport benchmark */}
-            <div className="py-1.5 px-2.5 rounded-lg bg-card border border-border/70 flex flex-wrap items-center justify-between gap-2 text-xs">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-muted-foreground font-medium text-[11px]">Payout Split:</span>
-                <span className="font-bold text-emerald-600 dark:text-emerald-400 text-[11px]">
-                  Worker {workerPercent.toFixed(1)}%
-                </span>
-                <span className="text-muted-foreground text-[10px]">•</span>
-                <span className="font-bold text-purple-600 dark:text-purple-400 text-[11px]">
-                  Coop {numCoop}%
-                </span>
-                <span className="text-muted-foreground text-[10px]">•</span>
-                <span className="font-bold text-blue-600 dark:text-blue-400 text-[11px]">
-                  Insurance {numIns}%
+            {/* Split Distribution Preview Bar */}
+            <div className="space-y-1 pt-1">
+              <div className="flex justify-between items-center text-[10px]">
+                <span className="text-muted-foreground font-medium">Platform Payout Split:</span>
+                <span className="font-semibold text-foreground">
+                  Worker: <strong className="text-emerald-600 dark:text-emerald-400">{workerPercent}%</strong> &bull; Co-op: {numCoop}% &bull; Welfare: {numIns}%
                 </span>
               </div>
-              <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                <Truck className="size-3 text-primary shrink-0" />
-                <span>₹30 transport fee (flat benchmark)</span>
+              <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden flex">
+                <div style={{ width: `${workerPercent}%` }} className="bg-emerald-500 h-full" title={`Worker Take-home: ${workerPercent}%`} />
+                <div style={{ width: `${numCoop}%` }} className="bg-primary h-full" title={`Cooperative Admin: ${numCoop}%`} />
+                <div style={{ width: `${numIns}%` }} className="bg-blue-500 h-full" title={`Welfare/Insurance: ${numIns}%`} />
               </div>
             </div>
           </div>
 
           {/* Description */}
           <div className="space-y-1">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="service-desc" className="text-xs font-semibold text-foreground">
-                Service Scope & Description <span className="text-destructive">*</span>
-              </Label>
-              <span className="text-[10px] text-muted-foreground">
-                {description.length}/1000
-              </span>
-            </div>
+            <Label htmlFor="service-description" className="text-xs font-semibold text-foreground">
+              Trade Scope & Details <span className="text-destructive">*</span>
+            </Label>
             <textarea
-              id="service-desc"
-              rows={2}
-              placeholder="Provide a clear description of what this service entails, scope of work, and standard expectations..."
+              id="service-description"
+              rows={3}
+              placeholder="Describe tasks, common issues resolved, tools provided, and job scope..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               disabled={isPending}
-              className={`w-full rounded-xl border bg-input/20 p-2.5 text-xs text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[2px] focus-visible:ring-ring/50 outline-none resize-none transition h-14 ${
-                errors.description ? "border-destructive" : "border-input"
+              className={`w-full p-2.5 rounded-lg border bg-input/20 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition resize-none ${
+                errors.description ? "border-destructive ring-destructive/30" : "border-input"
               }`}
             />
             {errors.description && (
@@ -480,23 +425,25 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
             )}
           </div>
 
-          <DialogFooter className="pt-1">
+          <DialogFooter className="pt-2 gap-2 sm:gap-0">
             <Button
               type="button"
               variant="outline"
+              size="sm"
               onClick={() => onOpenChange(false)}
               disabled={isPending}
-              className="rounded-lg text-xs h-8 sm:h-9"
+              className="h-8 text-xs font-semibold cursor-pointer"
             >
               Cancel
             </Button>
             <Button
               type="submit"
+              size="sm"
               disabled={isPending}
-              className="rounded-lg text-xs font-semibold h-8 sm:h-9"
+              className="h-8 text-xs font-semibold gap-1.5 cursor-pointer shadow-xs"
             >
-              {isPending && <Loader2 className="mr-1.5 size-3.5 animate-spin" />}
-              {isEditing ? "Save Service" : "Add Service"}
+              {isPending && <Loader2 className="size-3.5 animate-spin" />}
+              <span>{isEditing ? "Save Changes" : "Publish Trade Service"}</span>
             </Button>
           </DialogFooter>
         </form>
@@ -506,4 +453,3 @@ export const ServiceDialog: React.FC<ServiceDialogProps> = ({
 };
 
 export default ServiceDialog;
-

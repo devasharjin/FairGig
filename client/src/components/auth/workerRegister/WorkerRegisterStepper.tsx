@@ -13,7 +13,7 @@ export const WorkerRegisterStepper: React.FC<WorkerRegisterStepperProps> = ({
   onStepClick,
 }) => {
   const steps = [
-    { step: 1 as const, label: "Category & Guild", icon: Wrench },
+    { step: 1 as const, label: "Trade & Society", icon: Wrench },
     { step: 2 as const, label: "Coverage Area", icon: MapPin },
     { step: 3 as const, label: "Verification", icon: ShieldCheck },
   ];
@@ -34,13 +34,13 @@ export const WorkerRegisterStepper: React.FC<WorkerRegisterStepperProps> = ({
 
       <div>
         <h2 className="text-2xl font-bold tracking-tight text-foreground">
-          {currentStep === 1 && "Trade Category & Cooperative"}
+          {currentStep === 1 && "Trade Service & Cooperative"}
           {currentStep === 2 && "Coverage Area & Location"}
           {currentStep === 3 && "Document Verification"}
         </h2>
         <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
           {currentStep === 1 &&
-            "Select your primary trade category and affiliated cooperative society."}
+            "Select your skilled trade service (e.g. Plumber, Electrician, Gardener) and affiliated cooperative society."}
           {currentStep === 2 &&
             "Specify the geographic operational area where you will fulfill customer work requests."}
           {currentStep === 3 &&
