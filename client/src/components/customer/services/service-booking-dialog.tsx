@@ -35,11 +35,21 @@ import { useCustomerProfile } from "@/features/customer/profile/hooks";
 import { useAuthStore } from "@/features/auth/store";
 import { cn } from "@/lib/utils";
 
-interface ServiceBookingDialogProps {
+export interface BookingPrefillData {
+  address?: string;
+  preferredDay?: string; // YYYY-MM-DD
+  preferredTime?: string; // HH:mm
+  notes?: string;
+  bookingType?: BookingType;
+  immediateContact?: string;
+}
+
+export interface ServiceBookingDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   service: CustomerService | null;
   initialBookingType?: BookingType;
+  initialData?: BookingPrefillData | null;
 }
 
 export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
@@ -47,6 +57,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
   onOpenChange,
   service,
   initialBookingType = "SCHEDULED",
+  initialData,
 }) => {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
@@ -64,17 +75,26 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
   const [immediateContact, setImmediateContact] = useState("");
   const [isLocating, setIsLocating] = useState(false);
 
-  // Sync initial booking type when opening
+  // Sync initial booking type & prefilled data when opening
   useEffect(() => {
     if (open) {
-      setBookingType(initialBookingType);
+      if (initialData) {
+        if (initialData.bookingType) setBookingType(initialData.bookingType);
+        if (initialData.address) setAddress(initialData.address);
+        if (initialData.preferredDay) setPreferredDay(initialData.preferredDay);
+        if (initialData.preferredTime) setPreferredTime(initialData.preferredTime);
+        if (initialData.notes) setNotes(initialData.notes);
+        if (initialData.immediateContact) setImmediateContact(initialData.immediateContact);
+      } else {
+        setBookingType(initialBookingType);
+      }
     }
-  }, [open, initialBookingType]);
+  }, [open, initialBookingType, initialData]);
 
   // Pre-fill primary address & phone if available when opening dialog
   useEffect(() => {
     if (open) {
-      if (!address) {
+      if (!address && !initialData?.address) {
         if (profileData?.address?.street) {
           const formatted = [
             profileData.address.street,

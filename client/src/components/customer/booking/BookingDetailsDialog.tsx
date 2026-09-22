@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Phone, Star, ExternalLink, CreditCard, AlertTriangle, Zap, ShieldAlert, PhoneCall } from "lucide-react";
+import { Phone, Star, ExternalLink, CreditCard, AlertTriangle, Zap, ShieldAlert, PhoneCall, ShieldCheck } from "lucide-react";
 import {
   Dialog,
   DialogContent,

@@ -195,9 +195,9 @@ export const MemberDossierModal = ({
                 <div className="mb-2.5 flex items-center gap-2">
                   <span className="text-xs text-muted-foreground">Primary Trade:</span>
                   <Badge className="px-3 py-1 text-xs rounded-lg font-semibold bg-primary text-primary-foreground shadow-xs">
-                    {typeof member.category === "object" && member.category.name
-                      ? member.category.name
-                      : member.category}
+                    {typeof member.category === "object" && member.category !== null
+                      ? (member.category as any).name
+                      : String(member.category || "")}
                   </Badge>
                 </div>
               )}
@@ -252,20 +252,14 @@ export const MemberDossierModal = ({
                   </div>
                 </div>
                 {member.verificationDocuments?.identity?.url && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="size-8 p-0 rounded-lg text-primary"
-                    asChild
+                  <a
+                    href={member.verificationDocuments.identity.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="size-8 inline-flex items-center justify-center rounded-lg text-primary hover:bg-muted transition-colors cursor-pointer"
                   >
-                    <a
-                      href={member.verificationDocuments.identity.url}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <ExternalLink className="size-3.5" />
-                    </a>
-                  </Button>
+                    <ExternalLink className="size-3.5" />
+                  </a>
                 )}
               </div>
 
@@ -280,20 +274,14 @@ export const MemberDossierModal = ({
                   </div>
                 </div>
                 {member.verificationDocuments?.certificate?.url && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="size-8 p-0 rounded-lg text-primary"
-                    asChild
+                  <a
+                    href={member.verificationDocuments.certificate.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="size-8 inline-flex items-center justify-center rounded-lg text-primary hover:bg-muted transition-colors cursor-pointer"
                   >
-                    <a
-                      href={member.verificationDocuments.certificate.url}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <ExternalLink className="size-3.5" />
-                    </a>
-                  </Button>
+                    <ExternalLink className="size-3.5" />
+                  </a>
                 )}
               </div>
             </div>

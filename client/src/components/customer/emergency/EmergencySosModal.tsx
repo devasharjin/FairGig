@@ -219,7 +219,7 @@ export const EmergencySosModal: React.FC<EmergencySosModalProps> = ({
                 </Label>
                 <Select
                   value={selectedCategoryId}
-                  onValueChange={setSelectedCategoryId}
+                  onValueChange={(val) => val && setSelectedCategoryId(val)}
                   disabled={isLoadingCats}
                 >
                   <SelectTrigger className="h-9 text-xs rounded-lg border-border/70 bg-card focus:ring-rose-500/40 focus:border-rose-500/50 w-full">
@@ -261,7 +261,7 @@ export const EmergencySosModal: React.FC<EmergencySosModalProps> = ({
                 </Label>
                 <Select
                   value={selectedServiceId}
-                  onValueChange={setSelectedServiceId}
+                  onValueChange={(val) => val && setSelectedServiceId(val)}
                   disabled={!selectedCategoryId || isLoadingServices || categoryServices.length === 0}
                 >
                   <SelectTrigger className={cn(

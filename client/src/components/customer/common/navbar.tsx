@@ -13,9 +13,11 @@ import {
   ShieldCheck,
   PhoneCall,
   ArrowRight,
+  Mic,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/features/auth/store";
+import { useVoiceAssistantStore } from "@/features/customer/voice/voiceStore";
 import { logout } from "@/features/auth/api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -106,8 +108,19 @@ export const CustomerNavbar = () => {
           </nav>
         </div>
 
-        {/* Right Side: Auth Controls & Mobile Menu Toggle */}
+        {/* Right Side: Voice Booking, Auth Controls & Mobile Menu Toggle */}
         <div className="flex items-center gap-2.5 sm:gap-3">
+          {/* AI Voice Assistant Trigger Button */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => useVoiceAssistantStore.getState().openAssistant()}
+            className="h-9 px-3 rounded-xl border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary font-semibold text-xs gap-1.5 cursor-pointer shadow-xs"
+          >
+            <Mic className="size-3.5 text-accent animate-pulse" />
+            <span className="hidden sm:inline">Voice Booking</span>
+          </Button>
+
           {user ? (
             /* Logged In: Reusable Clean User Dropdown */
             <NavbarUserDropdown currentPortal="customer" />
@@ -218,6 +231,18 @@ export const CustomerNavbar = () => {
 
           {/* Mobile Sheet Footer / Action Buttons */}
           <div className="p-4 border-t border-border/50 space-y-2 bg-muted/10">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setIsMobileOpen(false);
+                useVoiceAssistantStore.getState().openAssistant();
+              }}
+              className="w-full justify-center gap-2 rounded-lg text-xs font-semibold text-primary border-primary/25 bg-primary/5 hover:bg-primary/10 cursor-pointer h-9 mb-1"
+            >
+              <Mic className="size-3.5 text-accent animate-pulse" />
+              <span>AI Voice Booking Assistant</span>
+            </Button>
             {user ? (
               <Button
                 variant="outline"

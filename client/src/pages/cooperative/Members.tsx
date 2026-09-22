@@ -243,7 +243,7 @@ export default function CooperativeMembers() {
             <Select
               value={statusFilter}
               onValueChange={(val) => {
-                setStatusFilter(val);
+                setStatusFilter(val || "ALL");
                 setCurrentPage(1);
               }}
             >
@@ -264,7 +264,7 @@ export default function CooperativeMembers() {
             <Select
               value={availabilityFilter}
               onValueChange={(val) => {
-                setAvailabilityFilter(val);
+                setAvailabilityFilter(val || "ALL");
                 setCurrentPage(1);
               }}
             >
@@ -353,9 +353,9 @@ export default function CooperativeMembers() {
                               variant="default"
                               className="w-fit text-[11px] px-2.5 py-0.5 rounded-lg font-semibold bg-primary/15 text-primary border border-primary/25"
                             >
-                              {typeof member.category === "object" && member.category.name
-                                ? member.category.name
-                                : member.category}
+                              {typeof member.category === "object" && member.category !== null
+                                ? (member.category as any).name
+                                : String(member.category || "")}
                             </Badge>
                           ) : null}
                           {member.skills && member.skills.length > 0 && (

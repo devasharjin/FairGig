@@ -43,12 +43,12 @@ export const WorkerEarningsReceiptCard: React.FC<WorkerEarningsReceiptCardProps>
   const transportFee = job.pricing?.transportFee ?? 30;
 
   const coopPct =
-    job.pricing?.cooperativeSharePercentage ??
+    job.pricing?.cooperativePercentage ??
     job.service?.cooperativeShare ??
     10;
 
   const insPct =
-    job.pricing?.insuranceSharePercentage ??
+    job.pricing?.insurancePercentage ??
     job.service?.insuranceShare ??
     5;
 
@@ -78,7 +78,7 @@ export const WorkerEarningsReceiptCard: React.FC<WorkerEarningsReceiptCardProps>
       : job.totalAmount);
 
   const customerTotal =
-    job.pricing?.customerTotal ??
+    job.pricing?.customerTotalAmount ??
     (job.pricing?.serviceAmount
       ? serviceAmount + transportFee
       : job.totalAmount);

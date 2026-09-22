@@ -405,7 +405,7 @@ export function AdminUsers() {
               <Select
                 value={selectedStatus}
                 onValueChange={(val) => {
-                  setSelectedStatus(val);
+                  setSelectedStatus(val || "ALL");
                   setPage(1);
                 }}
               >

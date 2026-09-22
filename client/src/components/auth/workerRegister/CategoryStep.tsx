@@ -115,7 +115,7 @@ export const CategoryStep: React.FC<CategoryStepProps> = ({
 
         <Select
           value={cooperativeId}
-          onValueChange={(val) => onCooperativeChange(val)}
+          onValueChange={(val) => val && onCooperativeChange(val)}
         >
           <SelectTrigger className="h-11 rounded-2xl bg-input/20 border-border/80 text-xs">
             <SelectValue placeholder="Select an affiliated cooperative society..." />

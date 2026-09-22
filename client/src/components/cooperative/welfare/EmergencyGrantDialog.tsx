@@ -117,7 +117,7 @@ export const EmergencyGrantDialog = ({
           {/* Select Worker */}
           <div className="space-y-1.5">
             <Label className="text-xs font-semibold">Beneficiary Worker</Label>
-            <Select value={selectedWorkerId} onValueChange={setSelectedWorkerId}>
+            <Select value={selectedWorkerId} onValueChange={(val) => val && setSelectedWorkerId(val)}>
               <SelectTrigger className="rounded-xl h-10 text-xs">
                 <SelectValue placeholder="Select member worker" />
               </SelectTrigger>

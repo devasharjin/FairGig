@@ -50,3 +50,23 @@ export function requireRole(...allowedRoles: Role[]) {
     next();
   };
 }
+
+export function optionalAuth(req: Request, _res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
+  const tokenFromHeader = authHeader?.startsWith("Bearer ")
+    ? authHeader.split(" ")[1]
+    : null;
+  const token = req.cookies?.accessToken || tokenFromHeader;
+
+  if (token) {
+    try {
+      const decoded = verifyAccessToken<AccessTokenPayload>(token);
+      if (decoded) {
+        req.user = decoded;
+      }
+    } catch {
+      // Ignore invalid token in optional auth
+    }
+  }
+  next();
+}
