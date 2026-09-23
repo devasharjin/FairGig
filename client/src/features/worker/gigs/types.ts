@@ -56,6 +56,9 @@ export interface WorkerJob {
   completedAt?: string;
   cancelledAt?: string;
   cancellationReason?: string;
+  distanceKm?: number;
+  distanceText?: string;
+  transportFee?: number;
   createdAt: string;
   updatedAt: string;
 }

@@ -195,7 +195,7 @@ RULES:
     let bookingDate = input.currentBooking?.bookingDate || null;
     let bookingTime = input.currentBooking?.bookingTime || null;
     let customerAddress = input.currentBooking?.customerAddress || null;
-    let bookingType: "SCHEDULED" | "ON_DEMAND" | "EMERGENCY" =
+    let bookingType: "SCHEDULED" | "PREMIUM" | "ON_DEMAND" | "EMERGENCY" =
       input.currentBooking?.bookingType || "SCHEDULED";
     let additionalInstructions = input.currentBooking?.additionalInstructions || "";
 
@@ -209,11 +209,14 @@ RULES:
     if (emergencyWords.some((w) => lower.includes(w) || text.includes(w))) {
       bookingType = "EMERGENCY";
     } else if (
+      lower.includes("premium") ||
+      lower.includes("top rated") ||
+      lower.includes("specialist") ||
       lower.includes("on demand") ||
       lower.includes("asap") ||
       lower.includes("today itself")
     ) {
-      bookingType = "ON_DEMAND";
+      bookingType = "PREMIUM";
     }
 
     // 2. Resolve Service Matching against real Catalog
@@ -784,7 +787,7 @@ RULES:
       bookingDate: raw.bookingDate || null,
       bookingTime: raw.bookingTime || null,
       customerAddress: raw.customerAddress || null,
-      bookingType: ["EMERGENCY", "ON_DEMAND", "SCHEDULED"].includes(raw.bookingType)
+      bookingType: ["EMERGENCY", "PREMIUM", "ON_DEMAND", "SCHEDULED"].includes(raw.bookingType)
         ? raw.bookingType
         : "SCHEDULED",
       additionalInstructions: raw.additionalInstructions || "",

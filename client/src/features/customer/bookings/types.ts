@@ -12,7 +12,7 @@ export type BookingStatus =
 
 export type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "REFUNDED";
 
-export type BookingType = "SCHEDULED" | "ON_DEMAND" | "EMERGENCY";
+export type BookingType = "SCHEDULED" | "PREMIUM" | "ON_DEMAND" | "EMERGENCY";
 
 export type UrgencyLevel = "STANDARD" | "HIGH" | "CRITICAL";
 

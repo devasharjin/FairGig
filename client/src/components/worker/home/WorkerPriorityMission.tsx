@@ -6,8 +6,11 @@ import {
   Clock,
   MapPin,
   ArrowRight,
+  Navigation,
+  Car,
 } from "lucide-react";
 import type { WorkerJob } from "@/features/worker/gigs/types";
+import { getGigDistanceInfo } from "@/features/worker/gigs/distance";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -20,6 +23,12 @@ export const WorkerPriorityMission: React.FC<WorkerPriorityMissionProps> = ({
   activeJob,
   topAvailableGig,
 }) => {
+  const topGigDistance = topAvailableGig ? getGigDistanceInfo(topAvailableGig) : null;
+  const topGigPayoutTotal =
+    topAvailableGig && topGigDistance
+      ? (topAvailableGig.rate || 0) + topGigDistance.transportFee
+      : 0;
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -88,14 +97,25 @@ export const WorkerPriorityMission: React.FC<WorkerPriorityMissionProps> = ({
       ) : topAvailableGig ? (
         <div className="rounded-xl border border-amber-500/30 bg-card p-5 shadow-xs space-y-4">
           <div className="flex items-start justify-between gap-3">
-            <div>
-              <Badge
-                variant="outline"
-                className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 text-[10px] font-semibold gap-1 rounded-md px-2 py-0.5"
-              >
-                <Sparkles className="size-3" />
-                Gig Waiting For Pickup
-              </Badge>
+            <div className="space-y-1">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <Badge
+                  variant="outline"
+                  className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 text-[10px] font-semibold gap-1 rounded-md px-2 py-0.5"
+                >
+                  <Sparkles className="size-3" />
+                  Gig Waiting For Pickup
+                </Badge>
+                {topGigDistance && (
+                  <Badge
+                    variant="outline"
+                    className="bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/30 text-[10px] font-semibold gap-1 rounded-md px-2 py-0.5"
+                  >
+                    <Navigation className="size-3" />
+                    <span>{topGigDistance.distanceDisplay} away</span>
+                  </Badge>
+                )}
+              </div>
               <h3 className="text-lg font-bold text-foreground mt-1">
                 {topAvailableGig.service?.name}
               </h3>
@@ -111,8 +131,37 @@ export const WorkerPriorityMission: React.FC<WorkerPriorityMissionProps> = ({
               <p className="text-[10px] text-muted-foreground">
                 /{topAvailableGig.priceType === "hourly" ? "hr" : "meter"}
               </p>
+              {topGigDistance && (
+                <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">
+                  Est. ₹{topGigPayoutTotal}
+                </p>
+              )}
             </div>
           </div>
+
+          {topGigDistance && (
+            <div className="p-3 rounded-lg bg-muted/40 border border-border/50 text-xs text-muted-foreground space-y-1.5">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <MapPin className="size-3.5 text-accent shrink-0" />
+                  <span className="truncate">
+                    {topAvailableGig.address?.street}
+                    {topAvailableGig.address?.city ? `, ${topAvailableGig.address.city}` : ""}
+                  </span>
+                </div>
+                <span className="font-semibold text-sky-600 dark:text-sky-400 shrink-0 text-[11px] bg-sky-500/10 px-2 py-0.5 rounded-md border border-sky-500/20">
+                  {topGigDistance.distanceDisplay}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-[11px] pt-1.5 border-t border-border/50 text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <Car className="size-3 text-sky-500" />
+                  <span>Transport Fee (₹5/km):</span>
+                </div>
+                <span className="font-bold text-foreground">₹{topGigDistance.transportFee}</span>
+              </div>
+            </div>
+          )}
 
           <div className="flex justify-end pt-2">
             <Link to="/worker/jobs">

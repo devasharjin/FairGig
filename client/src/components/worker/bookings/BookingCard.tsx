@@ -163,9 +163,9 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                   🚨 Emergency SOS
                 </Badge>
               )}
-              {job.bookingType === "ON_DEMAND" && !job.isEmergency && (
+              {(job.bookingType === "PREMIUM" || job.bookingType === "ON_DEMAND") && !job.isEmergency && (
                 <Badge variant="outline" className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 rounded-md text-[10px] py-0 px-2 font-semibold">
-                  ⚡ On-Demand
+                  ⭐ Premium Specialist
                 </Badge>
               )}
               <Badge variant="secondary" className="rounded-md text-[10px] py-0 px-2 font-medium">

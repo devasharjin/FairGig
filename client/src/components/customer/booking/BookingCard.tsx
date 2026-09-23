@@ -10,6 +10,7 @@ import {
   CreditCard,
   AlertTriangle,
   Zap,
+  Crown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -110,13 +111,13 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             </Badge>
           )}
 
-          {booking.bookingType === "ON_DEMAND" && !booking.isEmergency && (
+          {(booking.bookingType === "PREMIUM" || booking.bookingType === "ON_DEMAND") && !booking.isEmergency && (
             <Badge
               variant="outline"
               className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 rounded-lg text-[10px] font-bold py-0.5 px-2 gap-1"
             >
-              <Zap className="size-3" />
-              <span>⚡ On-Demand</span>
+              <Crown className="size-3 text-amber-500" />
+              <span>⭐ Premium Specialist</span>
             </Badge>
           )}
 

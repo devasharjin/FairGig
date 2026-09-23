@@ -638,9 +638,9 @@ export function SuperAdminHome() {
                               <Badge variant="outline" className="bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30 text-[10px] font-semibold">
                                 <AlertTriangle className="size-2.5 mr-1" /> EMERGENCY
                               </Badge>
-                            ) : b.bookingType === "ON_DEMAND" ? (
+                            ) : b.bookingType === "PREMIUM" || b.bookingType === "ON_DEMAND" ? (
                               <Badge variant="outline" className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 text-[10px] font-semibold">
-                                <Zap className="size-2.5 mr-1" /> ON-DEMAND
+                                <Zap className="size-2.5 mr-1" /> PREMIUM
                               </Badge>
                             ) : (
                               <Badge variant="outline" className="bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/30 text-[10px] font-semibold">

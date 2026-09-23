@@ -97,9 +97,9 @@ export const WorkerBookingDetailsView: React.FC<WorkerBookingDetailsViewProps> =
                   🚨 SOS Emergency Callout
                 </Badge>
               )}
-              {job.bookingType === "ON_DEMAND" && !job.isEmergency && (
+              {(job.bookingType === "PREMIUM" || job.bookingType === "ON_DEMAND") && !job.isEmergency && (
                 <Badge variant="outline" className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 rounded-md text-xs font-bold">
-                  ⚡ On-Demand
+                  ⭐ Premium Specialist
                 </Badge>
               )}
               <Badge variant="secondary" className="rounded-md text-xs font-semibold">

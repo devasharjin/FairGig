@@ -60,15 +60,15 @@ export async function createBooking(req: Request, res: Response) {
       urgencyLevel && urgencyLevel !== "STANDARD"
         ? (urgencyLevel as UrgencyLevel)
         : UrgencyLevel.CRITICAL;
-  } else if (typeUpper === "ON_DEMAND") {
-    finalBookingType = BookingType.ON_DEMAND;
+  } else if (typeUpper === "PREMIUM" || typeUpper === "ON_DEMAND") {
+    finalBookingType = BookingType.PREMIUM;
     finalIsEmergency = false;
     finalUrgency = UrgencyLevel.HIGH;
   }
 
-  // Set immediate scheduled date for on-demand & emergency dispatches
+  // Set immediate scheduled date for premium dispatches if not provided, or emergency
   const finalScheduledDate =
-    finalBookingType === BookingType.ON_DEMAND || finalBookingType === BookingType.EMERGENCY
+    finalIsEmergency
       ? new Date()
       : scheduledDate
       ? new Date(scheduledDate)
@@ -82,12 +82,12 @@ export async function createBooking(req: Request, res: Response) {
   const insurancePercentage = service.insuranceShare ?? 5;
 
   // Surge / Priority multiplier:
-  // 10% higher for demand (ON_DEMAND), 20% higher for emergency (EMERGENCY)
+  // 15% higher for premium (> 4.5★ specialist guarantee), 20% higher for emergency (EMERGENCY)
   const rateMultiplier =
     finalBookingType === BookingType.EMERGENCY || finalIsEmergency
       ? 1.20
-      : finalBookingType === BookingType.ON_DEMAND
-      ? 1.10
+      : finalBookingType === BookingType.PREMIUM
+      ? 1.15
       : 1.0;
 
   const firstHourRate = Math.round(baseFirstHourRate * rateMultiplier);
@@ -172,8 +172,8 @@ export async function createBooking(req: Request, res: Response) {
 
   const successMessage = finalIsEmergency
     ? "🚨 Emergency SOS request broadcast! Matching immediately with verified responders."
-    : finalBookingType === BookingType.ON_DEMAND
-    ? "⚡ On-Demand request submitted! Dispathing available worker ASAP."
+    : finalBookingType === BookingType.PREMIUM || (finalBookingType as any) === "ON_DEMAND"
+    ? "⭐ Premium specialist booking submitted! Routed exclusively to top-rated specialists (> 4.5★)."
     : "Booking requested successfully";
 
   return ok(res, populated, successMessage);

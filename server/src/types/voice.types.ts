@@ -5,7 +5,7 @@ export interface VoiceBookingDetails {
   bookingDate: string | null; // Resolved YYYY-MM-DD
   bookingTime: string | null; // Resolved HH:mm (24-hour format)
   customerAddress: string | null;
-  bookingType: "SCHEDULED" | "ON_DEMAND" | "EMERGENCY";
+  bookingType: "SCHEDULED" | "PREMIUM" | "ON_DEMAND" | "EMERGENCY";
   additionalInstructions: string;
 }
 
@@ -65,7 +65,7 @@ export interface VoiceProcessResponse {
   bookingDate: string | null;
   bookingTime: string | null;
   customerAddress: string | null;
-  bookingType: "SCHEDULED" | "ON_DEMAND" | "EMERGENCY";
+  bookingType: "SCHEDULED" | "PREMIUM" | "ON_DEMAND" | "EMERGENCY";
   additionalInstructions: string;
 
   missingFields: Array<"service" | "date" | "time" | "address">;

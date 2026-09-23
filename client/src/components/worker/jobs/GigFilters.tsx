@@ -1,10 +1,10 @@
 import React from "react";
-import { Search, AlertTriangle, Zap, Clock } from "lucide-react";
+import { Search, AlertTriangle, Crown, Star, Clock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export type QuickFilterType = "ALL" | "EMERGENCY" | "ON_DEMAND" | "HOURLY" | "METERS" | "TODAY";
+export type QuickFilterType = "ALL" | "EMERGENCY" | "PREMIUM" | "ON_DEMAND" | "HOURLY" | "METERS" | "TODAY";
 
 interface GigFiltersProps {
   searchQuery: string;
@@ -65,20 +65,20 @@ export const GigFilters: React.FC<GigFiltersProps> = ({
           <span>🚨 Emergency {emergencyCount > 0 ? `(${emergencyCount})` : ""}</span>
         </Button>
 
-        {/* On-Demand Filter Tab */}
+        {/* Premium Filter Tab */}
         <Button
           variant="outline"
           size="sm"
-          onClick={() => onFilterChange("ON_DEMAND")}
+          onClick={() => onFilterChange("PREMIUM")}
           className={cn(
             "rounded-xl h-9 px-3 text-xs font-semibold shrink-0 gap-1.5 cursor-pointer transition-all",
-            activeFilter === "ON_DEMAND"
+            activeFilter === "PREMIUM" || (activeFilter as string) === "ON_DEMAND"
               ? "bg-amber-600 hover:bg-amber-700 text-white border-amber-600 shadow-sm"
               : "border-amber-500/40 text-amber-700 dark:text-amber-400 bg-amber-500/10 hover:bg-amber-500/20"
           )}
         >
-          <Zap className="size-3.5" />
-          <span>⚡ On-Demand</span>
+          <Crown className="size-3.5" />
+          <span>⭐ Premium (&gt;4.5★)</span>
         </Button>
 
         <Button

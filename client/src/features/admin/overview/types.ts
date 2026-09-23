@@ -18,6 +18,7 @@ export interface PlatformOverviewKpis {
 
 export interface OrderBreakdown {
   emergencyCount: number;
+  premiumCount?: number;
   onDemandCount: number;
   scheduledCount: number;
   completedPercentage: number;

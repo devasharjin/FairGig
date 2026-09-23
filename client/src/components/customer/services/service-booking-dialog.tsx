@@ -11,6 +11,8 @@ import {
   Home,
   Building,
   Zap,
+  Crown,
+  Star,
   AlertTriangle,
   Clock,
   Phone,
@@ -130,11 +132,11 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
   if (!service) return null;
 
   const isEmergency = bookingType === "EMERGENCY";
-  const isOnDemand = bookingType === "ON_DEMAND";
+  const isPremium = bookingType === "PREMIUM" || (bookingType as string) === "ON_DEMAND";
   const isScheduled = bookingType === "SCHEDULED";
 
-  // Surge rate multiplier: +10% for demand, +20% for emergency
-  const rateMultiplier = isEmergency ? 1.20 : isOnDemand ? 1.10 : 1.0;
+  // Surge rate multiplier: +15% for premium top-rated (>4.5★), +20% for emergency
+  const rateMultiplier = isEmergency ? 1.20 : isPremium ? 1.15 : 1.0;
   const baseFirstHourRate = service.firstHourRate ?? service.hourlyPrice ?? 0;
   const baseAdditionalHourRate = service.additionalHourRate ?? service.firstHourRate ?? service.hourlyPrice ?? 0;
 
@@ -195,13 +197,13 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
       await createBooking.mutateAsync({
         serviceId: service._id,
         address: address.trim(),
-        scheduledDate: isScheduled && preferredDay
+        scheduledDate: (isScheduled || isPremium) && preferredDay
           ? new Date(`${preferredDay}T${preferredTime || "09:00"}`).toISOString()
           : new Date().toISOString(),
         customerNotes: notes.trim(),
-        bookingType,
+        bookingType: isPremium ? "PREMIUM" : bookingType,
         isEmergency,
-        urgencyLevel: isEmergency ? "CRITICAL" : isOnDemand ? "HIGH" : "STANDARD",
+        urgencyLevel: isEmergency ? "CRITICAL" : isPremium ? "HIGH" : "STANDARD",
         emergencyDetails: isEmergency
           ? {
             immediateContact: immediateContact.trim(),
@@ -230,7 +232,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
           "max-w-xl rounded-2xl p-0 border shadow-2xl bg-card overflow-y-auto max-h-[92vh] sm:overflow-visible sm:max-h-none transition-all gap-0",
           isEmergency
             ? "border-rose-500/40 shadow-rose-500/10"
-            : isOnDemand
+            : isPremium
               ? "border-amber-500/30 shadow-amber-500/10"
               : "border-border/80"
         )}
@@ -241,7 +243,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
             "px-6 pt-6 pb-4 border-b",
             isEmergency
               ? "border-rose-500/20 bg-rose-500/[0.04]"
-              : isOnDemand
+              : isPremium
                 ? "border-amber-500/20 bg-amber-500/[0.04]"
                 : "border-border/60 bg-muted/20"
           )}
@@ -253,15 +255,15 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
                   "flex size-10 items-center justify-center rounded-xl shrink-0 transition-all mt-0.5",
                   isEmergency
                     ? "bg-rose-500/15 text-rose-600 dark:text-rose-400"
-                    : isOnDemand
+                    : isPremium
                       ? "bg-amber-500/15 text-amber-600 dark:text-amber-400"
                       : "bg-primary/10 text-primary"
                 )}
               >
                 {isEmergency ? (
                   <AlertTriangle className="size-5 animate-pulse" />
-                ) : isOnDemand ? (
-                  <Zap className="size-5" />
+                ) : isPremium ? (
+                  <Crown className="size-5" />
                 ) : (
                   <Sparkles className="size-4.5" />
                 )}
@@ -274,9 +276,10 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
                       SOS
                     </Badge>
                   )}
-                  {isOnDemand && (
-                    <Badge variant="outline" className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 text-[10px] font-bold py-0.5 px-2 shrink-0">
-                      On-Demand
+                  {isPremium && (
+                    <Badge variant="outline" className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 text-[10px] font-bold py-0.5 px-2 shrink-0 flex items-center gap-1">
+                      <Star className="size-2.5 fill-amber-500 text-amber-500" />
+                      Premium (&gt;4.5★)
                     </Badge>
                   )}
                 </DialogTitle>
@@ -308,16 +311,16 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
             </button>
             <button
               type="button"
-              onClick={() => setBookingType("ON_DEMAND")}
+              onClick={() => setBookingType("PREMIUM")}
               className={cn(
                 "flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer",
-                isOnDemand
+                isPremium
                   ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground hover:text-foreground hover:bg-amber-500/5"
               )}
             >
-              <Zap className="size-3.5 text-amber-500 shrink-0" />
-              <span>On-Demand</span>
+              <Crown className="size-3.5 text-amber-500 shrink-0" />
+              <span>Premium</span>
             </button>
             <button
               type="button"
@@ -334,11 +337,19 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
             </button>
           </div>
 
-          {/* Mode Notice — only for on-demand; emergency notice lives in header */}
-          {isOnDemand && (
-            <div className="flex items-start gap-2.5 px-3.5 py-2 rounded-xl bg-amber-500/8 border border-amber-500/20 text-xs text-amber-700 dark:text-amber-300">
-              <Zap className="size-3.5 text-amber-500 shrink-0 mt-0.5" />
-              <p className="leading-relaxed">Dispatched immediately — nearest available verified worker matched within minutes.</p>
+          {/* Mode Notice — only for premium; emergency notice lives in header */}
+          {isPremium && (
+            <div className="flex items-start gap-2.5 px-3.5 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-xs text-amber-800 dark:text-amber-200">
+              <Star className="size-4 text-amber-500 fill-amber-500 shrink-0 mt-0.5" />
+              <div className="space-y-0.5">
+                <p className="font-semibold text-amber-900 dark:text-amber-100 flex items-center gap-1.5">
+                  Top-Rated Specialist Guarantee
+                  <span className="text-[10px] font-bold px-1.5 py-0.2 bg-amber-500/20 text-amber-700 dark:text-amber-300 rounded border border-amber-500/30">&gt; 4.5★</span>
+                </p>
+                <p className="leading-relaxed text-[11px] text-amber-700 dark:text-amber-300">
+                  Exclusive dispatch routed only to top-rated cooperative workers with at least <strong>4.5 stars</strong>.
+                </p>
+              </div>
             </div>
           )}
 
@@ -347,9 +358,10 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
             <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/40 flex-wrap gap-2">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-xs font-semibold text-foreground">Pricing Estimate</span>
-                {isOnDemand && (
-                  <Badge variant="outline" className="text-[10px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 py-0 px-2">
-                    +10% Demand Surge
+                {isPremium && (
+                  <Badge variant="outline" className="text-[10px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 py-0 px-2 flex items-center gap-1">
+                    <Star className="size-2.5 fill-amber-500 text-amber-500" />
+                    +15% Top-Rated Surge
                   </Badge>
                 )}
                 {isEmergency && (
@@ -461,13 +473,13 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
               />
             </div>
 
-            {/* Date & Time — two separate pickers (Scheduled only) */}
-            {isScheduled && (
+            {/* Date & Time — two separate pickers (Scheduled & Premium) */}
+            {(isScheduled || isPremium) && (
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                   <Calendar className="size-3.5 text-primary" />
                   Preferred Date & Time
-                  <span className="text-muted-foreground font-normal">(Optional)</span>
+                  <span className="text-muted-foreground font-normal">({isPremium ? "Optional — defaults to ASAP" : "Optional"})</span>
                 </Label>
                 <div className="grid grid-cols-2 gap-2">
                   {/* Date picker */}
@@ -546,7 +558,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
                   "h-9 px-6 rounded-lg text-xs font-bold cursor-pointer shadow-sm text-white gap-1.5 transition-all hover:scale-[1.02] active:scale-[0.98]",
                   isEmergency
                     ? "bg-rose-600 hover:bg-rose-700 shadow-rose-500/25"
-                    : isOnDemand
+                    : isPremium
                       ? "bg-amber-500 hover:bg-amber-600 shadow-amber-500/25"
                       : "bg-primary hover:bg-primary/90 shadow-primary/20"
                 )}
@@ -555,8 +567,8 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
                   "Processing…"
                 ) : isEmergency ? (
                   <><AlertTriangle className="size-3.5" /><span>Broadcast SOS</span></>
-                ) : isOnDemand ? (
-                  <><Zap className="size-3.5" /><span>Dispatch Now</span></>
+                ) : isPremium ? (
+                  <><Crown className="size-3.5" /><span>Book Premium Specialist</span></>
                 ) : (
                   "Confirm Booking"
                 )}

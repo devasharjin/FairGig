@@ -31,7 +31,7 @@ export async function getAdminPlatformOverview(req: Request, res: Response) {
       Booking.countDocuments({ status: BookingStatus.PENDING }),
       Booking.countDocuments({ status: BookingStatus.CANCELLED }),
       Booking.countDocuments({ isEmergency: true }),
-      Booking.countDocuments({ bookingType: BookingType.ON_DEMAND, isEmergency: false }),
+      Booking.countDocuments({ bookingType: { $in: [BookingType.PREMIUM, BookingType.ON_DEMAND] }, isEmergency: false }),
       Booking.countDocuments({ bookingType: BookingType.SCHEDULED, isEmergency: false }),
       Cooperative.countDocuments(),
       Cooperative.countDocuments({ verificationStatus: VerificationStatus.APPROVED }),
@@ -114,6 +114,7 @@ export async function getAdminPlatformOverview(req: Request, res: Response) {
       },
       orderBreakdown: {
         emergencyCount: emergencyBookings,
+        premiumCount: onDemandBookings,
         onDemandCount: onDemandBookings,
         scheduledCount: scheduledBookings,
         completedPercentage: totalBookings > 0 ? Math.round((completedBookings / totalBookings) * 100) : 0,

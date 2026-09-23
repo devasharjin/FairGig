@@ -6,9 +6,14 @@ import {
   ChevronRight,
   AlertTriangle,
   Zap,
+  Crown,
+  Star,
   Phone,
+  Navigation,
+  Car,
 } from "lucide-react";
 import type { WorkerJob } from "@/features/worker/gigs/types";
+import { getGigDistanceInfo } from "@/features/worker/gigs/distance";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -27,10 +32,14 @@ export const GigCard: React.FC<GigCardProps> = ({
   onAccept,
 }) => {
   const isEmergency = gig.isEmergency;
-  const isOnDemand = gig.bookingType === "ON_DEMAND";
+  const isPremium = gig.bookingType === "PREMIUM" || gig.bookingType === "ON_DEMAND";
+
+  // Distance randomly up to 5 km and ₹5/km transport fee
+  const { distanceKm, distanceDisplay, transportFee } = getGigDistanceInfo(gig);
+  const payoutTotal = (gig.rate || 0) + transportFee;
 
   const formatDate = (dateStr?: string) => {
-    if (!dateStr || isEmergency || isOnDemand) return "Immediate Dispatch (ASAP)";
+    if (!dateStr || isEmergency || isPremium) return "Immediate Dispatch (ASAP)";
     try {
       return new Date(dateStr).toLocaleString("en-US", {
         month: "short",
@@ -50,7 +59,7 @@ export const GigCard: React.FC<GigCardProps> = ({
         "group relative rounded-xl border bg-card p-5 sm:p-6 shadow-xs transition-all flex flex-col justify-between space-y-4",
         isEmergency
           ? "border-rose-500/60 ring-1 ring-rose-500/20 bg-card shadow-xs hover:border-rose-500"
-          : isOnDemand
+          : isPremium
             ? "border-amber-500/50 ring-1 ring-amber-500/20 bg-card hover:border-amber-500"
             : "border-border/80 hover:border-border transition-all"
       )}
@@ -66,6 +75,15 @@ export const GigCard: React.FC<GigCardProps> = ({
               {gig.bookingNumber || `#${gig._id.slice(-6)}`}
             </Badge>
 
+            {/* Distance Badge */}
+            <Badge
+              variant="outline"
+              className="bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/30 text-[10px] font-semibold gap-1 rounded-md"
+            >
+              <Navigation className="size-3" />
+              <span>{distanceDisplay} away</span>
+            </Badge>
+
             {isEmergency && (
               <Badge
                 variant="destructive"
@@ -76,13 +94,13 @@ export const GigCard: React.FC<GigCardProps> = ({
               </Badge>
             )}
 
-            {isOnDemand && !isEmergency && (
+            {isPremium && !isEmergency && (
               <Badge
                 variant="outline"
                 className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 text-[10px] font-semibold gap-1 rounded-md"
               >
-                <Zap className="size-3" />
-                <span>⚡ On-Demand</span>
+                <Crown className="size-3 text-amber-500" />
+                <span>⭐ Premium (&gt;4.5★)</span>
               </Badge>
             )}
           </div>
@@ -117,7 +135,7 @@ export const GigCard: React.FC<GigCardProps> = ({
                 "font-semibold",
                 isEmergency
                   ? "text-rose-600 dark:text-rose-400 font-bold"
-                  : isOnDemand
+                  : isPremium
                     ? "text-amber-600 dark:text-amber-400 font-semibold"
                     : "text-foreground"
               )}
@@ -143,17 +161,31 @@ export const GigCard: React.FC<GigCardProps> = ({
           </div>
         )}
 
-        {/* Location & Details */}
-        <div className="p-3 rounded-lg bg-muted/40 border border-border/50 text-xs text-muted-foreground space-y-1.5">
-          <div className="flex items-start gap-2">
-            <MapPin className="size-3.5 text-accent shrink-0 mt-0.5" />
-            <span className="truncate">
-              {gig.address?.street}
-              {gig.address?.city ? `, ${gig.address.city}` : ""}
+        {/* Location & Distance Details */}
+        <div className="p-3 rounded-lg bg-muted/40 border border-border/50 text-xs text-muted-foreground space-y-2">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-start gap-2 min-w-0">
+              <MapPin className="size-3.5 text-accent shrink-0 mt-0.5" />
+              <span className="truncate">
+                {gig.address?.street}
+                {gig.address?.city ? `, ${gig.address.city}` : ""}
+              </span>
+            </div>
+            <span className="font-semibold text-sky-600 dark:text-sky-400 shrink-0 text-[11px] bg-sky-500/10 px-2 py-0.5 rounded-md border border-sky-500/20">
+              {distanceDisplay}
             </span>
           </div>
+
+          <div className="flex items-center justify-between text-[11px] pt-1.5 border-t border-border/50 text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <Car className="size-3 text-sky-500" />
+              <span>Transport Fee (₹5/km):</span>
+            </div>
+            <span className="font-bold text-foreground">₹{transportFee}</span>
+          </div>
+
           {gig.customerNotes && (
-            <p className="italic pl-5.5 text-foreground line-clamp-2">
+            <p className="italic pl-5.5 text-foreground line-clamp-2 pt-1 border-t border-border/40">
               "{gig.customerNotes}"
             </p>
           )}
@@ -174,9 +206,9 @@ export const GigCard: React.FC<GigCardProps> = ({
 
           <div className="text-right">
             <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
-              Est. ₹{gig.totalAmount}
+              Est. ₹{payoutTotal}
             </span>
-            <p className="text-[10px] text-muted-foreground">Guaranteed Payout</p>
+            <p className="text-[10px] text-muted-foreground">Rate + ₹{transportFee} Transport</p>
           </div>
         </div>
 
@@ -199,7 +231,7 @@ export const GigCard: React.FC<GigCardProps> = ({
               "rounded-lg h-9 text-xs font-semibold shadow-xs cursor-pointer gap-1.5 text-white transition-all",
               isEmergency
                 ? "bg-rose-600 hover:bg-rose-700"
-                : isOnDemand
+                : isPremium
                   ? "bg-amber-600 hover:bg-amber-700"
                   : "bg-primary text-primary-foreground hover:bg-primary/90"
             )}
@@ -210,8 +242,8 @@ export const GigCard: React.FC<GigCardProps> = ({
                 ? "Claiming..."
                 : isEmergency
                   ? "Claim Emergency SOS"
-                  : isOnDemand
-                    ? "Claim On-Demand"
+                  : isPremium
+                    ? "Claim Premium Gig"
                     : "Accept Gig"}
             </span>
           </Button>

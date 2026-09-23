@@ -61,9 +61,9 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
                 🚨 SOS Emergency Dispatch
               </Badge>
             )}
-            {booking.bookingType === "ON_DEMAND" && !booking.isEmergency && (
+            {(booking.bookingType === "PREMIUM" || booking.bookingType === "ON_DEMAND") && !booking.isEmergency && (
               <Badge variant="outline" className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 text-[10px] font-bold py-0.5 px-2">
-                ⚡ On-Demand Dispatch
+                ⭐ Premium Specialist Dispatch
               </Badge>
             )}
             <DialogDescription className="text-xs text-muted-foreground">

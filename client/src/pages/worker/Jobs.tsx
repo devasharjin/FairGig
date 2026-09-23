@@ -31,16 +31,45 @@ export const WorkerJobs: React.FC = () => {
   const { data: profile } = useWorkerProfile();
   const acceptGigMutation = useAcceptGig();
 
+  const registeredSkills = (profile?.skills || profile?.worker?.skills || []) as any[];
+  const registeredSkillIds = registeredSkills
+    .map((s) => (typeof s === "object" ? s?._id : s))
+    .filter(Boolean)
+    .map((id) => id.toString());
+
+  const registeredSkillNames = registeredSkills
+    .map((s) => (typeof s === "object" ? s?.name : null))
+    .filter(Boolean);
+
   const workerCategory = profile?.category || profile?.categories?.[0] || profile?.worker?.category;
   const categoryName = typeof workerCategory === "object" ? workerCategory?.name : undefined;
+  const displayTradeName = registeredSkillNames.length > 0 ? registeredSkillNames.join(", ") : categoryName;
 
-  const emergencyCount = availableGigs.filter((g) => g.isEmergency).length;
+  const workerRating = Number(profile?.rating ?? profile?.worker?.rating ?? 0);
 
   // Filter and search logic
   const filteredGigs = availableGigs.filter((gig) => {
+    // Premium gigs only visible to workers with rating > 4.5
+    if (gig.bookingType === "PREMIUM" && workerRating <= 4.5) {
+      return false;
+    }
+
+    // Only display services that the worker registered
+    if (registeredSkillIds.length > 0) {
+      const gigServiceId = (gig.service?._id || gig.service)?.toString();
+      if (gigServiceId && !registeredSkillIds.includes(gigServiceId)) {
+        return false;
+      }
+    }
+
     // Quick filter
     if (quickFilter === "EMERGENCY" && !gig.isEmergency) return false;
-    if (quickFilter === "ON_DEMAND" && (gig.bookingType !== "ON_DEMAND" || gig.isEmergency)) return false;
+    if (
+      (quickFilter === "PREMIUM" || (quickFilter as string) === "ON_DEMAND") &&
+      ((gig.bookingType !== "PREMIUM" && gig.bookingType !== "ON_DEMAND") || gig.isEmergency)
+    ) {
+      return false;
+    }
     if (quickFilter === "HOURLY" && gig.priceType !== "hourly") return false;
     if (quickFilter === "METERS" && gig.priceType !== "meters") return false;
     if (quickFilter === "TODAY") {
@@ -63,6 +92,8 @@ export const WorkerJobs: React.FC = () => {
 
     return true;
   });
+
+  const emergencyCount = filteredGigs.filter((g) => g.isEmergency).length;
 
   const handleAccept = async (gigId: string) => {
     try {
@@ -95,10 +126,10 @@ export const WorkerJobs: React.FC = () => {
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* Radar Live Status Header */}
       <GigRadarHeader
-        totalAvailable={availableGigs.length}
+        totalAvailable={filteredGigs.length}
         isRefetching={isRefetching}
         onRefresh={() => refetch()}
-        categoryName={categoryName}
+        categoryName={displayTradeName}
       />
 
       {/* Emergency SOS Radar Notification Banner */}

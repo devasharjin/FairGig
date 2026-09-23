@@ -27,6 +27,7 @@ export enum CancelledByRole {
 
 export enum BookingType {
   SCHEDULED = "SCHEDULED",
+  PREMIUM = "PREMIUM",
   ON_DEMAND = "ON_DEMAND",
   EMERGENCY = "EMERGENCY",
 }

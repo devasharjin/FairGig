@@ -5,6 +5,7 @@ import {
   useWorkerStats,
   useAvailableGigs,
   useWorkerJobs,
+  useWorkerProfile,
 } from "@/features/worker/gigs/hooks";
 import { WorkerMetricCard } from "@/components/worker/common/WorkerMetricCard";
 import { WorkerWelcomeBanner } from "@/components/worker/home/WorkerWelcomeBanner";
@@ -16,6 +17,20 @@ export const WorkerHome: React.FC = () => {
   const { data: stats } = useWorkerStats();
   const { data: availableGigs = [] } = useAvailableGigs();
   const { data: myJobs = [] } = useWorkerJobs();
+  const { data: profile } = useWorkerProfile();
+
+  const registeredSkills = (profile?.skills || profile?.worker?.skills || []) as any[];
+  const registeredSkillIds = registeredSkills
+    .map((s) => (typeof s === "object" ? s?._id : s))
+    .filter(Boolean)
+    .map((id) => id.toString());
+
+  const matchingAvailableGigs = registeredSkillIds.length > 0
+    ? availableGigs.filter((gig) => {
+        const gigServiceId = (gig.service?._id || gig.service)?.toString();
+        return gigServiceId ? registeredSkillIds.includes(gigServiceId) : true;
+      })
+    : availableGigs;
 
   const activeJob = myJobs.find(
     (j) =>
@@ -33,7 +48,7 @@ export const WorkerHome: React.FC = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <WorkerMetricCard
           label="Available Gigs"
-          value={stats?.availableGigs ?? availableGigs.length}
+          value={stats?.availableGigs ?? matchingAvailableGigs.length}
           subtitle="Waiting for pickup"
           icon={Sparkles}
           iconBgClass="bg-amber-500/10"
@@ -70,7 +85,7 @@ export const WorkerHome: React.FC = () => {
         <div className="lg:col-span-2">
           <WorkerPriorityMission
             activeJob={activeJob}
-            topAvailableGig={availableGigs[0]}
+            topAvailableGig={matchingAvailableGigs[0]}
           />
         </div>
         <div>
