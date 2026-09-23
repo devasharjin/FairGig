@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { RotateCcw, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +19,8 @@ export const BookingsHeader: React.FC<BookingsHeaderProps> = ({
   isRefreshing = false,
   className,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div
       className={cn(
@@ -28,7 +31,7 @@ export const BookingsHeader: React.FC<BookingsHeaderProps> = ({
       <div>
         <div className="flex items-center gap-2">
           <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-            My Service Bookings
+            {t("bookings.headerTitle")}
           </h1>
           <Badge
             variant="secondary"
@@ -38,7 +41,7 @@ export const BookingsHeader: React.FC<BookingsHeaderProps> = ({
           </Badge>
         </div>
         <p className="text-sm text-muted-foreground mt-1">
-          Track your scheduled gig requests, assigned cooperative workers, and work progress.
+          {t("bookings.headerDesc")}
         </p>
       </div>
 
@@ -53,7 +56,7 @@ export const BookingsHeader: React.FC<BookingsHeaderProps> = ({
           <RotateCcw
             className={cn("size-3.5", isRefreshing && "animate-spin")}
           />
-          <span>Refresh</span>
+          <span>{t("bookings.refresh")}</span>
         </Button>
 
         <Link to="/services">
@@ -62,7 +65,7 @@ export const BookingsHeader: React.FC<BookingsHeaderProps> = ({
             className="rounded-xl h-9 gap-1.5 cursor-pointer shadow-xs text-xs font-semibold"
           >
             <Sparkles className="size-3.5" />
-            <span>Book Another Service</span>
+            <span>{t("bookings.bookAnotherService", { defaultValue: "Book Another Service" })}</span>
           </Button>
         </Link>
       </div>
@@ -71,3 +74,4 @@ export const BookingsHeader: React.FC<BookingsHeaderProps> = ({
 };
 
 export default BookingsHeader;
+

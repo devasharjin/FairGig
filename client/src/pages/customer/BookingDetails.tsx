@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { ArrowLeft, AlertCircle, RotateCcw } from "lucide-react";
 import {
   useCustomerBooking,
@@ -15,6 +16,7 @@ import { RazorpayPaymentModal } from "@/components/customer/payment";
 import { Button } from "@/components/ui/button";
 
 export const CustomerBookingDetails: React.FC = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -92,11 +94,10 @@ export const CustomerBookingDetails: React.FC = () => {
 
         <div className="space-y-1">
           <h2 className="text-xl font-bold text-foreground">
-            Booking Details Unavailable
+            {t("bookingDetails.errorTitle")}
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            {(error as any)?.message ||
-              "We couldn't locate this gig booking. It may have been removed or you may not have access."}
+            {(error as any)?.message || t("bookingDetails.errorDesc")}
           </p>
         </div>
 
@@ -107,12 +108,12 @@ export const CustomerBookingDetails: React.FC = () => {
             className="rounded-xl h-10 px-4 text-xs font-semibold gap-1.5 cursor-pointer"
           >
             <RotateCcw className="size-3.5" />
-            <span>Try Again</span>
+            <span>{t("bookingDetails.tryAgain")}</span>
           </Button>
 
           <Link to="/bookings">
             <Button className="rounded-xl h-10 px-5 text-xs font-semibold cursor-pointer shadow-xs">
-              <span>Back to My Bookings</span>
+              <span>{t("bookingDetails.backToAll")}</span>
             </Button>
           </Link>
         </div>
@@ -130,11 +131,11 @@ export const CustomerBookingDetails: React.FC = () => {
           className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-foreground transition cursor-pointer bg-card/80 hover:bg-card border border-border/70 py-2 px-3.5 rounded-xl shadow-xs"
         >
           <ArrowLeft className="size-3.5" />
-          <span>Back to All Bookings</span>
+          <span>{t("bookingDetails.backToAll")}</span>
         </button>
 
         <div className="text-xs text-muted-foreground hidden sm:block">
-          Customer Portal • Booking #{booking.bookingNumber}
+          {t("bookingDetails.portalSubtitle", { number: booking.bookingNumber })}
         </div>
       </div>
 

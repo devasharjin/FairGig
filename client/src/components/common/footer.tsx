@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Handshake,
   ShieldCheck,
@@ -17,6 +18,8 @@ import {
 } from "lucide-react";
 
 export const Footer: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <footer className="relative w-full bg-[#0A1624] text-slate-300 overflow-hidden border-t border-slate-800/80 mt-auto select-none">
       {/* Subtle Top Gradient Highlight Line */}
@@ -32,11 +35,11 @@ export const Footer: React.FC = () => {
         <div className="flex items-center justify-between text-[11px]">
           <span className="inline-flex items-center gap-1.5 font-medium text-slate-200">
             <ShieldCheck className="size-3.5 text-[#5EEAD4]" />
-            ICA Democratic Principles
+            {t("footer.trustStripPrinciple")}
           </span>
           <span className="inline-flex items-center gap-1.5 font-medium text-emerald-400">
             <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            Live Platform
+            {t("footer.livePlatform")}
           </span>
         </div>
       </div>
@@ -50,19 +53,19 @@ export const Footer: React.FC = () => {
               <div className="flex items-center gap-2.5 flex-wrap">
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#168C83]/15 text-[#5EEAD4] border border-[#168C83]/30 shadow-xs">
                   <ShieldCheck className="size-3 text-[#5EEAD4]" />
-                  ICA Cooperative Principles
+                  {t("footer.trustStripPrinciple")}
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
                   <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  Live Platform Operational
+                  {t("footer.liveOperational")}
                 </span>
               </div>
 
               <h3 className="text-base sm:text-lg font-bold tracking-tight text-white">
-                Empowering Trade Professionals Through Democratic Ownership
+                {t("footer.empoweringHeadline")}
               </h3>
               <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                Zero predatory aggregator deductions, guaranteed floor wages, collective welfare reserve funds, and standardized hourly pricing across India.
+                {t("footer.empoweringDesc")}
               </p>
             </div>
 
@@ -74,7 +77,7 @@ export const Footer: React.FC = () => {
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-[#168C83] to-[#13796F] text-white shadow-md shadow-[#168C83]/25 hover:from-[#13796F] hover:to-[#0F635B] transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                 >
                   <Wrench className="size-3.5" />
-                  <span>Join as Worker</span>
+                  <span>{t("footer.joinWorker")}</span>
                   <ArrowUpRight className="size-3.5 opacity-80" />
                 </button>
               </Link>
@@ -84,7 +87,7 @@ export const Footer: React.FC = () => {
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 h-9 px-4 rounded-xl text-xs font-semibold border border-white/15 bg-white/5 hover:bg-white/10 text-white transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xs cursor-pointer"
                 >
                   <Building2 className="size-3.5" />
-                  <span>Affiliate Co-op</span>
+                  <span>{t("footer.affiliateCoop")}</span>
                   <ArrowUpRight className="size-3.5 opacity-80" />
                 </button>
               </Link>
@@ -108,13 +111,13 @@ export const Footer: React.FC = () => {
                   <span className="text-[#5EEAD4] ml-0.5">gig</span>
                 </span>
                 <span className="text-[10px] text-slate-400 font-medium tracking-normal mt-0.5">
-                  Cooperative Gig Platform
+                  {t("nav.cooperativePlatform")}
                 </span>
               </div>
             </Link>
 
             <p className="text-xs text-slate-400 leading-relaxed max-w-md">
-              India&apos;s multi-stakeholder cooperative network uniting customers, trade professionals, and worker cooperatives for transparent, dignified, middleman-free trade services.
+              {t("footer.platformDesc")}
             </p>
 
             {/* Mobile Contact Quick-Pills */}
@@ -131,7 +134,7 @@ export const Footer: React.FC = () => {
                 className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-slate-200 transition-colors border border-white/10"
               >
                 <Mail className="size-3 text-[#5EEAD4]" />
-                <span>Support</span>
+                <span>{t("footer.support")}</span>
               </a>
               <span className="inline-flex items-center gap-1 text-[11px] text-slate-400 ml-1">
                 <MapPin className="size-3 text-[#5EEAD4]/80" />
@@ -143,7 +146,7 @@ export const Footer: React.FC = () => {
             <div className="hidden sm:block space-y-2 pt-1 text-xs text-slate-400">
               <div className="flex items-start gap-2">
                 <MapPin className="size-3.5 text-[#5EEAD4] shrink-0 mt-0.5" />
-                <span>Cooperative Apex Center, Institutional Area, New Delhi 110001</span>
+                <span>{t("footer.newDelhi")}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="size-3.5 text-[#5EEAD4] shrink-0" />
@@ -151,7 +154,7 @@ export const Footer: React.FC = () => {
                   href="tel:18003247444"
                   className="hover:text-white hover:underline transition-colors font-semibold text-slate-300"
                 >
-                  1800-FAIR-GIG (24/7 Helpline)
+                  {t("footer.helplineTitle")}
                 </a>
               </div>
               <div className="flex items-center gap-2">
@@ -172,7 +175,7 @@ export const Footer: React.FC = () => {
             <div className="space-y-2.5">
               <h4 className="font-bold text-[11px] uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
                 <Globe className="size-3.5 text-[#5EEAD4]" />
-                <span>Portals & Roles</span>
+                <span>{t("footer.portalsAndRoles")}</span>
               </h4>
               <ul className="space-y-1.5 text-xs">
                 <li>
@@ -180,7 +183,7 @@ export const Footer: React.FC = () => {
                     to="/"
                     className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5"
                   >
-                    Customer Marketplace
+                    {t("footer.marketplace")}
                   </Link>
                 </li>
                 <li>
@@ -188,7 +191,7 @@ export const Footer: React.FC = () => {
                     to="/services"
                     className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5"
                   >
-                    All Trade Services
+                    {t("footer.allTradeServices")}
                   </Link>
                 </li>
                 <li>
@@ -196,7 +199,7 @@ export const Footer: React.FC = () => {
                     to="/register/worker"
                     className="text-slate-400 hover:text-[#5EEAD4] hover:translate-x-0.5 transition-all inline-flex items-center gap-1 py-0.5 group"
                   >
-                    <span>Worker Portal</span>
+                    <span>{t("footer.workerPortal")}</span>
                     <ArrowUpRight className="size-3 opacity-60 group-hover:opacity-100 transition-opacity" />
                   </Link>
                 </li>
@@ -205,7 +208,7 @@ export const Footer: React.FC = () => {
                     to="/register/cooperative"
                     className="text-slate-400 hover:text-[#5EEAD4] hover:translate-x-0.5 transition-all inline-flex items-center gap-1 py-0.5 group"
                   >
-                    <span>Cooperative Society</span>
+                    <span>{t("footer.coopSociety")}</span>
                     <ArrowUpRight className="size-3 opacity-60 group-hover:opacity-100 transition-opacity" />
                   </Link>
                 </li>
@@ -214,7 +217,7 @@ export const Footer: React.FC = () => {
                     to="/contact"
                     className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5"
                   >
-                    Help & Contact Us
+                    {t("footer.helpContact")}
                   </Link>
                 </li>
                 <li>
@@ -222,7 +225,7 @@ export const Footer: React.FC = () => {
                     to="/admin"
                     className="text-slate-400 hover:text-[#5EEAD4] hover:translate-x-0.5 transition-all inline-flex items-center gap-1 py-0.5 group"
                   >
-                    <span>Apex Admin</span>
+                    <span>{t("footer.apexAdmin")}</span>
                     <ArrowUpRight className="size-3 opacity-60 group-hover:opacity-100 transition-opacity" />
                   </Link>
                 </li>
@@ -233,7 +236,7 @@ export const Footer: React.FC = () => {
             <div className="space-y-2.5">
               <h4 className="font-bold text-[11px] uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
                 <Wrench className="size-3.5 text-[#5EEAD4]" />
-                <span>Trade Domains</span>
+                <span>{t("footer.tradeDomains")}</span>
               </h4>
               <ul className="space-y-1.5 text-xs">
                 <li>
@@ -241,7 +244,7 @@ export const Footer: React.FC = () => {
                     to="/services?q=Electrical"
                     className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5"
                   >
-                    Electrical & Wiring
+                    {t("footer.electricalWiring")}
                   </Link>
                 </li>
                 <li>
@@ -249,7 +252,7 @@ export const Footer: React.FC = () => {
                     to="/services?q=Plumbing"
                     className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5"
                   >
-                    Plumbing & Pipework
+                    {t("footer.plumbingPipework")}
                   </Link>
                 </li>
                 <li>
@@ -257,7 +260,7 @@ export const Footer: React.FC = () => {
                     to="/services?q=Carpentry"
                     className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5"
                   >
-                    Carpentry & Furniture
+                    {t("footer.carpentryFurniture")}
                   </Link>
                 </li>
                 <li>
@@ -265,7 +268,7 @@ export const Footer: React.FC = () => {
                     to="/services?q=Painting"
                     className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5"
                   >
-                    Wall & Wood Painting
+                    {t("footer.wallWoodPainting")}
                   </Link>
                 </li>
                 <li>
@@ -273,7 +276,7 @@ export const Footer: React.FC = () => {
                     to="/services?priceType=hourly"
                     className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5"
                   >
-                    Hourly Standard Gigs
+                    {t("footer.hourlyGigs")}
                   </Link>
                 </li>
                 <li>
@@ -281,7 +284,7 @@ export const Footer: React.FC = () => {
                     to="/services?priceType=meters"
                     className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5"
                   >
-                    Metered Tariff Jobs
+                    {t("footer.meteredGigs")}
                   </Link>
                 </li>
               </ul>
@@ -291,33 +294,33 @@ export const Footer: React.FC = () => {
             <div className="hidden sm:block space-y-2.5">
               <h4 className="font-bold text-[11px] uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
                 <Landmark className="size-3.5 text-[#5EEAD4]" />
-                <span>Trust & Governance</span>
+                <span>{t("footer.trustGovernance")}</span>
               </h4>
 
               <ul className="space-y-1.5 text-xs">
                 <li>
                   <span className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5 cursor-pointer">
-                    Fair Floor Wage Standards
+                    {t("footer.floorWageStandards")}
                   </span>
                 </li>
                 <li>
                   <span className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5 cursor-pointer">
-                    Dispute Ombudsman Protocol
+                    {t("footer.ombudsmanProtocol")}
                   </span>
                 </li>
                 <li>
                   <span className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5 cursor-pointer">
-                    Trade Guild Certification
+                    {t("footer.guildCert")}
                   </span>
                 </li>
                 <li>
                   <span className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5 cursor-pointer">
-                    Welfare Fund Transparency
+                    {t("footer.welfareFundTrans")}
                   </span>
                 </li>
                 <li>
                   <span className="text-slate-400 hover:text-white hover:translate-x-0.5 transition-all block py-0.5 cursor-pointer">
-                    Democratic General Assembly
+                    {t("footer.genAssembly")}
                   </span>
                 </li>
               </ul>
@@ -330,29 +333,29 @@ export const Footer: React.FC = () => {
       <div className="border-t border-white/[0.07] py-3 sm:py-3.5 px-4 sm:px-6 lg:px-8 bg-black/20">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5 text-center sm:text-left text-xs text-slate-400">
           <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-[11px] sm:text-xs">
-            <span>&copy; {new Date().getFullYear()} FairGig Cooperative Platform.</span>
+            <span>&copy; {new Date().getFullYear()} {t("footer.copyright")}</span>
             <span className="hidden sm:inline text-slate-600">&bull;</span>
             <span className="inline-flex items-center gap-1 text-slate-400">
-              Built with <Heart className="size-3 text-rose-500 fill-rose-500 inline" /> for Indian trade workers
+              {t("footer.builtWithLove")} <Heart className="size-3 text-rose-500 fill-rose-500 inline ml-1" />
             </span>
           </div>
 
           {/* Legal links */}
           <div className="flex items-center gap-3 sm:gap-4 flex-wrap justify-center text-[11px] sm:text-xs font-medium">
             <span className="hover:text-white hover:underline transition-colors cursor-pointer">
-              Privacy
+              {t("footer.privacy")}
             </span>
             <span className="text-slate-600">&bull;</span>
             <span className="hover:text-white hover:underline transition-colors cursor-pointer">
-              Terms
+              {t("footer.terms")}
             </span>
             <span className="text-slate-600">&bull;</span>
             <span className="hover:text-white hover:underline transition-colors cursor-pointer">
-              Tariffs
+              {t("footer.tariffs")}
             </span>
             <span className="text-slate-600">&bull;</span>
             <span className="hover:text-white hover:underline transition-colors cursor-pointer">
-              Bylaws
+              {t("footer.bylaws")}
             </span>
           </div>
         </div>

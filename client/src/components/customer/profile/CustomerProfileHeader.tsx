@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   ShieldCheck,
   Mail,
@@ -29,12 +30,13 @@ export const CustomerProfileHeader: React.FC<CustomerProfileHeaderProps> = ({
   address,
   onOpenEdit,
 }) => {
+  const { t, i18n } = useTranslation();
   const memberSinceYear = user?.createdAt
-    ? new Date(user.createdAt).toLocaleDateString(undefined, {
+    ? new Date(user.createdAt).toLocaleDateString(i18n.language || undefined, {
         month: "short",
         year: "numeric",
       })
-    : "Member";
+    : t("profile.header.member");
 
   const userInitial = user?.name ? user.name.charAt(0).toUpperCase() : "C";
 
@@ -54,7 +56,7 @@ export const CustomerProfileHeader: React.FC<CustomerProfileHeaderProps> = ({
                 className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-xs font-semibold gap-1.5"
               >
                 <ShieldCheck className="size-3.5 text-emerald-500" />
-                Verified Customer
+                {t("profile.header.verifiedCustomer", { defaultValue: t("profile.verifiedCustomer") })}
               </Badge>
 
               <Badge
@@ -62,12 +64,12 @@ export const CustomerProfileHeader: React.FC<CustomerProfileHeaderProps> = ({
                 className="bg-primary/10 text-primary border-primary/30 text-xs font-semibold gap-1"
               >
                 <Sparkles className="size-3" />
-                Cooperative Patron
+                {t("profile.header.cooperativePatron", { defaultValue: t("profile.coopPatron") })}
               </Badge>
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-              {user?.name || "Customer Profile"}
+              {user?.name || t("profile.header.customerProfile", { defaultValue: t("profile.customerProfile") })}
             </h1>
 
             <div className="text-xs sm:text-sm text-muted-foreground flex flex-wrap items-center gap-y-1.5 gap-x-4">
@@ -95,7 +97,7 @@ export const CustomerProfileHeader: React.FC<CustomerProfileHeaderProps> = ({
 
               <span className="flex items-center gap-1.5">
                 <Calendar className="size-3.5 text-muted-foreground shrink-0" />
-                <span>Joined {memberSinceYear}</span>
+                <span>{t("profile.header.joined", { date: memberSinceYear, defaultValue: t("profile.joined", { date: memberSinceYear }) })}</span>
               </span>
             </div>
           </div>
@@ -108,7 +110,13 @@ export const CustomerProfileHeader: React.FC<CustomerProfileHeaderProps> = ({
             className="rounded-2xl h-11 px-5 text-sm font-semibold shadow-xs gap-2 cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90 transition-all"
           >
             <Edit3 className="size-4" />
-            <span>Edit Profile</span>
+            <span>
+              {t("profile.header.editProfile", {
+                defaultValue: t("profile.header.editprofile", {
+                  defaultValue: t("profile.editProfileBtn"),
+                }),
+              })}
+            </span>
           </Button>
         </div>
       </div>

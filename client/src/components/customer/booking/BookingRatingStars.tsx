@@ -26,6 +26,26 @@ export const getStarLabel = (stars: number): string => {
   }
 };
 
+export const getLocalizedStarLabel = (
+  stars: number,
+  t: (key: string, options?: any) => string
+): string => {
+  switch (stars) {
+    case 1:
+      return t("bookings.stars.poor", { defaultValue: "Poor" });
+    case 2:
+      return t("bookings.stars.fair", { defaultValue: "Fair" });
+    case 3:
+      return t("bookings.stars.good", { defaultValue: "Good" });
+    case 4:
+      return t("bookings.stars.veryGood", { defaultValue: "Very Good" });
+    case 5:
+      return t("bookings.stars.exceptional", { defaultValue: "Exceptional" });
+    default:
+      return "";
+  }
+};
+
 export const BookingRatingStars: React.FC<BookingRatingStarsProps> = ({
   rating,
   maxStars = 5,

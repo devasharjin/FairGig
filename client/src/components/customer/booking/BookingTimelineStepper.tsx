@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Check, Clock, PlayCircle, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CustomerBooking } from "@/features/customer/bookings/types";
@@ -18,10 +19,10 @@ interface StepItem {
   isCancelled?: boolean;
 }
 
-const formatStepDate = (dateStr?: string) => {
+const formatStepDate = (dateStr?: string, lang?: string) => {
   if (!dateStr) return undefined;
   try {
-    return new Date(dateStr).toLocaleString("en-US", {
+    return new Date(dateStr).toLocaleString(lang || "en-US", {
       month: "short",
       day: "numeric",
       hour: "numeric",
@@ -37,6 +38,7 @@ export const BookingTimelineStepper: React.FC<BookingTimelineStepperProps> = ({
   booking,
   className,
 }) => {
+  const { t, i18n } = useTranslation();
   const isCancelled = booking.status === "CANCELLED" || booking.status === "REJECTED";
   const isCompleted = booking.status === "COMPLETED";
   const isInProgress = booking.status === "IN_PROGRESS";
@@ -45,41 +47,41 @@ export const BookingTimelineStepper: React.FC<BookingTimelineStepperProps> = ({
   const steps: StepItem[] = [
     {
       id: "requested",
-      label: "Requested",
-      description: "Booking dispatched",
-      timestamp: formatStepDate(booking.createdAt),
+      label: t("bookingDetails.timeline.requested"),
+      description: t("bookingDetails.timeline.requestedDesc"),
+      timestamp: formatStepDate(booking.createdAt, i18n.language),
       isCompleted: true,
       isCurrent: !isAssigned && !isCancelled,
     },
     {
       id: "assigned",
-      label: "Worker Assigned",
+      label: t("bookingDetails.timeline.workerAssigned"),
       description: booking.worker
-        ? booking.worker.userId?.name || "Trade Worker"
-        : "Awaiting acceptance",
-      timestamp: formatStepDate(booking.assignedAt),
+        ? booking.worker.userId?.name || t("bookingDetails.timeline.workerAssigned")
+        : t("bookingDetails.timeline.awaitingAcceptance"),
+      timestamp: formatStepDate(booking.assignedAt, i18n.language),
       isCompleted: isAssigned && !isCancelled,
       isCurrent: isAssigned && !isInProgress && !isCompleted && !isCancelled,
     },
     {
       id: "started",
-      label: "In Progress",
-      description: booking.startedAt ? "Work commenced" : "Worker en route",
-      timestamp: formatStepDate(booking.startedAt),
+      label: t("bookingDetails.timeline.inProgress"),
+      description: booking.startedAt ? t("bookingDetails.timeline.workCommenced") : t("bookingDetails.timeline.workerEnRoute"),
+      timestamp: formatStepDate(booking.startedAt, i18n.language),
       isCompleted: (Boolean(booking.startedAt) || isCompleted) && !isCancelled,
       isCurrent: isInProgress && !isCancelled,
     },
     {
       id: "finished",
-      label: isCancelled ? "Cancelled" : "Completed",
+      label: isCancelled ? t("bookingDetails.timeline.cancelled") : t("bookingDetails.timeline.completed"),
       description: isCancelled
-        ? booking.cancellationReason || "Request was cancelled"
+        ? booking.cancellationReason || t("bookingDetails.timeline.requestCancelled")
         : isCompleted
-        ? "Job fulfilled & approved"
-        : "Final verification",
+        ? t("bookingDetails.timeline.jobFulfilled")
+        : t("bookingDetails.timeline.finalVerification"),
       timestamp: isCancelled
-        ? formatStepDate(booking.cancelledAt)
-        : formatStepDate(booking.completedAt),
+        ? formatStepDate(booking.cancelledAt, i18n.language)
+        : formatStepDate(booking.completedAt, i18n.language),
       isCompleted: isCompleted,
       isCurrent: isCompleted || isCancelled,
       isCancelled: isCancelled,
@@ -96,17 +98,17 @@ export const BookingTimelineStepper: React.FC<BookingTimelineStepperProps> = ({
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-sm sm:text-base font-bold text-foreground">
-            Service Dispatch Timeline
+            {t("bookingDetails.timeline.title")}
           </h3>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Real-time status updates from gig request to fulfillment
+            {t("bookingDetails.timeline.subtitle")}
           </p>
         </div>
 
         {isInProgress && (
           <span className="flex items-center gap-1.5 text-xs font-semibold text-purple-600 dark:text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20">
             <PlayCircle className="size-3.5 animate-pulse text-purple-500" />
-            Live Now
+            {t("bookingDetails.timeline.liveNow")}
           </span>
         )}
       </div>

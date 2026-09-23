@@ -110,14 +110,14 @@ export const SocketNotificationProvider: React.FC<{ children: React.ReactNode }>
       toast.custom(
         (t) => (
           <div
-            className={`flex items-start gap-3 p-4 max-w-md w-full bg-card rounded-2xl shadow-xl border transition-all ${
-              t.visible ? "animate-in fade-in slide-in-from-top-4" : "animate-out fade-out slide-out-to-top-4"
+            className={`pointer-events-auto flex items-start gap-3.5 p-4 max-w-md w-full bg-card/95 text-card-foreground rounded-xl shadow-xl border backdrop-blur-md transition-all duration-300 select-none ${
+              t.visible ? "translate-y-0 opacity-100 scale-100" : "-translate-y-2 opacity-0 scale-95 pointer-events-none"
             } ${
               isCompleted
-                ? "border-emerald-500/40 shadow-emerald-500/10"
+                ? "border-border/80 border-l-[3.5px] border-l-emerald-500 shadow-emerald-500/5"
                 : isStarted
-                ? "border-blue-500/40 shadow-blue-500/10"
-                : "border-primary/40 shadow-primary/10"
+                ? "border-border/80 border-l-[3.5px] border-l-blue-500 shadow-blue-500/5"
+                : "border-border/80 border-l-[3.5px] border-l-primary shadow-primary/5"
             }`}
           >
             {/* Status Icon */}
@@ -233,8 +233,8 @@ export const SocketNotificationProvider: React.FC<{ children: React.ReactNode }>
       toast.custom(
         (t) => (
           <div
-            className={`flex items-start gap-3 p-4 max-w-md w-full bg-rose-950 text-white rounded-2xl shadow-2xl border-2 border-rose-500 transition-all ${
-              t.visible ? "animate-in fade-in slide-in-from-top-4" : "animate-out fade-out slide-out-to-top-4"
+            className={`pointer-events-auto flex items-start gap-3.5 p-4 max-w-md w-full bg-rose-950/95 text-white rounded-xl shadow-2xl border border-rose-500/40 border-l-[3.5px] border-l-rose-500 backdrop-blur-md transition-all duration-300 select-none ${
+              t.visible ? "translate-y-0 opacity-100 scale-100" : "-translate-y-2 opacity-0 scale-95 pointer-events-none"
             }`}
           >
             {/* Siren Icon */}

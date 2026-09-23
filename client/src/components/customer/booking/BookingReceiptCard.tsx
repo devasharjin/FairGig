@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   Receipt,
   CheckCircle2,
@@ -27,6 +28,7 @@ export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
   onPay,
   className,
 }) => {
+  const { t, i18n } = useTranslation();
   const isCompleted = booking.status === "COMPLETED";
   const isPaid = booking.paymentStatus === "PAID";
   const pricing = booking.pricing;
@@ -40,7 +42,7 @@ export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
             className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 gap-1 text-[11px] font-semibold"
           >
             <CheckCircle2 className="size-3 text-emerald-500" />
-            Paid & Settled
+            {t("bookingDetails.receiptCard.paidSettled")}
           </Badge>
         );
       case "FAILED":
@@ -50,7 +52,7 @@ export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
             className="bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30 gap-1 text-[11px] font-semibold"
           >
             <AlertCircle className="size-3 text-rose-500" />
-            Payment Failed
+            {t("bookingDetails.receiptCard.paymentFailed")}
           </Badge>
         );
       case "REFUNDED":
@@ -59,7 +61,7 @@ export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
             variant="outline"
             className="bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30 gap-1 text-[11px] font-semibold"
           >
-            Refunded
+            {t("bookingDetails.receiptCard.refunded")}
           </Badge>
         );
       case "PENDING":
@@ -69,17 +71,16 @@ export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
             variant="outline"
             className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 gap-1 text-[11px] font-semibold"
           >
-            <Clock className="size-3 text-amber-500" />
-            {isCompleted ? "Payment Due" : "Payment Upon Completion"}
+            
           </Badge>
         );
     }
   };
 
   const formatTimestamp = (dateStr?: string) => {
-    if (!dateStr) return "Pending";
+    if (!dateStr) return t("bookingDetails.receiptCard.pending");
     try {
-      return new Date(dateStr).toLocaleString("en-IN", {
+      return new Date(dateStr).toLocaleString(i18n.language || "en-IN", {
         month: "short",
         day: "numeric",
         hour: "numeric",
@@ -113,6 +114,10 @@ export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
     pricing?.additionalHoursCharge ?? Math.max(0, (billableHours - 1) * additionalHourRate);
   const serviceAmount = pricing?.serviceAmount ?? (firstHourCharge + additionalHoursCharge);
 
+  const serviceName = booking.service?.name
+    ? t("services.trades." + booking.service.name.toLowerCase().replace(/\s+/g, "_"), { defaultValue: booking.service.name })
+    : t("bookingDetails.receiptCard.standardGigService");
+
   return (
     <div
       className={cn(
@@ -125,7 +130,7 @@ export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
         <div className="flex items-center gap-2">
           <Receipt className="size-4 text-primary" />
           <h3 className="text-sm sm:text-base font-bold text-foreground">
-            {isCompleted ? "Final Settled Invoice" : "Estimated Pricing Breakdown"}
+            {isCompleted ? t("bookingDetails.receiptCard.finalSettledInvoice") : t("bookingDetails.receiptCard.estimatedPricingBreakdown")}
           </h3>
         </div>
         <div className="flex items-center gap-2">
@@ -138,7 +143,7 @@ export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
                 : "bg-muted text-muted-foreground"
             )}
           >
-            {isCompleted ? "Final Invoice" : "Estimated Amount"}
+            {isCompleted ? t("bookingDetails.receiptCard.finalInvoice") : t("bookingDetails.receiptCard.estimatedAmount")}
           </Badge>
           {getPaymentBadge(booking.paymentStatus)}
         </div>
@@ -147,9 +152,9 @@ export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
       <div className="space-y-3 text-xs">
         {/* Service Name */}
         <div className="flex justify-between items-center py-2 border-b border-border/50">
-          <span className="text-muted-foreground">Trade Service</span>
+          <span className="text-muted-foreground">{t("bookingDetails.receiptCard.tradeService")}</span>
           <span className="font-semibold text-foreground text-right">
-            {booking.service?.name || "Standard Gig Service"}
+            {serviceName}
           </span>
         </div>
 
@@ -157,7 +162,7 @@ export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
         {booking.worker?.userId?.name && (
           <div className="flex justify-between items-center py-1">
             <span className="text-muted-foreground flex items-center gap-1">
-              <User className="size-3 text-primary" /> Assigned Worker
+              <User className="size-3 text-primary" /> {t("bookingDetails.receiptCard.assignedWorker")}
             </span>
             <span className="font-semibold text-foreground">
               {booking.worker.userId.name}
@@ -170,7 +175,7 @@ export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
           <div className="p-3 rounded-2xl bg-muted/30 border border-border/60 space-y-2 text-[11px]">
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground flex items-center gap-1">
-                <Calendar className="size-3 text-primary" /> Work Start Time:
+                <Calendar className="size-3 text-primary" /> {t("bookingDetails.receiptCard.workStartTime")}
               </span>
               <span className="font-medium text-foreground">
                 {formatTimestamp(booking.startedAt)}
@@ -179,7 +184,7 @@ export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
 
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground flex items-center gap-1">
-                <Clock className="size-3 text-emerald-500" /> Work Completion:
+                <Clock className="size-3 text-emerald-500" /> {t("bookingDetails.receiptCard.workCompletion")}
               </span>
               <span className="font-medium text-foreground">
                 {formatTimestamp(booking.completedAt)}
@@ -188,17 +193,17 @@ export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
 
             <div className="flex justify-between items-center pt-1 border-t border-border/40">
               <span className="text-muted-foreground flex items-center gap-1">
-                <Hourglass className="size-3 text-primary" /> Actual Working Duration:
+                <Hourglass className="size-3 text-primary" /> {t("bookingDetails.receiptCard.actualWorkingDuration")}
               </span>
               <span className="font-bold text-foreground">
-                {actualDurationMinutes} mins
+                {actualDurationMinutes} {t("bookingDetails.receiptCard.mins")}
               </span>
             </div>
 
             <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Rounded Billable Hours:</span>
+              <span className="text-muted-foreground">{t("bookingDetails.receiptCard.roundedBillableHours")}</span>
               <span className="font-extrabold text-primary">
-                {billableHours} hour{billableHours === 1 ? "" : "s"} (Ceiling Rule)
+                {t("bookingDetails.receiptCard.hoursCeilingRule", { count: billableHours })}
               </span>
             </div>
           </div>
@@ -207,35 +212,35 @@ export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
         {/* Charges Breakdown */}
         <div className="space-y-1.5 pt-1">
           <div className="flex justify-between items-center py-1">
-            <span className="text-muted-foreground">First Hour Charge (≤ 60 mins):</span>
+            <span className="text-muted-foreground">{t("bookingDetails.receiptCard.firstHourCharge")}</span>
             <span className="font-semibold text-foreground">₹{firstHourCharge}</span>
           </div>
 
           {billableHours > 1 && (
             <div className="flex justify-between items-center py-1">
               <span className="text-muted-foreground">
-                Additional Hours Charge ({billableHours - 1} × ₹{additionalHourRate}):
+                {t("bookingDetails.receiptCard.additionalHoursCharge", { hours: billableHours - 1, rate: additionalHourRate })}
               </span>
               <span className="font-semibold text-foreground">₹{additionalHoursCharge}</span>
             </div>
           )}
 
           <div className="flex justify-between items-center py-1 font-medium">
-            <span className="text-foreground">Total Service Amount:</span>
+            <span className="text-foreground">{t("bookingDetails.receiptCard.totalServiceAmount")}</span>
             <span className="text-foreground font-bold">₹{serviceAmount}</span>
           </div>
 
           <div className="flex justify-between items-center py-1">
             <span className="text-muted-foreground flex items-center gap-1">
-              <Truck className="size-3.5 text-primary" /> Fixed Transport Fee:
+              <Truck className="size-3.5 text-primary" /> {t("bookingDetails.receiptCard.fixedTransportFee")}
             </span>
             <span className="font-semibold text-foreground">₹{transportFee}</span>
           </div>
 
           <div className="flex justify-between items-center py-1 text-[11px] text-muted-foreground">
-            <span>Cooperative Platform Allocations:</span>
+            <span>{t("bookingDetails.receiptCard.cooperativeAllocations")}</span>
             <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
-              Included in Service Amount (No Extra Charge)
+              {t("bookingDetails.receiptCard.includedInService")}
             </span>
           </div>
         </div>
@@ -244,12 +249,12 @@ export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
         <div className="pt-3 border-t border-border flex justify-between items-baseline">
           <div>
             <span className="text-sm font-extrabold text-foreground block">
-              {isCompleted ? "Final Customer Payable Amount" : "Estimated Initial Total"}
+              {isCompleted ? t("bookingDetails.receiptCard.finalPayableAmount") : t("bookingDetails.receiptCard.estimatedInitialTotal")}
             </span>
             <span className="text-[11px] text-muted-foreground">
               {isCompleted
-                ? "Final billed total inclusive of transport"
-                : "Initial estimate for 1st billable hour + transport"}
+                ? t("bookingDetails.receiptCard.finalBilledTotal")
+                : t("bookingDetails.receiptCard.initialEstimate")}
             </span>
           </div>
           <span className="text-xl sm:text-2xl font-black text-primary tracking-tight">
@@ -266,7 +271,7 @@ export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
               className="w-full rounded-xl h-11 text-xs font-bold gap-2 cursor-pointer shadow-sm bg-emerald-600 hover:bg-emerald-700 text-white"
             >
               <CreditCard className="size-4" />
-              <span>Pay Final Bill ₹{booking.totalAmount} with Razorpay</span>
+              <span>{t("bookingDetails.receiptCard.payFinalBill", { amount: booking.totalAmount })}</span>
             </Button>
           </div>
         )}
@@ -278,11 +283,11 @@ export const BookingReceiptCard: React.FC<BookingReceiptCardProps> = ({
         <div>
           {isCompleted ? (
             <span>
-              <strong>Final Bill Settled:</strong> This invoice was calculated from verified on-site timestamps. Thank you for supporting the worker cooperative.
+              <strong>{t("bookingDetails.receiptCard.finalInvoice")}:</strong> {t("bookingDetails.receiptCard.finalSettledNotice")}
             </span>
           ) : (
             <span>
-              <strong>Estimated Price Notice:</strong> The final payable amount will be determined by actual on-site working duration using the ceiling rule (Math.ceil(minutes / 60)).
+              <strong>{t("bookingDetails.receiptCard.estimatedAmount")}:</strong> {t("bookingDetails.receiptCard.estimatedNotice")}
             </span>
           )}
         </div>

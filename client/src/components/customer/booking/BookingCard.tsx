@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Calendar,
   MapPin,
@@ -36,6 +37,8 @@ export const BookingCard: React.FC<BookingCardProps> = ({
   onPay,
   className,
 }) => {
+  const { t } = useTranslation();
+
   const isPendingOrConfirmed =
     booking.status === "PENDING" ||
     booking.status === "CONFIRMED" ||
@@ -47,7 +50,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
   // Ratings and reviews are unlocked only after the booking is completed and paid
   const canRate = isCompleted && isPaid && !booking.isRated;
 
-  let formattedDate = "Immediate Dispatch";
+  let formattedDate = t("bookings.immediateDispatch");
   try {
     if (booking.scheduledDate) {
       formattedDate = new Date(booking.scheduledDate).toLocaleString("en-US", {
@@ -82,7 +85,9 @@ export const BookingCard: React.FC<BookingCardProps> = ({
               className="hover:text-primary transition-colors block"
             >
               <h2 className="text-base sm:text-lg font-bold text-foreground mt-0.5 hover:text-primary transition-colors">
-                {booking.service?.name || "Gig Service"}
+                {booking.service?.name
+                  ? t(`services.trades.${booking.service.name.toLowerCase().replace(/\s+/g, "_")}`, { defaultValue: booking.service.name })
+                  : t("bookings.serviceDefault")}
               </h2>
             </Link>
           </div>
@@ -94,12 +99,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
 
         {/* Pricing and Schedule Tag */}
         <div className="flex flex-wrap items-center gap-2 pt-1">
-          <Badge
-            variant="secondary"
-            className="rounded-lg text-xs font-medium py-0.5 px-2"
-          >
-            {booking.category?.name || "Trade Service"}
-          </Badge>
+          
 
           {booking.isEmergency && (
             <Badge
@@ -107,7 +107,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
               className="rounded-lg text-[10px] font-black uppercase tracking-wider py-0.5 px-2 gap-1 animate-pulse"
             >
               <AlertTriangle className="size-3" />
-              <span>🚨 Emergency SOS</span>
+              <span>🚨 {t("bookingDialog.emergency")}</span>
             </Badge>
           )}
 
@@ -117,7 +117,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
               className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 rounded-lg text-[10px] font-bold py-0.5 px-2 gap-1"
             >
               <Crown className="size-3 text-amber-500" />
-              <span>⭐ Premium Specialist</span>
+              <span>⭐ {t("bookingDialog.premium")}</span>
             </Badge>
           )}
 
@@ -131,18 +131,18 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                   : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30"
               )}
             >
-              {isPaid ? "✓ Paid & Settled" : "Payment Due"}
+              {isPaid ? `✓ ${t("bookingDetails.paidSettled")}` : t("bookingDetails.paymentDue")}
             </Badge>
           )}
 
           <div className="flex items-baseline gap-1 text-xs text-foreground font-semibold bg-muted/50 px-2.5 py-1 rounded-lg border border-border/50">
-            <span>Rate:</span>
+            <span>{t("services.benchmarkRate")}:</span>
             <span className="text-primary font-bold">₹{booking.rate}</span>
             <span className="text-muted-foreground font-normal">
               /{booking.priceType === "hourly" ? "hr" : "meter"}
             </span>
             <span className="text-muted-foreground font-normal mx-1">•</span>
-            <span>Total:</span>
+            <span>{t("bookingDetails.total", { defaultValue: "Total" })}:</span>
             <span className="text-foreground font-bold">₹{booking.totalAmount}</span>
           </div>
         </div>
@@ -153,7 +153,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
         <div className="flex items-start gap-2">
           <Calendar className="size-4 text-primary shrink-0 mt-0.5" />
           <div>
-            <span className="font-semibold text-foreground">Scheduled:</span>{" "}
+            <span className="font-semibold text-foreground">{t("bookingDialog.scheduled")}:</span>{" "}
             {formattedDate}
           </div>
         </div>
@@ -161,7 +161,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
         <div className="flex items-start gap-2">
           <MapPin className="size-4 text-primary shrink-0 mt-0.5" />
           <div>
-            <span className="font-semibold text-foreground">Location:</span>{" "}
+            <span className="font-semibold text-foreground">{t("bookingDialog.deliveryAddress")}:</span>{" "}
             {booking.address?.street || "Address provided at booking"}
             {booking.address?.city ? `, ${booking.address.city}` : ""}
           </div>
@@ -187,17 +187,20 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <p className="text-xs sm:text-sm font-bold text-foreground">
-                  {booking.worker.userId?.name || "Assigned Worker"}
+                  {booking.worker.userId?.name || t("bookings.status.workerAssigned")}
                 </p>
                 <span className="flex items-center gap-0.5 text-[11px] font-bold text-amber-500 bg-amber-500/10 px-1.5 py-0.2 rounded-md">
                   <Star className="size-3 fill-amber-500" />
                   {booking.worker.rating > 0
                     ? booking.worker.rating.toFixed(1)
-                    : "New"}
+                    : t("common.new", { defaultValue: "New" })}
                 </span>
               </div>
               <p className="text-[11px] text-muted-foreground">
-                Verified Cooperative Worker • {booking.worker.totalJobsCompleted} jobs completed
+                {t("bookingDetails.verifiedWorkerJobs", {
+                  count: booking.worker.totalJobsCompleted,
+                  defaultValue: `Verified Cooperative Worker • ${booking.worker.totalJobsCompleted} jobs completed`,
+                })}
               </p>
             </div>
           </div>
@@ -216,7 +219,9 @@ export const BookingCard: React.FC<BookingCardProps> = ({
         <div className="p-3 rounded-2xl bg-amber-500/5 border border-amber-500/20 text-xs text-amber-700 dark:text-amber-400 flex items-center gap-2">
           <Clock className="size-4 text-amber-500 shrink-0" />
           <span>
-            Dispatch broadcasted to available verified workers in your cooperative region.
+            {t("bookingDetails.broadcastNotice", {
+              defaultValue: "Dispatch broadcasted to available verified workers in your cooperative region.",
+            })}
           </span>
         </div>
       )}
@@ -225,7 +230,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
       {booking.isRated && booking.rating && (
         <div className="p-3.5 rounded-2xl bg-card border border-border/80 space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-foreground">Your Feedback</span>
+            <span className="text-xs font-semibold text-foreground">{t("bookingDetails.yourFeedback", { defaultValue: "Your Feedback" })}</span>
             <BookingRatingStars rating={booking.rating.rating} />
           </div>
           {booking.rating.review && (
@@ -245,7 +250,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             onClick={() => onViewDetails?.(booking)}
             className="rounded-xl h-9 px-3 text-xs cursor-pointer"
           >
-            View Details
+            {t("bookings.viewDetails")}
           </Button>
         </Link>
 
@@ -256,7 +261,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             onClick={() => onCancel(booking)}
             className="rounded-xl h-9 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive cursor-pointer"
           >
-            Cancel Request
+            {t("bookings.cancelBooking")}
           </Button>
         )}
 
@@ -267,7 +272,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             className="rounded-xl h-9 px-4 text-xs font-bold gap-1.5 cursor-pointer shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white"
           >
             <CreditCard className="size-3.5" />
-            <span>Pay ₹{booking.totalAmount}</span>
+            <span>{t("bookings.payNow")} ₹{booking.totalAmount}</span>
           </Button>
         )}
 
@@ -278,7 +283,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             className="rounded-xl h-9 px-4 text-xs font-semibold gap-1.5 cursor-pointer shadow-xs bg-amber-500 hover:bg-amber-600 text-white"
           >
             <Star className="size-3.5 fill-white" />
-            Rate & Review Worker
+            {t("bookings.rateWorker")}
           </Button>
         )}
 
@@ -288,7 +293,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
             size="sm"
             className="rounded-xl h-9 px-4 text-xs cursor-pointer"
           >
-            Book Again
+            {t("bookings.bookAgain", { defaultValue: "Book Again" })}
           </Button>
         </Link>
       </div>

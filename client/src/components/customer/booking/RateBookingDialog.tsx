@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Star, CreditCard } from "lucide-react";
 import {
   Dialog,
@@ -10,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { CustomerBooking } from "@/features/customer/bookings/types";
-import { getStarLabel } from "./BookingRatingStars";
+import { getLocalizedStarLabel } from "./BookingRatingStars";
 
 export interface RateBookingDialogProps {
   booking: CustomerBooking | null;
@@ -33,6 +34,7 @@ export const RateBookingDialog: React.FC<RateBookingDialogProps> = ({
   onRequestPay,
   isPending = false,
 }) => {
+  const { t } = useTranslation();
   const [selectedStars, setSelectedStars] = useState(5);
   const [hoveredStars, setHoveredStars] = useState<number | null>(null);
   const [reviewText, setReviewText] = useState("");
@@ -65,14 +67,12 @@ export const RateBookingDialog: React.FC<RateBookingDialogProps> = ({
             </div>
             <div>
               <DialogTitle className="text-base font-bold text-foreground">
-                Rate Service & Worker
+                {t("bookings.rateDialogTitle")}
               </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                How was your experience with{" "}
-                <strong>
-                  {booking.worker?.userId?.name || "the gig worker"}
-                </strong>
-                ?
+                {t("bookings.rateDialogSubtitle", {
+                  name: booking.worker?.userId?.name || t("bookings.status.workerAssigned"),
+                })}
               </DialogDescription>
             </div>
           </div>
@@ -85,10 +85,10 @@ export const RateBookingDialog: React.FC<RateBookingDialogProps> = ({
             </div>
             <div className="space-y-1">
               <h3 className="text-base font-bold text-foreground">
-                Payment Required Before Review
+                {t("bookings.payRequiredTitle")}
               </h3>
               <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
-                Cooperative policy requires service invoices to be settled before submitting worker feedback. Please complete the payment of <strong>₹{booking.totalAmount}</strong> to unlock rating.
+                {t("bookings.payRequiredDesc", { amount: booking.totalAmount })}
               </p>
             </div>
             <div className="flex items-center justify-center gap-3 pt-2">
@@ -98,7 +98,7 @@ export const RateBookingDialog: React.FC<RateBookingDialogProps> = ({
                 onClick={() => onOpenChange(false)}
                 className="rounded-xl h-10 px-4 text-xs cursor-pointer"
               >
-                Close
+                {t("common.close")}
               </Button>
 
               {onRequestPay && (
@@ -111,7 +111,7 @@ export const RateBookingDialog: React.FC<RateBookingDialogProps> = ({
                   className="rounded-xl h-10 px-5 text-xs font-bold gap-2 cursor-pointer shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white"
                 >
                   <CreditCard className="size-3.5" />
-                  <span>Pay ₹{booking.totalAmount} with Razorpay</span>
+                  <span>{t("bookings.payWithRazorpay", { amount: booking.totalAmount })}</span>
                 </Button>
               )}
             </div>
@@ -149,7 +149,7 @@ export const RateBookingDialog: React.FC<RateBookingDialogProps> = ({
                 })}
               </div>
               <span className="text-xs font-bold text-foreground">
-                {getStarLabel(activeScore)} ({activeScore} / 5)
+                {getLocalizedStarLabel(activeScore, t)} ({activeScore} / 5)
               </span>
             </div>
 
@@ -159,12 +159,12 @@ export const RateBookingDialog: React.FC<RateBookingDialogProps> = ({
                 htmlFor="review-comment"
                 className="text-xs font-semibold text-foreground"
               >
-                Written Review (Optional)
+                {t("bookings.writtenReviewLabel")}
               </label>
               <textarea
                 id="review-comment"
                 rows={3}
-                placeholder="Share details about the punctuality, work quality, professionalism..."
+                placeholder={t("bookings.writtenReviewPlaceholder")}
                 value={reviewText}
                 onChange={(e) => setReviewText(e.target.value)}
                 className="w-full px-3 py-2 rounded-2xl border border-input bg-input/20 text-xs sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition resize-none"
@@ -179,14 +179,14 @@ export const RateBookingDialog: React.FC<RateBookingDialogProps> = ({
                 disabled={isPending}
                 className="h-10 px-4 rounded-xl text-xs sm:text-sm cursor-pointer"
               >
-                Skip / Later
+                {t("bookings.skipLater")}
               </Button>
               <Button
                 type="submit"
                 disabled={isPending}
                 className="h-10 px-5 rounded-xl text-xs sm:text-sm font-semibold cursor-pointer shadow-sm bg-primary text-primary-foreground"
               >
-                {isPending ? "Submitting..." : "Submit Rating"}
+                {isPending ? t("bookings.submittingRating") : t("bookings.submitRating")}
               </Button>
             </div>
           </form>

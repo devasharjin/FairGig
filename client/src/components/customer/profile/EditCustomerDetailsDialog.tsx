@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -31,6 +32,7 @@ export const EditCustomerDetailsDialog: React.FC<EditCustomerDetailsDialogProps>
   onSubmit,
   isPending = false,
 }) => {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
 
@@ -45,12 +47,12 @@ export const EditCustomerDetailsDialog: React.FC<EditCustomerDetailsDialogProps>
     e.preventDefault();
 
     if (!name.trim() || name.trim().length < 2) {
-      toast.error("Name must contain at least 2 characters");
+      toast.error(t("profile.editDetailsModal.nameError"));
       return;
     }
 
     if (!phone.trim()) {
-      toast.error("Phone number is required");
+      toast.error(t("profile.editDetailsModal.phoneError"));
       return;
     }
 
@@ -70,10 +72,10 @@ export const EditCustomerDetailsDialog: React.FC<EditCustomerDetailsDialogProps>
             </div>
             <div>
               <DialogTitle className="text-lg font-bold text-foreground">
-                Edit Personal Details
+                {t("profile.editDetailsModal.title")}
               </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground">
-                Update your contact information for bookings and dispatch
+                {t("profile.editDetailsModal.subtitle")}
               </DialogDescription>
             </div>
           </div>
@@ -84,7 +86,7 @@ export const EditCustomerDetailsDialog: React.FC<EditCustomerDetailsDialogProps>
           <div className="space-y-1.5">
             <Label className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
               <Mail className="size-3.5 text-muted-foreground" />
-              <span>Email Address</span>
+              <span>{t("profile.editDetailsModal.emailLabel")}</span>
             </Label>
             <Input
               value={initialData?.email || ""}
@@ -92,7 +94,7 @@ export const EditCustomerDetailsDialog: React.FC<EditCustomerDetailsDialogProps>
               className="rounded-xl h-10 bg-muted/50 border-border/50 text-muted-foreground text-xs cursor-not-allowed"
             />
             <p className="text-[11px] text-muted-foreground">
-              Email address is linked to authentication credentials and cannot be modified.
+              {t("profile.editDetailsModal.emailNotice")}
             </p>
           </div>
 
@@ -100,12 +102,12 @@ export const EditCustomerDetailsDialog: React.FC<EditCustomerDetailsDialogProps>
           <div className="space-y-1.5">
             <Label htmlFor="customer-name" className="text-xs font-semibold text-foreground flex items-center gap-1.5">
               <User className="size-3.5 text-primary" />
-              <span>Full Name</span>
+              <span>{t("profile.editDetailsModal.fullNameLabel")}</span>
               <span className="text-destructive">*</span>
             </Label>
             <Input
               id="customer-name"
-              placeholder="e.g. Rahul Sharma"
+              placeholder={t("profile.editDetailsModal.namePlaceholder")}
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="rounded-xl h-10 border-border/80 text-sm focus-visible:ring-primary"
@@ -118,12 +120,12 @@ export const EditCustomerDetailsDialog: React.FC<EditCustomerDetailsDialogProps>
           <div className="space-y-1.5">
             <Label htmlFor="customer-phone" className="text-xs font-semibold text-foreground flex items-center gap-1.5">
               <Phone className="size-3.5 text-primary" />
-              <span>Phone Number</span>
+              <span>{t("profile.editDetailsModal.phoneLabel")}</span>
               <span className="text-destructive">*</span>
             </Label>
             <Input
               id="customer-phone"
-              placeholder="e.g. +91 98765 43210"
+              placeholder={t("profile.editDetailsModal.phonePlaceholder")}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               className="rounded-xl h-10 border-border/80 text-sm focus-visible:ring-primary"
@@ -141,7 +143,7 @@ export const EditCustomerDetailsDialog: React.FC<EditCustomerDetailsDialogProps>
               disabled={isPending}
               className="rounded-xl h-10 px-4 text-xs font-semibold cursor-pointer"
             >
-              Cancel
+              {t("profile.editDetailsModal.cancel")}
             </Button>
             <Button
               type="submit"
@@ -151,12 +153,12 @@ export const EditCustomerDetailsDialog: React.FC<EditCustomerDetailsDialogProps>
               {isPending ? (
                 <>
                   <Loader2 className="size-3.5 animate-spin" />
-                  <span>Saving...</span>
+                  <span>{t("profile.editDetailsModal.saving")}</span>
                 </>
               ) : (
                 <>
                   <Save className="size-3.5" />
-                  <span>Save Changes</span>
+                  <span>{t("profile.editDetailsModal.saveChanges")}</span>
                 </>
               )}
             </Button>

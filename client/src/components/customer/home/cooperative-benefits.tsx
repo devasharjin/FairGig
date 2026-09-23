@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   ShieldCheck,
   Coins,
@@ -9,34 +10,32 @@ import {
 } from "lucide-react";
 
 export const CooperativeBenefits: React.FC = () => {
+  const { t } = useTranslation();
+
   const benefits = [
     {
       icon: Coins,
-      title: "Fair Standardized Pricing",
-      description:
-        "No dynamic surge multipliers or predatory commissions. You pay honest hourly and per-meter rates agreed upon by trade federations.",
-      tag: "Zero Price Gouging",
+      title: t("home.benefits.b1Title"),
+      description: t("home.benefits.b1Desc"),
+      tag: t("home.benefits.b1Tag"),
     },
     {
       icon: ShieldCheck,
-      title: "100% Certified Trade Workers",
-      description:
-        "Technicians are vetted members of registered district cooperatives with documented experience, background checks, and guild endorsements.",
-      tag: "Verified Safety",
+      title: t("home.benefits.b2Title"),
+      description: t("home.benefits.b2Desc"),
+      tag: t("home.benefits.b2Tag"),
     },
     {
       icon: Award,
-      title: "Cooperative Guarantee",
-      description:
-        "Jobs are protected by collective dispute resolution. If work does not meet agreed specifications, the cooperative federation ensures swift rectification.",
-      tag: "Protection Assured",
+      title: t("home.benefits.b3Title"),
+      description: t("home.benefits.b3Desc"),
+      tag: t("home.benefits.b3Tag"),
     },
     {
       icon: Users2,
-      title: "Dignity of Labor & Ownership",
-      description:
-        "Your payment directly supports trade families and cooperative welfare funds instead of enriching offshore venture capital aggregator platforms.",
-      tag: "Social Impact",
+      title: t("home.benefits.b4Title"),
+      description: t("home.benefits.b4Desc"),
+      tag: t("home.benefits.b4Tag"),
     },
   ];
 
@@ -47,14 +46,13 @@ export const CooperativeBenefits: React.FC = () => {
         <div className="text-center space-y-2 max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-accent/10 border border-accent/25 text-accent text-[11px] sm:text-xs font-semibold uppercase tracking-wider">
             <HeartHandshake className="size-3 sm:size-3.5" />
-            <span>The Cooperative Advantage</span>
+            <span>{t("home.benefits.badge")}</span>
           </div>
           <h2 className="text-xl sm:text-3xl font-bold text-foreground tracking-tight">
-            Why Customers & Workers Trust FairGig
+            {t("home.benefits.title")}
           </h2>
           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            By shifting governance from corporate platform middlemen to registered worker cooperatives,
-            we deliver better service quality at democratic, standardized rates.
+            {t("home.benefits.desc")}
           </p>
         </div>
 
@@ -90,7 +88,7 @@ export const CooperativeBenefits: React.FC = () => {
 
                 <div className="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-border/40 flex items-center gap-1.5 text-[10px] sm:text-xs font-semibold text-foreground/80">
                   <CheckCircle2 className="size-3 sm:size-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                  <span className="truncate">Verified Standard</span>
+                  <span className="truncate">{t("home.benefits.verifiedStandard")}</span>
                 </div>
               </div>
             );
@@ -100,3 +98,4 @@ export const CooperativeBenefits: React.FC = () => {
     </section>
   );
 };
+

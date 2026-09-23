@@ -252,3 +252,25 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgba(100, 116, 139, 0.45);
 }
+
+/* ═══════════════════════════════════════════════
+   CLEAN TOAST NOTIFICATIONS
+   ═══════════════════════════════════════════════ */
+@keyframes toastProgress {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+.toast-progress-bar {
+    animation-name: toastProgress;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+
+.toast-item:hover .toast-progress-bar {
+    animation-play-state: paused;
+}

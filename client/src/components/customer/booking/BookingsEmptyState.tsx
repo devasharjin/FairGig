@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Briefcase, ArrowRight, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -18,21 +19,23 @@ export const BookingsEmptyState: React.FC<BookingsEmptyStateProps> = ({
   onClearSearch,
   className,
 }) => {
+  const { t } = useTranslation();
+
   const getMessage = () => {
     if (hasSearchQuery) {
-      return "No bookings matched your search query. Try searching with a different keyword.";
+      return t("bookings.noBookingsDesc");
     }
 
     switch (activeTab) {
       case "ACTIVE":
-        return "You have no active gig requests at the moment. Need trade assistance?";
+        return t("bookings.noBookingsDesc");
       case "COMPLETED":
-        return "You don't have any completed bookings yet. Completed service receipts will appear here.";
+        return t("bookings.noBookingsDesc");
       case "CANCELLED":
-        return "You don't have any cancelled bookings.";
+        return t("bookings.noBookingsDesc");
       case "ALL":
       default:
-        return "You haven't requested any gig services yet. Browse our verified cooperative trades.";
+        return t("bookings.noBookingsDesc");
     }
   };
 
@@ -49,7 +52,7 @@ export const BookingsEmptyState: React.FC<BookingsEmptyStateProps> = ({
 
       <div className="space-y-1">
         <h3 className="text-base font-bold text-foreground">
-          {hasSearchQuery ? "No matching bookings" : "No bookings found"}
+          {t("bookings.noBookingsTitle")}
         </h3>
         <p className="text-xs sm:text-sm text-muted-foreground">{getMessage()}</p>
       </div>
@@ -62,12 +65,12 @@ export const BookingsEmptyState: React.FC<BookingsEmptyStateProps> = ({
             className="rounded-xl h-10 px-4 gap-2 text-xs font-semibold cursor-pointer"
           >
             <RotateCcw className="size-3.5" />
-            <span>Clear Search</span>
+            <span>{t("bookings.clearSearch")}</span>
           </Button>
         ) : (
           <Link to="/services">
             <Button className="rounded-xl h-10 px-5 gap-2 text-xs font-semibold cursor-pointer shadow-xs">
-              <span>Explore Services</span>
+              <span>{t("home.cta.exploreBtn")}</span>
               <ArrowRight className="size-3.5" />
             </Button>
           </Link>
@@ -78,3 +81,4 @@ export const BookingsEmptyState: React.FC<BookingsEmptyStateProps> = ({
 };
 
 export default BookingsEmptyState;
+

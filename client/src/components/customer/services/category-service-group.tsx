@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Briefcase, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ServiceCard } from "./service-card";
@@ -16,7 +17,12 @@ export const CategoryServiceGroup: React.FC<CategoryServiceGroupProps> = ({
   services,
   onBookService,
 }) => {
+  const { t } = useTranslation();
   if (services.length === 0) return null;
+
+  const categoryName = category.name
+    ? t("services.categories." + category.name.toLowerCase().replace(/\s+/g, "_"), { defaultValue: category.name })
+    : category.name;
 
   return (
     <section
@@ -29,7 +35,7 @@ export const CategoryServiceGroup: React.FC<CategoryServiceGroupProps> = ({
   <div className="flex min-w-0 items-center gap-3">
     <div
       className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[#17324D]/10 bg-white text-[#17324D] shadow-sm"
-      title={category.name}
+      title={categoryName}
     >
       {category.icon ? (
         <span
@@ -42,7 +48,7 @@ export const CategoryServiceGroup: React.FC<CategoryServiceGroupProps> = ({
     </div>
 
     <h2 className="text-sm sm:text-base font-bold tracking-tight text-[#172B3A]">
-      {category.name}
+      {categoryName}
     </h2>
   </div>
 
@@ -52,7 +58,7 @@ export const CategoryServiceGroup: React.FC<CategoryServiceGroupProps> = ({
     className="shrink-0 gap-1 rounded-md border border-[#17324D]/10 bg-white px-2 py-1 text-[11px] font-medium text-[#17324D]"
   >
     <Sparkles className="size-3 text-[#168C83]" />
-    {services.length} {services.length === 1 ? "Service" : "Services"}
+    {services.length} {services.length === 1 ? t("services.trades.service", { defaultValue: "Service" }) : t("services.trades.services", { defaultValue: "Services" })}
   </Badge>
 </div>
 

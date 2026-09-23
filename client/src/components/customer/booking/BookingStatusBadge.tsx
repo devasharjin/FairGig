@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   Clock,
   CheckCircle2,
@@ -21,6 +22,8 @@ export const BookingStatusBadge: React.FC<BookingStatusBadgeProps> = ({
   className,
   showIcon = true,
 }) => {
+  const { t } = useTranslation();
+
   switch (status) {
     case "PENDING":
       return (
@@ -32,7 +35,7 @@ export const BookingStatusBadge: React.FC<BookingStatusBadgeProps> = ({
           )}
         >
           {showIcon && <Clock className="size-3.5 animate-spin text-amber-500" />}
-          <span>Awaiting Worker</span>
+          <span>{t("bookings.status.awaitingWorker")}</span>
         </Badge>
       );
     case "ASSIGNED":
@@ -46,7 +49,7 @@ export const BookingStatusBadge: React.FC<BookingStatusBadgeProps> = ({
           )}
         >
           {showIcon && <CheckCircle2 className="size-3.5 text-blue-500" />}
-          <span>Worker Assigned</span>
+          <span>{t("bookings.status.workerAssigned")}</span>
         </Badge>
       );
     case "IN_PROGRESS":
@@ -59,7 +62,7 @@ export const BookingStatusBadge: React.FC<BookingStatusBadgeProps> = ({
           )}
         >
           {showIcon && <PlayCircle className="size-3 text-accent animate-pulse" />}
-          <span>In Progress</span>
+          <span>{t("bookings.status.inProgress")}</span>
         </Badge>
       );
     case "COMPLETED":
@@ -72,7 +75,7 @@ export const BookingStatusBadge: React.FC<BookingStatusBadgeProps> = ({
           )}
         >
           {showIcon && <ShieldCheck className="size-3.5 text-emerald-500" />}
-          <span>Completed</span>
+          <span>{t("bookings.status.completed")}</span>
         </Badge>
       );
     case "CANCELLED":
@@ -86,7 +89,11 @@ export const BookingStatusBadge: React.FC<BookingStatusBadgeProps> = ({
           )}
         >
           {showIcon && <XCircle className="size-3.5 text-rose-500" />}
-          <span>{status === "CANCELLED" ? "Cancelled" : "Rejected"}</span>
+          <span>
+            {status === "CANCELLED"
+              ? t("bookings.status.cancelled")
+              : t("bookings.status.rejected")}
+          </span>
         </Badge>
       );
     default:
@@ -102,3 +109,4 @@ export const BookingStatusBadge: React.FC<BookingStatusBadgeProps> = ({
 };
 
 export default BookingStatusBadge;
+

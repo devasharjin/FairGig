@@ -35,6 +35,7 @@ import { useAuthStore } from "@/features/auth/store";
 import type { CustomerService } from "@/features/customer/services/types";
 import { getSocket } from "@/lib/socket";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 interface EmergencySosModalProps {
   open: boolean;
@@ -45,6 +46,7 @@ export const EmergencySosModal: React.FC<EmergencySosModalProps> = ({
   open,
   onOpenChange,
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const { data: services = [], isLoading: isLoadingServices } = useCustomerServices({ isActive: true });
@@ -170,23 +172,23 @@ export const EmergencySosModal: React.FC<EmergencySosModalProps> = ({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <DialogTitle className="text-sm font-black text-white">
-                    Emergency SOS
+                    {t("emergencyModal.title")}
                   </DialogTitle>
                   <Badge className="bg-white/20 border-0 text-white text-[9px] font-black uppercase tracking-wider py-0 px-1.5">
-                    Priority
+                    {t("emergencyModal.priority")}
                   </Badge>
                 </div>
                 <DialogDescription className="text-[11px] text-rose-100/75 mt-0">
-                  Immediate dispatch · Nearest cooperative responder
+                  {t("emergencyModal.subtitle")}
                 </DialogDescription>
               </div>
               {selectedService && (
                 <div className="text-right shrink-0 relative z-10">
                   <p className="text-[9px] text-rose-200/70 font-medium leading-none mb-0.5">
-                    Est. 1st Hr
+                    {t("emergencyModal.estFirstHr")}
                   </p>
                   <p className="text-xl font-black text-white leading-none">₹{estimatedTotal}</p>
-                  <p className="text-[9px] text-rose-200/60">+20% surge</p>
+                  <p className="text-[9px] text-rose-200/60">{t("emergencyModal.surgeText")}</p>
                 </div>
               )}
             </div>
@@ -201,7 +203,7 @@ export const EmergencySosModal: React.FC<EmergencySosModalProps> = ({
             <div className="flex items-center justify-between">
               <Label className="text-xs font-bold text-foreground flex items-center gap-1.5">
                 <Wrench className="size-3.5 text-rose-500" />
-                <span>Select Service</span>
+                <span>{t("emergencyModal.selectServiceLabel")}</span>
                 <span className="text-rose-500 font-bold">*</span>
               </Label>
               {selectedService && (
@@ -222,10 +224,10 @@ export const EmergencySosModal: React.FC<EmergencySosModalProps> = ({
                 <SelectValue
                   placeholder={
                     isLoadingServices
-                      ? "Loading services..."
+                      ? t("common.loading")
                       : services.length === 0
-                        ? "No services available"
-                        : "Select an emergency service…"
+                        ? t("home.showcase.noServices")
+                        : t("emergencyModal.servicePlaceholder")
                   }
                 >
                   {selectedService ? selectedService.name : undefined}
@@ -266,7 +268,7 @@ export const EmergencySosModal: React.FC<EmergencySosModalProps> = ({
               <div className="flex items-center justify-between">
                 <Label className="text-[11px] font-bold text-foreground flex items-center gap-1">
                   <MapPin className="size-3 text-rose-500" />
-                  Location <span className="text-destructive ml-0.5">*</span>
+                  {t("emergencyModal.locationLabel")} <span className="text-destructive ml-0.5">*</span>
                 </Label>
                 <button
                   type="button"
@@ -275,7 +277,7 @@ export const EmergencySosModal: React.FC<EmergencySosModalProps> = ({
                   className="text-[10px] font-semibold text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-0.5 cursor-pointer"
                 >
                   <Crosshair className={cn("size-2.5", isLocating && "animate-spin")} />
-                  <span>{isLocating ? "Locating..." : "GPS"}</span>
+                  <span>{isLocating ? t("emergencyModal.locating") : t("emergencyModal.gpsButton")}</span>
                 </button>
               </div>
               <Input
@@ -291,7 +293,7 @@ export const EmergencySosModal: React.FC<EmergencySosModalProps> = ({
             <div className="space-y-1.5 col-span-2 sm:col-span-1">
               <Label className="text-[11px] font-bold text-foreground flex items-center gap-1">
                 <Phone className="size-3 text-rose-500" />
-                Contact <span className="text-destructive ml-0.5">*</span>
+                {t("emergencyModal.contactLabel")} <span className="text-destructive ml-0.5">*</span>
               </Label>
               <Input
                 placeholder="e.g. 9876543210"
@@ -305,7 +307,7 @@ export const EmergencySosModal: React.FC<EmergencySosModalProps> = ({
             {/* Access notes */}
             <div className="space-y-1.5 col-span-2">
               <Label className="text-[11px] font-medium text-muted-foreground">
-                Access Notes <span className="opacity-60 font-normal">(optional)</span>
+                {t("emergencyModal.notesLabel")} <span className="opacity-60 font-normal">{t("emergencyModal.optional")}</span>
               </Label>
               <Input
                 placeholder="e.g. Gate code 1234, 3rd floor"
@@ -320,7 +322,7 @@ export const EmergencySosModal: React.FC<EmergencySosModalProps> = ({
           <div className="flex items-center justify-between pt-2 border-t border-border/60">
             <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-muted-foreground">
               <ShieldCheck className="size-3.5 text-rose-500 shrink-0" />
-              <span>Direct Co-op · No Middleman</span>
+              <span>{t("emergencyModal.directCoop")}</span>
             </div>
 
             <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
@@ -332,7 +334,7 @@ export const EmergencySosModal: React.FC<EmergencySosModalProps> = ({
                 disabled={createBooking.isPending}
                 className="h-8 px-3 rounded-lg text-xs cursor-pointer"
               >
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button
                 type="submit"
@@ -343,12 +345,12 @@ export const EmergencySosModal: React.FC<EmergencySosModalProps> = ({
                 {createBooking.isPending ? (
                   <>
                     <Zap className="size-3.5 animate-pulse" />
-                    <span>Broadcasting...</span>
+                    <span>{t("emergencyModal.broadcasting")}</span>
                   </>
                 ) : (
                   <>
                     <AlertTriangle className="size-3.5" />
-                    <span>Broadcast SOS</span>
+                    <span>{t("emergencyModal.broadcastSos")}</span>
                   </>
                 )}
               </Button>

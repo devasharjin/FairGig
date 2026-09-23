@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { LogIn, Grid, Briefcase } from "lucide-react";
 import { useAuthStore } from "@/features/auth/store";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ import {
 import { RazorpayPaymentModal } from "@/components/customer/payment";
 
 export const CustomerBookings: React.FC = () => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<FilterTab>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -140,23 +142,23 @@ export const CustomerBookings: React.FC = () => {
           </div>
           <div className="space-y-2">
             <h2 className="text-xl font-bold text-foreground">
-              Sign In to View Your Bookings
+              {t("bookings.unauthTitle")}
             </h2>
             <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-              Track real-time gig service statuses, contact assigned cooperative specialists, and manage your service orders.
+              {t("bookings.unauthDesc")}
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <Link to="/login" className="w-full sm:w-auto">
               <Button className="w-full sm:w-auto rounded-xl px-5 gap-2 text-xs font-semibold shadow-xs bg-primary text-primary-foreground">
                 <LogIn className="size-3.5" />
-                <span>Log In</span>
+                <span>{t("bookings.signInBtn")}</span>
               </Button>
             </Link>
             <Link to="/services" className="w-full sm:w-auto">
               <Button variant="outline" className="w-full sm:w-auto rounded-xl px-5 gap-2 text-xs font-semibold">
                 <Grid className="size-3.5" />
-                <span>Browse Services</span>
+                <span>{t("bookings.browseBtn")}</span>
               </Button>
             </Link>
           </div>

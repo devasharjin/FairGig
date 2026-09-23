@@ -1,19 +1,20 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Search, X, SlidersHorizontal, Clock, Ruler, RotateCcw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import type { ServicePriceType } from "@/features/customer/services/types";
 
 export const TRADE_FILTER_TAGS = [
-  { label: "All Services", value: "all", icon: "🛠️" },
-  { label: "Plumber", value: "Plumber", icon: "🚰" },
-  { label: "Electrician", value: "Electrician", icon: "⚡" },
-  { label: "Gardener", value: "Gardener", icon: "🌱" },
-  { label: "Carpenter", value: "Carpenter", icon: "🪚" },
-  { label: "Painter", value: "Painter", icon: "🎨" },
-  { label: "House Cleaner", value: "House Cleaner", icon: "🧹" },
-  { label: "Appliance Tech", value: "Appliance", icon: "🔧" },
-  { label: "Mason", value: "Mason", icon: "🧱" },
+  { key: "all", value: "all", icon: "🛠️", fallback: "All Services" },
+  { key: "plumber", value: "Plumber", icon: "🚰", fallback: "Plumber" },
+  { key: "electrician", value: "Electrician", icon: "⚡", fallback: "Electrician" },
+  { key: "gardener", value: "Gardener", icon: "🌱", fallback: "Gardener" },
+  { key: "carpenter", value: "Carpenter", icon: "🪚", fallback: "Carpenter" },
+  { key: "painter", value: "Painter", icon: "🎨", fallback: "Painter" },
+  { key: "house_cleaner", value: "House Cleaner", icon: "🧹", fallback: "House Cleaner" },
+  { key: "appliance_tech", value: "Appliance", icon: "🔧", fallback: "Appliance Tech" },
+  { key: "mason", value: "Mason", icon: "🧱", fallback: "Mason" },
 ];
 
 interface ServiceSearchFilterProps {
@@ -43,6 +44,8 @@ export const ServiceSearchFilter: React.FC<ServiceSearchFilterProps> = ({
   onResetFilters,
   hasActiveFilters,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="space-y-4">
       {/* Search Bar & Pricing Type Segment */}
@@ -53,7 +56,7 @@ export const ServiceSearchFilter: React.FC<ServiceSearchFilterProps> = ({
           <Input
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search verified trade services (e.g. Plumber, Electrician, Gardener)..."
+            placeholder={t("services.searchPlaceholder")}
             className="h-11 pl-10 pr-10 rounded-xl bg-card border border-border/80 text-sm shadow-xs focus-visible:ring-accent/30 focus-visible:border-accent"
           />
           {searchQuery && (
@@ -61,7 +64,7 @@ export const ServiceSearchFilter: React.FC<ServiceSearchFilterProps> = ({
               type="button"
               onClick={() => onSearchChange("")}
               className="absolute right-3 top-1/2 -translate-y-1/2 size-5 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition cursor-pointer"
-              title="Clear search"
+              title={t("common.clear")}
             >
               <X className="size-3.5" />
             </button>
@@ -80,7 +83,7 @@ export const ServiceSearchFilter: React.FC<ServiceSearchFilterProps> = ({
             }`}
           >
             <SlidersHorizontal className="size-3.5" />
-            <span>All Rates</span>
+            <span>{t("services.allRates")}</span>
           </button>
 
           <button
@@ -93,7 +96,7 @@ export const ServiceSearchFilter: React.FC<ServiceSearchFilterProps> = ({
             }`}
           >
             <Clock className="size-3.5" />
-            <span>Hourly</span>
+            <span>{t("services.hourly")}</span>
           </button>
 
           <button
@@ -106,7 +109,7 @@ export const ServiceSearchFilter: React.FC<ServiceSearchFilterProps> = ({
             }`}
           >
             <Ruler className="size-3.5" />
-            <span>Metered</span>
+            <span>{t("services.metered")}</span>
           </button>
         </div>
       </div>
@@ -127,7 +130,7 @@ export const ServiceSearchFilter: React.FC<ServiceSearchFilterProps> = ({
               }`}
             >
               <span className="text-xs">{tag.icon}</span>
-              <span>{tag.label}</span>
+              <span>{t(`services.trades.${tag.key}`, { defaultValue: tag.fallback })}</span>
             </button>
           );
         })}
@@ -136,7 +139,7 @@ export const ServiceSearchFilter: React.FC<ServiceSearchFilterProps> = ({
       {/* Status bar */}
       <div className="flex items-center justify-between text-xs text-muted-foreground px-1 pt-1">
         <span>
-          Showing <strong className="text-foreground font-semibold">{totalServicesCount}</strong> verified services
+          {t("services.showingCount", { count: totalServicesCount })}
         </span>
 
         {hasActiveFilters && (
@@ -147,7 +150,7 @@ export const ServiceSearchFilter: React.FC<ServiceSearchFilterProps> = ({
             className="h-7 text-xs text-primary hover:text-primary/80 gap-1.5 cursor-pointer p-0"
           >
             <RotateCcw className="size-3" />
-            <span>Reset all filters</span>
+            <span>{t("services.resetFilters")}</span>
           </Button>
         )}
       </div>
@@ -156,3 +159,4 @@ export const ServiceSearchFilter: React.FC<ServiceSearchFilterProps> = ({
 };
 
 export default ServiceSearchFilter;
+

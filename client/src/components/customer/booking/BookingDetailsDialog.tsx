@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Phone, Star, ExternalLink, CreditCard, AlertTriangle, Zap, ShieldAlert, PhoneCall, ShieldCheck } from "lucide-react";
 import {
   Dialog,
@@ -31,6 +32,8 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
   onRateBooking,
   onPayBooking,
 }) => {
+  const { t } = useTranslation();
+
   if (!booking) return null;
 
   const canCancel =
@@ -53,21 +56,23 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
             <BookingStatusBadge status={booking.status} />
           </div>
           <DialogTitle className="text-lg font-bold text-foreground">
-            {booking.service?.name || "Gig Service"}
+            {booking.service?.name
+              ? t(`services.trades.${booking.service.name.toLowerCase().replace(/\s+/g, "_")}`, { defaultValue: booking.service.name })
+              : t("bookings.serviceDefault")}
           </DialogTitle>
           <div className="flex items-center gap-2 pt-1 flex-wrap">
             {booking.isEmergency && (
               <Badge variant="destructive" className="text-[10px] uppercase font-black tracking-wider py-0.5 px-2 animate-pulse">
-                🚨 SOS Emergency Dispatch
+                🚨 {t("bookingDialog.emergency")}
               </Badge>
             )}
             {(booking.bookingType === "PREMIUM" || booking.bookingType === "ON_DEMAND") && !booking.isEmergency && (
               <Badge variant="outline" className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 text-[10px] font-bold py-0.5 px-2">
-                ⭐ Premium Specialist Dispatch
+                ⭐ {t("bookingDialog.premium")}
               </Badge>
             )}
             <DialogDescription className="text-xs text-muted-foreground">
-              Trade Category: {booking.category?.name || "Gig Service"}
+              {t("nav.cooperativePlatform")}: {booking.category?.name || t("bookings.serviceDefault")}
             </DialogDescription>
           </div>
         </DialogHeader>
@@ -79,7 +84,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 font-bold text-rose-600 dark:text-rose-400">
                   <AlertTriangle className="size-4 animate-bounce shrink-0" />
-                  <span>Priority Emergency Callout Active</span>
+                  <span>{t("home.emergency.title")}</span>
                 </div>
                 <Badge variant="outline" className="bg-rose-500/20 text-rose-700 dark:text-rose-300 border-rose-500/40 text-[10px] font-black">
                   {booking.urgencyLevel || "CRITICAL"}
@@ -88,7 +93,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
 
               {booking.emergencyDetails?.hazardType && (
                 <div className="text-xs">
-                  <span className="opacity-80">Reported Hazard: </span>
+                  <span className="opacity-80">{t("bookingDialog.hazardDesc")}: </span>
                   <strong className="text-foreground">{booking.emergencyDetails.hazardType}</strong>
                 </div>
               )}
@@ -96,25 +101,25 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
               {booking.emergencyDetails?.immediateContact && (
                 <div className="text-xs flex items-center gap-1.5">
                   <Phone className="size-3 text-rose-500" />
-                  <span className="opacity-80">On-Site Emergency Contact: </span>
+                  <span className="opacity-80">{t("bookingDialog.emergencyContactLabel")}: </span>
                   <strong className="text-foreground">{booking.emergencyDetails.immediateContact}</strong>
                 </div>
               )}
 
               <p className="text-[11px] opacity-90 leading-relaxed pt-1 border-t border-rose-500/20">
                 {booking.worker
-                  ? "✓ Verified responder has been assigned and is navigating to your address."
-                  : "Broadcasting with top priority to online verified responders in your sector. Stand by."}
+                  ? `✓ ${t("bookingDetails.workerTitle")} ${t("bookingDetails.workerEnRoute")}.`
+                  : t("bookingDetails.unassignedWorker")}
               </p>
 
               <div className="pt-2 flex items-center justify-between">
-                <span className="text-[10px] opacity-80">Need instant human assistance?</span>
+                <span className="text-[10px] opacity-80">{t("home.emergency.badge")}</span>
                 <a
                   href="tel:1800123456"
                   className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-600 dark:text-rose-400 hover:underline"
                 >
                   <PhoneCall className="size-3" />
-                  <span>Call Emergency Helpline</span>
+                  <span>{t("home.emergency.hotline")}</span>
                 </a>
               </div>
             </div>
@@ -122,13 +127,13 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
 
           {/* Visual Progress Stepper */}
           <div className="p-4 rounded-2xl bg-muted/30 border border-border/50 space-y-2">
-            <h4 className="font-semibold text-foreground">Service Dispatch Timeline</h4>
+            <h4 className="font-semibold text-foreground">{t("bookingDetails.timelineTitle")}</h4>
             <div className="flex items-center justify-between text-[11px] pt-2">
               <div className="flex flex-col items-center gap-1">
                 <div className="size-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-bold">
                   ✓
                 </div>
-                <span className="text-muted-foreground">Requested</span>
+                <span className="text-muted-foreground">{t("bookingDetails.requestedStep")}</span>
               </div>
 
               <div
@@ -149,7 +154,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
                 >
                   {booking.worker ? "✓" : "2"}
                 </div>
-                <span className="text-muted-foreground">Assigned</span>
+                <span className="text-muted-foreground">{t("bookingDetails.assignedStep")}</span>
               </div>
 
               <div
@@ -170,7 +175,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
                 >
                   {booking.startedAt ? "✓" : "3"}
                 </div>
-                <span className="text-muted-foreground">Started</span>
+                <span className="text-muted-foreground">{t("bookingDetails.startedStep")}</span>
               </div>
 
               <div
@@ -191,7 +196,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
                 >
                   {booking.status === "COMPLETED" ? "✓" : "4"}
                 </div>
-                <span className="text-muted-foreground">Finished</span>
+                <span className="text-muted-foreground">{t("bookingDetails.completedStep")}</span>
               </div>
             </div>
           </div>
@@ -201,13 +206,16 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
             <div className="p-3.5 rounded-2xl bg-primary/5 border border-primary/15 flex items-center justify-between gap-3">
               <div>
                 <span className="text-[11px] text-muted-foreground font-semibold">
-                  Assigned Gig Worker
+                  {t("bookingDetails.workerTitle")}
                 </span>
                 <p className="text-sm font-bold text-foreground mt-0.5">
                   {booking.worker.userId?.name}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {booking.worker.userId?.phone} • {booking.worker.totalJobsCompleted} jobs completed
+                  {booking.worker.userId?.phone} • {t("bookingDetails.verifiedWorkerJobs", {
+                    count: booking.worker.totalJobsCompleted,
+                    defaultValue: `${booking.worker.totalJobsCompleted} jobs completed`,
+                  })}
                 </p>
               </div>
 
@@ -215,7 +223,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
                 <a
                   href={`tel:${booking.worker.userId.phone}`}
                   className="size-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 hover:opacity-90 transition cursor-pointer shadow-xs"
-                  title="Call Worker"
+                  title={t("bookingDetails.callWorker")}
                 >
                   <Phone className="size-4" />
                 </a>
@@ -223,13 +231,13 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
             </div>
           ) : (
             <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400">
-              Awaiting worker acceptance. You will receive real-time notification once a certified trade worker accepts your request.
+              {t("bookingDetails.unassignedWorker")}
             </div>
           )}
 
           {/* Service Address */}
           <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/60 space-y-1">
-            <h4 className="font-semibold text-foreground">Service Location</h4>
+            <h4 className="font-semibold text-foreground">{t("bookingDialog.deliveryAddress")}</h4>
             <p className="text-muted-foreground">
               {booking.address?.street}
               {booking.address?.city ? `, ${booking.address.city}` : ""}
@@ -239,7 +247,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
           {/* Instructions */}
           {booking.customerNotes && (
             <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/60 space-y-1">
-              <h4 className="font-semibold text-foreground">Special Instructions</h4>
+              <h4 className="font-semibold text-foreground">{t("bookingDialog.accessNotes")}</h4>
               <p className="italic text-foreground">"{booking.customerNotes}"</p>
             </div>
           )}
@@ -247,9 +255,9 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
           {/* Cost Breakdown & Receipt */}
           <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/60 space-y-1.5">
             <div className="flex justify-between items-center">
-              <h4 className="font-semibold text-foreground">Pricing & Bill</h4>
+              <h4 className="font-semibold text-foreground">{t("bookingDetails.receiptTitle")}</h4>
               <Badge variant="outline" className="text-[10px] py-0 px-2 font-bold">
-                {isCompleted ? "Final Settled Invoice" : "Estimated Benchmark"}
+                {isCompleted ? t("bookingDetails.paidSettled") : t("services.benchmarkRate")}
               </Badge>
             </div>
 
@@ -263,21 +271,21 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
             )}
 
             <div className="flex justify-between text-muted-foreground">
-              <span>First Hour Rate:</span>
+              <span>{t("bookingDetails.firstHourRate")}:</span>
               <span className="font-medium text-foreground">
                 ₹{booking.pricing?.firstHourRate ?? booking.rate}
               </span>
             </div>
 
             <div className="flex justify-between text-muted-foreground">
-              <span>Additional Hour Rate:</span>
+              <span>{t("services.additionalHour")}:</span>
               <span className="font-medium text-foreground">
                 ₹{booking.pricing?.additionalHourRate ?? booking.rate} / hr
               </span>
             </div>
 
             <div className="flex justify-between text-muted-foreground">
-              <span>Fixed Transport Fee:</span>
+              <span>{t("bookingDetails.transportFee")}:</span>
               <span className="font-medium text-foreground">
                 ₹{booking.pricing?.transportFee ?? 30}
               </span>
@@ -285,7 +293,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
 
             <div className="flex justify-between pt-1 border-t border-border/50 items-baseline">
               <span className="font-bold text-foreground">
-                {isCompleted ? "Final Payable Amount:" : "Estimated Initial Total:"}
+                {t("bookingDetails.totalPayable")}:
               </span>
               <span className="font-extrabold text-primary text-base">
                 ₹{booking.totalAmount}
@@ -298,8 +306,8 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
             <div className="flex items-center gap-2">
               <ShieldCheck className="size-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
               <div>
-                <span className="font-bold text-foreground block">Worker Welfare & Insurance Guarantee</span>
-                <span className="text-[11px] text-muted-foreground">5% of service fee directly supports worker accident, disability, and medical insurance.</span>
+                <span className="font-bold text-foreground block">{t("profile.fairWageTitle")}</span>
+                <span className="text-[11px] text-muted-foreground">{t("profile.fairWageDesc")}</span>
               </div>
             </div>
             <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 shrink-0">
@@ -317,7 +325,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
               className="rounded-xl h-9 text-xs cursor-pointer gap-1.5"
             >
               <ExternalLink className="size-3.5" />
-              <span>Full Details Page</span>
+              <span>{t("bookings.viewDetails")}</span>
             </Button>
           </Link>
 
@@ -328,7 +336,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
               onClick={() => onOpenChange(false)}
               className="rounded-xl h-9 text-xs cursor-pointer"
             >
-              Close
+              {t("common.close")}
             </Button>
 
             {canCancel && onCancelBooking && (
@@ -341,7 +349,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
                 }}
                 className="rounded-xl h-9 px-4 text-xs font-semibold"
               >
-                Cancel Booking
+                {t("bookings.cancelBooking")}
               </Button>
             )}
 
@@ -355,7 +363,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
                 className="rounded-xl h-9 px-4 text-xs font-bold gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs cursor-pointer"
               >
                 <CreditCard className="size-3.5" />
-                <span>Pay ₹{booking.totalAmount}</span>
+                <span>{t("bookings.payNow")} ₹{booking.totalAmount}</span>
               </Button>
             )}
 
@@ -369,7 +377,7 @@ export const BookingDetailsDialog: React.FC<BookingDetailsDialogProps> = ({
                 className="rounded-xl h-9 px-4 text-xs font-semibold bg-amber-500 hover:bg-amber-600 text-white"
               >
                 <Star className="size-3.5 fill-white mr-1" />
-                Rate Worker
+                {t("bookings.rateWorker")}
               </Button>
             )}
           </div>

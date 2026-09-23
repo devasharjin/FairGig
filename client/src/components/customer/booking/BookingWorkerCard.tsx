@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Phone, Mail, Star, ShieldCheck, Radio, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +20,7 @@ export const BookingWorkerCard: React.FC<BookingWorkerCardProps> = ({
   status,
   className,
 }) => {
+  const { t } = useTranslation();
   const isCancelled = status === "CANCELLED" || status === "REJECTED";
 
   if (!worker) {
@@ -45,22 +47,22 @@ export const BookingWorkerCard: React.FC<BookingWorkerCardProps> = ({
             <div className="flex items-center gap-2">
               <h3 className="text-sm sm:text-base font-bold text-foreground">
                 {isCancelled
-                  ? "Dispatch Terminated"
-                  : "Worker Dispatch Broadcasting"}
+                  ? t("bookingDetails.workerCard.dispatchTerminated")
+                  : t("bookingDetails.workerCard.broadcasting")}
               </h3>
               {!isCancelled && (
                 <Badge
                   variant="outline"
                   className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 text-[10px]"
                 >
-                  Searching Nearby
+                  {t("bookingDetails.workerCard.searchingNearby")}
                 </Badge>
               )}
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
               {isCancelled
-                ? "This booking request was cancelled before a worker was dispatched."
-                : "Your gig request has been transmitted to certified cooperative workers in your area. You'll receive instant notification when a worker accepts."}
+                ? t("bookingDetails.workerCard.cancelledDesc")
+                : t("bookingDetails.workerCard.broadcastingDesc")}
             </p>
           </div>
         </div>
@@ -69,9 +71,9 @@ export const BookingWorkerCard: React.FC<BookingWorkerCardProps> = ({
           <div className="pt-2 border-t border-amber-500/20 flex flex-wrap items-center justify-between gap-3 text-[11px] text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <ShieldCheck className="size-3.5 text-emerald-500" />
-              <span>Cooperative Certified & Background Screened</span>
+              <span>{t("bookingDetails.workerCard.screened")}</span>
             </div>
-            <span>Est. Acceptance: 3-5 mins</span>
+            <span>{t("bookingDetails.workerCard.estAcceptance")}</span>
           </div>
         )}
       </div>
@@ -92,14 +94,14 @@ export const BookingWorkerCard: React.FC<BookingWorkerCardProps> = ({
         <div className="flex items-center gap-2">
           <UserCheck className="size-4 text-primary" />
           <h3 className="text-sm sm:text-base font-bold text-foreground">
-            Assigned Service Professional
+            {t("bookingDetails.workerCard.assignedTitle")}
           </h3>
         </div>
         <Badge
           variant="outline"
           className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-[10px] font-semibold"
         >
-          Verified Partner
+          {t("bookingDetails.workerCard.verifiedPartner")}
         </Badge>
       </div>
 
@@ -120,17 +122,18 @@ export const BookingWorkerCard: React.FC<BookingWorkerCardProps> = ({
           <div className="space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
               <h4 className="text-base font-bold text-foreground">
-                {workerUser?.name || "Assigned Worker"}
+                {workerUser?.name || t("bookingDetails.workerCard.assignedWorker")}
               </h4>
               <span className="flex items-center gap-1 text-xs font-bold text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-md">
                 <Star className="size-3 fill-amber-500" />
-                {worker.rating > 0 ? worker.rating.toFixed(1) : "New"}
+                {worker.rating > 0 ? worker.rating.toFixed(1) : t("bookingDetails.workerCard.newRating")}
               </span>
             </div>
 
             <p className="text-xs text-muted-foreground">
-              Cooperative Certified Trade Partner • {worker.totalJobsCompleted}{" "}
-              {worker.totalJobsCompleted === 1 ? "gig" : "gigs"} fulfilled
+              {t("bookingDetails.workerCard.certifiedTrade")} • {worker.totalJobsCompleted === 1
+                ? t("bookingDetails.workerCard.fulfilled_one", { count: worker.totalJobsCompleted })
+                : t("bookingDetails.workerCard.fulfilled_other", { count: worker.totalJobsCompleted })}
             </p>
           </div>
         </div>
@@ -147,7 +150,7 @@ export const BookingWorkerCard: React.FC<BookingWorkerCardProps> = ({
                 className="w-full sm:w-auto rounded-xl h-9 px-3.5 gap-2 text-xs font-semibold cursor-pointer shadow-xs bg-primary text-primary-foreground"
               >
                 <Phone className="size-3.5" />
-                <span>Call ({workerUser.phone})</span>
+                <span>{t("bookingDetails.workerCard.call")} ({workerUser.phone})</span>
               </Button>
             </a>
           )}
@@ -172,7 +175,7 @@ export const BookingWorkerCard: React.FC<BookingWorkerCardProps> = ({
       <div className="flex items-center gap-2 text-xs text-muted-foreground bg-primary/5 p-3 rounded-2xl border border-primary/10">
         <ShieldCheck className="size-4 text-primary shrink-0" />
         <span>
-          Worker is covered under Cooperative Trade Insurance and Service Quality Guarantee.
+          {t("bookingDetails.workerCard.insuranceNotice")}
         </span>
       </div>
     </div>

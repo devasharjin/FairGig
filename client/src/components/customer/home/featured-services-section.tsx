@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Sparkles, ArrowRight, ChevronRight } from "lucide-react";
 import { useCustomerServices } from "@/features/customer/services/hooks";
 import { ServiceCard } from "@/components/customer/services/service-card";
@@ -13,6 +14,7 @@ interface FeaturedServicesSectionProps {
 export const FeaturedServicesSection: React.FC<FeaturedServicesSectionProps> = ({
   onBookService,
 }) => {
+  const { t } = useTranslation();
   const { data: services = [], isLoading } = useCustomerServices({
     isActive: true,
   });
@@ -28,13 +30,13 @@ export const FeaturedServicesSection: React.FC<FeaturedServicesSectionProps> = (
           <div className="space-y-2">
             <div className="inline-flex items-center gap-1.5 text-xs font-bold text-primary tracking-wider uppercase">
               <Sparkles className="size-3.5" />
-              <span>Standardized Gigs</span>
+              <span>{t("home.featured.tag", { defaultValue: "Standardized Gigs" })}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-foreground tracking-tight">
-              Popular Cooperative Services
+              {t("home.featured.title", { defaultValue: "Popular Cooperative Services" })}
             </h2>
             <p className="text-xs sm:text-sm text-muted-foreground max-w-xl">
-              Fixed hourly and metric billing verified by local federations. Request trusted service technicians directly.
+              {t("home.featured.subtitle", { defaultValue: "Fixed hourly and metric billing verified by local federations. Request trusted service technicians directly." })}
             </p>
           </div>
 
@@ -42,7 +44,7 @@ export const FeaturedServicesSection: React.FC<FeaturedServicesSectionProps> = (
             to="/services"
             className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-primary hover:text-primary/80 transition-colors self-start sm:self-auto group"
           >
-            <span>Browse Full Catalog</span>
+            <span>{t("home.featured.browseCatalog", { defaultValue: "Browse Full Catalog" })}</span>
             <ChevronRight className="size-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
@@ -61,7 +63,7 @@ export const FeaturedServicesSection: React.FC<FeaturedServicesSectionProps> = (
           </div>
         ) : featured.length === 0 ? (
           <div className="p-8 text-center rounded-3xl bg-card border border-dashed border-border/70 text-muted-foreground text-sm">
-            No featured services currently available.
+            {t("home.featured.empty", { defaultValue: "No featured services currently available." })}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
@@ -85,7 +87,7 @@ export const FeaturedServicesSection: React.FC<FeaturedServicesSectionProps> = (
                 size="lg"
                 className="rounded-2xl px-6 h-12 font-bold gap-2 cursor-pointer shadow-xs hover:border-primary/50"
               >
-                <span>View All Published Services</span>
+                <span>{t("home.featured.viewAll", { defaultValue: "View All Published Services" })}</span>
                 <ArrowRight className="size-4" />
               </Button>
             </Link>

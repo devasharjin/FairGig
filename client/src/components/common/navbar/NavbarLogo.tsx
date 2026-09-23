@@ -8,6 +8,7 @@ export interface NavbarLogoProps {
   to?: string;
   icon?: LucideIcon;
   subtitle?: string;
+  subtitleClassName?: string;
   badge?: string;
   className?: string;
 }
@@ -16,6 +17,7 @@ export const NavbarLogo = ({
   to = "/",
   icon: Icon = Handshake,
   subtitle = "Cooperative Platform",
+  subtitleClassName,
   badge,
   className,
 }: NavbarLogoProps) => {
@@ -37,7 +39,12 @@ export const NavbarLogo = ({
             <span className="text-accent font-bold ml-0.5">gig</span>
           </span>
           {subtitle && (
-            <span className="text-[10px] text-muted-foreground font-medium tracking-normal mt-0.5">
+            <span
+              className={cn(
+                "text-[10px] text-muted-foreground font-medium tracking-normal mt-0.5",
+                subtitleClassName
+              )}
+            >
               {subtitle}
             </span>
           )}

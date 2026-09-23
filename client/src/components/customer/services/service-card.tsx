@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   Clock,
   ArrowRight,
@@ -21,10 +22,27 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
   onBookService,
   className,
 }) => {
+  const { t } = useTranslation();
   const firstHourRate = service.firstHourRate ?? service.hourlyPrice ?? 0;
   const additionalHourRate =
     service.additionalHourRate ?? service.firstHourRate ?? service.hourlyPrice ?? 0;
   const transportFee = service.transportFee ?? 30;
+
+  const tradeKey = service.name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+
+  const localizedName = t(`services.trades.${tradeKey}`, {
+    defaultValue: t(
+      `services.trades.${service.name.toLowerCase().replace(/\s+/g, "_")}`,
+      { defaultValue: service.name }
+    ),
+  });
+
+  const localizedDesc = t(`services.tradeDescriptions.${tradeKey}`, {
+    defaultValue: service.description || t("services.defaultDescription"),
+  });
 
   return (
     <div
@@ -51,12 +69,11 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
 
         {/* Title & Description */}
         <div className="space-y-1.5">
-          <h3 className="text-lg font-bold text-foreground tracking-tight group-hover:text-accent transition-colors line-clamp-1">
-            {service.name}
+          <h3 className="text-lg font-bold text-foreground tracking-tight group-hover:text-accent transition-colors line-clamp-2 min-h-[3rem] flex items-center leading-snug">
+            {localizedName}
           </h3>
-          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
-            {service.description ||
-              "Certified trade artisan dispatched directly by the local cooperative. Standard tariff protected with full quality warranty."}
+          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 min-h-[2.5rem]">
+            {localizedDesc}
           </p>
         </div>
 
@@ -64,14 +81,14 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
         <div className="p-3.5 rounded-xl bg-muted/40 border border-border/60 space-y-2.5">
           <div className="flex items-baseline justify-between">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Benchmark Rate
+              {t("services.benchmarkRate")}
             </span>
             <div className="flex items-baseline gap-1">
               <span className="text-xs font-semibold text-muted-foreground">₹</span>
               <span className="text-2xl font-extrabold text-foreground tracking-tight">
                 {firstHourRate}
               </span>
-              <span className="text-xs font-medium text-muted-foreground">/ 1st hr</span>
+              <span className="text-xs font-medium text-muted-foreground">{t("services.perFirstHour")}</span>
             </div>
           </div>
 
@@ -79,13 +96,13 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
           <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/50 text-[11px]">
             <div className="flex items-center gap-1 text-muted-foreground">
               <Clock className="size-3 text-accent shrink-0" />
-              <span>Add'l:</span>
+              <span>{t("services.additionalHour")}</span>
               <strong className="text-foreground font-semibold">₹{additionalHourRate}/hr</strong>
             </div>
 
             <div className="flex items-center justify-end gap-1 text-muted-foreground">
               <Truck className="size-3 text-accent shrink-0" />
-              <span>Travel:</span>
+              <span>{t("services.travelFee")}</span>
               <strong className="text-foreground font-semibold">₹{transportFee}</strong>
             </div>
           </div>
@@ -95,11 +112,11 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
         <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-1">
           <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
             <CheckCircle2 className="size-3.5" />
-            100% Vetted Artisan
+            {t("services.vettedArtisan")}
           </span>
           <span className="inline-flex items-center gap-1 font-medium">
             <ShieldCheck className="size-3.5 text-accent" />
-            ₹5L Protected
+            {t("services.protectedGuarantee")}
           </span>
         </div>
       </div>
@@ -110,7 +127,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
           onClick={() => onBookService(service)}
           className="w-full h-11 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer shadow-xs hover:shadow-md transition-all group/btn"
         >
-          <span>Book Service</span>
+          <span>{t("services.bookNow")}</span>
           <ArrowRight className="size-4 group-hover/btn:translate-x-1 transition-transform" />
         </Button>
       </div>
@@ -119,3 +136,4 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
 };
 
 export default ServiceCard;
+

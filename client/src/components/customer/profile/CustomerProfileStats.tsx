@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Briefcase, Clock, CheckCircle2, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CustomerProfileStats as StatsType } from "@/features/customer/profile/types";
@@ -49,6 +50,8 @@ export const CustomerProfileStats: React.FC<CustomerProfileStatsProps> = ({
   stats,
   className,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div
       className={cn(
@@ -57,33 +60,33 @@ export const CustomerProfileStats: React.FC<CustomerProfileStatsProps> = ({
       )}
     >
       <StatItem
-        label="Total Orders"
+        label={t("profile.stats.totalOrders")}
         value={stats?.totalBookings ?? 0}
-        subtitle="All-time service requests"
+        subtitle={t("profile.stats.totalOrdersDesc", { defaultValue: t("profile.stats.totalOrdersSub") })}
         icon={Briefcase}
         iconBg="bg-primary/10"
         iconColor="text-primary"
       />
       <StatItem
-        label="Active Bookings"
+        label={t("profile.stats.activeBookings")}
         value={stats?.activeBookings ?? 0}
-        subtitle="In progress & scheduled"
+        subtitle={t("profile.stats.activeBookingsDesc", { defaultValue: t("profile.stats.activeBookingsSub") })}
         icon={Clock}
         iconBg="bg-amber-500/10"
         iconColor="text-amber-500"
       />
       <StatItem
-        label="Completed"
+        label={t("profile.stats.completed")}
         value={stats?.completedBookings ?? 0}
-        subtitle="Fulfilled satisfactorily"
+        subtitle={t("profile.stats.completedDesc", { defaultValue: t("profile.stats.completedSub") })}
         icon={CheckCircle2}
         iconBg="bg-emerald-500/10"
         iconColor="text-emerald-500"
       />
       <StatItem
-        label="Saved Addresses"
+        label={t("profile.stats.savedAddresses")}
         value={stats?.totalSavedAddresses ?? 0}
-        subtitle="Quick delivery locations"
+        subtitle={t("profile.stats.savedAddressesDesc", { defaultValue: t("profile.stats.savedAddressesSub") })}
         icon={MapPin}
         iconBg="bg-blue-500/10"
         iconColor="text-blue-500"

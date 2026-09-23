@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Mic,
   MicOff,
@@ -11,18 +12,14 @@ import {
   Calendar,
   Clock,
   MapPin,
-  FileText,
   AlertCircle,
-  ExternalLink,
   ChevronRight,
   ShieldCheck,
-  Zap,
   Globe,
 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
@@ -44,6 +41,7 @@ import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 
 export const VoiceAssistantModal: React.FC = () => {
+  const { t } = useTranslation();
   const {
     isOpen,
     closeAssistant,
@@ -63,7 +61,6 @@ export const VoiceAssistantModal: React.FC = () => {
     updateBooking,
     matchedService,
     setMatchedService,
-    candidateServices,
     setCandidateServices,
     isTtsEnabled,
     toggleTts,
@@ -298,13 +295,13 @@ export const VoiceAssistantModal: React.FC = () => {
             </div>
             <div>
               <DialogTitle className="text-base font-bold text-foreground flex items-center gap-2">
-                <span>AI Voice Assistant</span>
+                <span>{t("voice.assistantTitle")}</span>
                 <Badge variant="outline" className="text-[10px] font-semibold bg-accent/15 text-accent border-accent/30 py-0.5 px-2">
                   Multilingual
                 </Badge>
               </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Speak or type naturally in your preferred language
+                {t("voice.assistantSubtitle")}
               </DialogDescription>
             </div>
           </div>
@@ -346,7 +343,7 @@ export const VoiceAssistantModal: React.FC = () => {
               variant="ghost"
               size="icon"
               onClick={resetSession}
-              title="Reset conversation"
+              title={t("voice.tryAgain")}
               className="size-8 rounded-xl text-muted-foreground hover:text-foreground cursor-pointer"
             >
               <RotateCcw className="size-3.5" />
@@ -413,7 +410,7 @@ export const VoiceAssistantModal: React.FC = () => {
           {isProcessing && (
             <div className="flex items-center gap-2 text-xs text-muted-foreground px-2 py-1">
               <span className="size-2 rounded-full bg-accent animate-ping" />
-              <span>Analyzing your booking request...</span>
+              <span>{t("voice.processing")}</span>
             </div>
           )}
 
@@ -457,7 +454,7 @@ export const VoiceAssistantModal: React.FC = () => {
                 size="sm"
                 className="h-8 rounded-xl text-xs font-bold gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm cursor-pointer shrink-0"
               >
-                <span>Review & Book Form</span>
+                <span>{t("voice.confirmAndBook")}</span>
                 <ChevronRight className="size-3.5" />
               </Button>
             )}
@@ -485,7 +482,7 @@ export const VoiceAssistantModal: React.FC = () => {
                   ? "bg-rose-500 text-white ring-4 ring-rose-500/30 animate-pulse"
                   : "bg-primary hover:bg-primary/90 text-primary-foreground"
               )}
-              title={isListening ? "Stop listening" : "Click to speak"}
+              title={isListening ? t("voice.stop") : t("voice.speak")}
             >
               {isListening ? <MicOff className="size-5" /> : <Mic className="size-5" />}
               {isListening && (
@@ -500,8 +497,8 @@ export const VoiceAssistantModal: React.FC = () => {
                 type="text"
                 placeholder={
                   isListening
-                    ? "Listening... speak now..."
-                    : `Speak or type (e.g., 'Need an electrician tomorrow at 10 AM')...`
+                    ? t("voice.listening")
+                    : t("voice.tapToSpeak")
                 }
                 value={typedText}
                 onChange={(e) => setTypedText(e.target.value)}
@@ -531,13 +528,13 @@ export const VoiceAssistantModal: React.FC = () => {
           <div className="flex items-center justify-between text-[11px] text-muted-foreground px-1">
             <span className="flex items-center gap-1">
               <ShieldCheck className="size-3 text-accent" />
-              Verified cooperative services & real rates guaranteed
+              {t("welfare.zeroExploitationDesc")}
             </span>
             <span>
               {isListening ? (
-                <span className="text-rose-500 font-semibold animate-pulse">● Listening in {selectedLang.name}...</span>
+                <span className="text-rose-500 font-semibold animate-pulse">● {t("voice.listening")} ({selectedLang.name})...</span>
               ) : (
-                <span>Language: {selectedLang.nativeName}</span>
+                <span>{t("voice.detectedLanguage", { lang: selectedLang.nativeName })}</span>
               )}
             </span>
           </div>

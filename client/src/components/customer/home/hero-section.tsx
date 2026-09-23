@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Search,
   ArrowRight,
@@ -11,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export const HeroSection: React.FC = () => {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
@@ -24,12 +26,12 @@ export const HeroSection: React.FC = () => {
   };
 
   const quickTags = [
-    { label: "Plumber", query: "Plumber" },
-    { label: "Electrician", query: "Electrician" },
-    { label: "Gardener", query: "Gardener" },
-    { label: "Carpenter", query: "Carpenter" },
-    { label: "Painter", query: "Painter" },
-    { label: "House Cleaner", query: "House Cleaner" },
+    { label: t("services.trades.plumber"), query: "Plumber" },
+    { label: t("services.trades.electrician"), query: "Electrician" },
+    { label: t("services.trades.gardener"), query: "Gardener" },
+    { label: t("services.trades.carpenter"), query: "Carpenter" },
+    { label: t("services.trades.painter"), query: "Painter" },
+    { label: t("services.trades.house_cleaner"), query: "House Cleaner" },
   ];
 
   return (
@@ -39,21 +41,20 @@ export const HeroSection: React.FC = () => {
           {/* Trust Banner Badge */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-accent/10 border border-accent/25 text-accent text-xs font-semibold shadow-xs">
             <Sparkles className="size-3.5" />
-            <span>Cooperative Gig Platform &bull; Democratically Governed</span>
+            <span>{t("home.hero.badge")}</span>
           </div>
 
           {/* Main Headline */}
           <h1 className="text-3xl sm:text-5xl lg:text-5xl font-bold text-foreground tracking-tight leading-[1.18]">
-  Reliable Household & Trade Services{" "}
-  <span className="bg-gradient-to-r from-[#17324D] via-[#3F5F7F] via-[#168C83] via-[#10B981] to-[#5EEAD4] bg-clip-text text-transparent">
-    Without Middleman Markups
-  </span>
-</h1>
+            {t("home.hero.titlePart1")}{" "}
+            <span className="bg-gradient-to-r from-[#17324D] via-[#3F5F7F] via-[#168C83] via-[#10B981] to-[#5EEAD4] bg-clip-text text-transparent">
+              {t("home.hero.titleHighlight")}
+            </span>
+          </h1>
 
           {/* Subtitle */}
           <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl">
-            Book verified plumbers, electricians, gardeners, carpenters, and technicians from certified
-            worker cooperatives. Transparent rates, zero predatory commissions, and genuine community accountability.
+            {t("home.hero.subtitle")}
           </p>
 
           {/* Interactive Search Bar */}
@@ -65,7 +66,7 @@ export const HeroSection: React.FC = () => {
               <Search className="absolute left-3.5 size-4 text-muted-foreground pointer-events-none" />
               <Input
                 type="text"
-                placeholder="What service do you need today? (e.g. Plumber, Electrician, Gardener)..."
+                placeholder={t("home.hero.searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="h-11 pl-10 pr-3 border-0 bg-transparent text-sm focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none"
@@ -76,17 +77,17 @@ export const HeroSection: React.FC = () => {
               size="default"
               className="w-full sm:w-auto h-10 px-5 rounded-lg font-semibold flex items-center justify-center gap-2 cursor-pointer shadow-xs"
             >
-              <span>Search Services</span>
+              <span>{t("home.hero.searchButton")}</span>
               <ArrowRight className="size-4" />
             </Button>
           </form>
 
           {/* Quick Tag Pills */}
           <div className="flex flex-wrap items-center justify-center gap-1.5 text-xs text-muted-foreground">
-            <span className="font-semibold text-foreground/80">Popular:</span>
+            <span className="font-semibold text-foreground/80">{t("home.hero.popular")}</span>
             {quickTags.map((tag) => (
               <button
-                key={tag.label}
+                key={tag.query}
                 type="button"
                 onClick={() => {
                   navigate(`/services?trade=${encodeURIComponent(tag.query)}`);
@@ -105,7 +106,7 @@ export const HeroSection: React.FC = () => {
                 <span>100%</span>
               </div>
               <span className="text-[11px] text-muted-foreground font-medium mt-0.5">
-                Vetted Co-op Workers
+                {t("home.hero.vettedWorkers")}
               </span>
             </div>
 
@@ -114,17 +115,17 @@ export const HeroSection: React.FC = () => {
                 <span>0%</span>
               </div>
               <span className="text-[11px] text-muted-foreground font-medium mt-0.5">
-                Middleman Deductions
+                {t("home.hero.middlemanDeductions")}
               </span>
             </div>
 
             <div className="flex flex-col items-center p-3 rounded-xl bg-card border border-border/70 shadow-xs">
               <div className="flex items-center gap-1 text-primary font-bold text-xl">
                 <Clock className="size-4 text-emerald-600 dark:text-emerald-400 inline" />
-                <span>Standard</span>
+                <span>{t("home.hero.standardRates")}</span>
               </div>
               <span className="text-[11px] text-muted-foreground font-medium mt-0.5">
-                Hourly & Meter Rates
+                {t("footer.floorWageStandards")}
               </span>
             </div>
 
@@ -134,7 +135,7 @@ export const HeroSection: React.FC = () => {
                 <span>4.9 / 5</span>
               </div>
               <span className="text-[11px] text-muted-foreground font-medium mt-0.5">
-                Customer Rating
+                {t("home.hero.customerRating")}
               </span>
             </div>
           </div>

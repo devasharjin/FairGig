@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Briefcase,
   Grid,
@@ -35,6 +36,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export const CustomerProfile: React.FC = () => {
+  const { t } = useTranslation();
   const authUser = useAuthStore((state) => state.user);
   const isBootstrapped = useAuthStore((state) => state.isBootstrapped);
 
@@ -128,7 +130,7 @@ export const CustomerProfile: React.FC = () => {
   };
 
   const handleDeleteAddress = (addressId: string) => {
-    if (window.confirm("Are you sure you want to remove this saved address?")) {
+    if (window.confirm(t("profile.confirmDeleteAddress"))) {
       deleteAddressMutation.mutate(addressId);
     }
   };
@@ -147,22 +149,22 @@ export const CustomerProfile: React.FC = () => {
           </div>
           <div className="space-y-2">
             <h2 className="text-xl font-bold text-foreground">
-              Customer Account Required
+              {t("profile.accountRequired")}
             </h2>
             <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
-              Please log in to manage your customer profile details, saved service delivery locations, and view platform activity.
+              {t("profile.accountRequiredDesc")}
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             <Link to="/login" className="w-full sm:w-auto">
               <Button className="w-full sm:w-auto rounded-xl px-5 gap-2 text-xs font-semibold shadow-xs bg-primary text-primary-foreground">
                 <LogIn className="size-3.5" />
-                <span>Log In</span>
+                <span>{t("profile.login")}</span>
               </Button>
             </Link>
             <Link to="/register" className="w-full sm:w-auto">
               <Button variant="outline" className="w-full sm:w-auto rounded-xl px-5 gap-2 text-xs font-semibold">
-                <span>Create Account</span>
+                <span>{t("profile.createAccount")}</span>
               </Button>
             </Link>
           </div>
@@ -198,17 +200,17 @@ export const CustomerProfile: React.FC = () => {
           <ShieldCheck className="size-7" />
         </div>
         <h2 className="text-xl font-bold text-foreground">
-          Could not load profile details
+          {t("profile.loadError")}
         </h2>
         <p className="text-sm text-muted-foreground">
-          There was an issue fetching your account information. Please check your connection and retry.
+          {t("profile.loadErrorDesc")}
         </p>
         <Button
           onClick={() => refetch()}
           className="rounded-xl text-xs font-semibold gap-2 cursor-pointer"
         >
           <RefreshCw className="size-3.5" />
-          <span>Retry Loading</span>
+          <span>{t("profile.retry")}</span>
         </Button>
       </div>
     );
@@ -238,10 +240,10 @@ export const CustomerProfile: React.FC = () => {
           {/* Quick Actions Card */}
           <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-xs space-y-4">
             <h3 className="text-sm font-bold text-foreground">
-              Customer Hub
+              {t("profile.customerHub", { defaultValue: t("profile.hub.title") })}
             </h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Explore trusted cooperative services or monitor the status of ongoing gig requests.
+              {t("profile.customerHubDesc", { defaultValue: t("profile.hub.desc") })}
             </p>
 
             <div className="space-y-2 pt-1">
@@ -252,7 +254,7 @@ export const CustomerProfile: React.FC = () => {
                 >
                   <span className="flex items-center gap-2">
                     <Briefcase className="size-3.5 text-primary" />
-                    <span>My Bookings</span>
+                    <span>{t("profile.myBookings", { defaultValue: t("profile.hub.myBookings") })}</span>
                   </span>
                   <ChevronRight className="size-3.5 text-muted-foreground" />
                 </Button>
@@ -265,7 +267,7 @@ export const CustomerProfile: React.FC = () => {
                 >
                   <span className="flex items-center gap-2">
                     <Grid className="size-3.5 text-primary" />
-                    <span>Browse All Services</span>
+                    <span>{t("profile.browseAllServices", { defaultValue: t("profile.hub.browseServices") })}</span>
                   </span>
                   <ChevronRight className="size-3.5 text-muted-foreground" />
                 </Button>
@@ -280,10 +282,10 @@ export const CustomerProfile: React.FC = () => {
             </div>
             <div className="space-y-1 text-xs">
               <p className="font-bold text-emerald-950 dark:text-emerald-200">
-                100% Fair Wage Guaranteed
+                {t("profile.fairWageTitle", { defaultValue: t("profile.hub.fairWageTitle") })}
               </p>
               <p className="text-emerald-800/80 dark:text-emerald-400/80 leading-relaxed text-[11px]">
-                Every gig on this platform directly supports worker cooperatives with transparent pricing and no predatory cuts.
+                {t("profile.fairWageDesc", { defaultValue: t("profile.hub.fairWageDesc") })}
               </p>
             </div>
           </div>

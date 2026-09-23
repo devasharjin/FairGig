@@ -1,10 +1,12 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Mic, Sparkles } from "lucide-react";
 import { useVoiceAssistantStore } from "@/features/customer/voice/voiceStore";
 import { cn } from "@/lib/utils";
 
 export const VoiceAssistantTrigger: React.FC = () => {
-  const { openAssistant, isOpen, isListening } = useVoiceAssistantStore();
+  const { t } = useTranslation();
+  const { openAssistant, isOpen } = useVoiceAssistantStore();
 
   if (isOpen) return null;
 
@@ -31,11 +33,11 @@ export const VoiceAssistantTrigger: React.FC = () => {
 
         <div className="flex flex-col text-left">
           <span className="text-xs font-bold tracking-wide flex items-center gap-1 leading-tight">
-            <span>Voice Booking</span>
+            <span>{t("voice.triggerTitle")}</span>
             <Sparkles className="size-3 text-accent" />
           </span>
           <span className="text-[10px] text-primary-foreground/75 leading-tight">
-            Speak in any language
+            {t("voice.triggerSubtitle")}
           </span>
         </div>
       </button>

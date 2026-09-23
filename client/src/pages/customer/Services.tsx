@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Sparkles,
   ShieldCheck,
@@ -22,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 export const CustomerServices: React.FC = () => {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Read initial params from URL
@@ -147,6 +149,10 @@ export const CustomerServices: React.FC = () => {
     setIsBookingOpen(true);
   };
 
+  const localizedSelectedTrade = selectedTrade !== "all"
+    ? t(`services.trades.${selectedTrade.toLowerCase().replace(/\s+/g, "_")}`, { defaultValue: selectedTrade })
+    : "";
+
   return (
     <div className="min-h-screen bg-background text-foreground pb-20">
       {/* Hero Header */}
@@ -155,44 +161,38 @@ export const CustomerServices: React.FC = () => {
           {/* Badge */}
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-accent/10 border border-accent/25 text-accent text-xs font-semibold shadow-xs">
             <Sparkles className="size-3.5" />
-            <span>Cooperative Gig Services Platform</span>
+            <span>{t("services.badge")}</span>
           </div>
 
           {/* Heading */}
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground tracking-tight">
             {selectedTrade !== "all" ? (
-              <>
-                Verified <span className="text-accent">{selectedTrade}</span> Services
-              </>
+              t("services.verifiedTitle", { trade: localizedSelectedTrade })
             ) : searchQuery ? (
-              <>
-                Services matching "<span className="text-accent">{searchQuery}</span>"
-              </>
+              t("services.matchingTitle", { query: searchQuery })
             ) : (
-              <>
-                Direct Trade Services: <span className="text-accent">Plumber, Electrician, Gardener & More</span>
-              </>
+              t("services.directTitle")
             )}
           </h1>
 
           {/* Subtitle */}
           <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Transparent hourly pricing without middleman commissions. Book certified local plumbers, electricians, gardeners, carpenters, and technicians directly from registered worker cooperatives.
+            {t("services.subtitle")}
           </p>
 
           {/* Trust Highlights */}
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 pt-1 text-xs font-medium text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="size-3.5 text-emerald-600 dark:text-emerald-400" />
-              100% Vetted Guild Workers
+              {t("services.trust1")}
             </span>
             <span className="flex items-center gap-1.5">
               <Clock className="size-3.5 text-accent" />
-              Standardized Benchmark Rates
+              {t("services.trust2")}
             </span>
             <span className="flex items-center gap-1.5">
               <Wrench className="size-3.5 text-accent" />
-              Direct Guild Dispatch
+              {t("services.trust3")}
             </span>
           </div>
         </div>
@@ -220,14 +220,14 @@ export const CustomerServices: React.FC = () => {
           {/* Active Filter Breadcrumbs / Tags */}
           {(selectedTrade !== "all" || searchQuery.trim()) && (
             <div className="flex flex-wrap items-center gap-2 pt-3">
-              <span className="text-xs text-muted-foreground font-semibold">Active filters:</span>
+              <span className="text-xs text-muted-foreground font-semibold">{t("services.activeFilters")}</span>
 
               {selectedTrade !== "all" && (
                 <Badge
                   variant="secondary"
                   className="pl-2.5 pr-1.5 py-1 rounded-xl text-xs flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/20"
                 >
-                  <span>Trade: {selectedTrade}</span>
+                  <span>{t("services.tradeFilter", { trade: localizedSelectedTrade })}</span>
                   <button
                     type="button"
                     onClick={handleClearTrade}
@@ -244,7 +244,7 @@ export const CustomerServices: React.FC = () => {
                   variant="secondary"
                   className="pl-2.5 pr-1.5 py-1 rounded-xl text-xs flex items-center gap-1.5 bg-muted border border-border"
                 >
-                  <span>Query: "{searchQuery}"</span>
+                  <span>{t("services.queryFilter", { query: searchQuery })}</span>
                   <button
                     type="button"
                     onClick={handleClearSearch}
@@ -261,7 +261,7 @@ export const CustomerServices: React.FC = () => {
                 onClick={handleResetFilters}
                 className="text-xs font-semibold text-primary hover:underline ml-1 cursor-pointer"
               >
-                Clear all
+                {t("services.clearAll")}
               </button>
             </div>
           )}
@@ -274,10 +274,10 @@ export const CustomerServices: React.FC = () => {
           <div className="flex flex-col items-center justify-center p-8 sm:p-12 text-center rounded-3xl border border-destructive/20 bg-destructive/5 my-6 space-y-3">
             <AlertCircle className="size-10 text-destructive" />
             <h3 className="text-base font-bold text-foreground">
-              Unable to load gig services
+              {t("services.errorTitle")}
             </h3>
             <p className="text-xs sm:text-sm text-muted-foreground max-w-md">
-              There was an issue connecting to the cooperative service server. Please try refreshing.
+              {t("services.errorDesc")}
             </p>
             <Button
               onClick={() => refetchServices()}
@@ -285,7 +285,7 @@ export const CustomerServices: React.FC = () => {
               className="mt-2 rounded-2xl gap-2 font-semibold cursor-pointer"
             >
               <RefreshCw className="size-3.5" />
-              <span>Retry</span>
+              <span>{t("services.retryBtn")}</span>
             </Button>
           </div>
         ) : filteredServices.length === 0 ? (

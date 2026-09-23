@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { AlertCircle } from "lucide-react";
 import {
   Dialog,
@@ -25,6 +26,7 @@ export const CancelBookingDialog: React.FC<CancelBookingDialogProps> = ({
   onConfirmCancel,
   isPending = false,
 }) => {
+  const { t } = useTranslation();
   const [reason, setReason] = useState("");
 
   // Reset reason when dialog opens or booking changes
@@ -51,10 +53,10 @@ export const CancelBookingDialog: React.FC<CancelBookingDialogProps> = ({
             </div>
             <div>
               <DialogTitle className="text-base font-bold text-foreground">
-                Cancel Booking Request?
+                {t("bookings.cancelDialogTitle")}
               </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Booking #{booking.bookingNumber}
+                {t("bookings.bookingNumber", { number: booking.bookingNumber })}
               </DialogDescription>
             </div>
           </div>
@@ -66,12 +68,12 @@ export const CancelBookingDialog: React.FC<CancelBookingDialogProps> = ({
               htmlFor="cancel-reason"
               className="text-xs font-semibold text-foreground"
             >
-              Reason for cancellation (Optional)
+              {t("bookings.cancelReasonLabel")}
             </label>
             <textarea
               id="cancel-reason"
               rows={3}
-              placeholder="e.g. Schedule conflict, problem resolved, etc."
+              placeholder={t("bookings.cancelReasonPlaceholder")}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               className="w-full px-3 py-2 rounded-2xl border border-input bg-input/20 text-xs sm:text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition resize-none"
@@ -86,7 +88,7 @@ export const CancelBookingDialog: React.FC<CancelBookingDialogProps> = ({
               disabled={isPending}
               className="h-10 px-4 rounded-xl text-xs sm:text-sm cursor-pointer"
             >
-              Keep Booking
+              {t("bookings.keepBooking")}
             </Button>
             <Button
               type="submit"
@@ -94,7 +96,7 @@ export const CancelBookingDialog: React.FC<CancelBookingDialogProps> = ({
               disabled={isPending}
               className="h-10 px-4 rounded-xl text-xs sm:text-sm font-semibold cursor-pointer shadow-sm"
             >
-              {isPending ? "Cancelling..." : "Confirm Cancellation"}
+              {isPending ? t("bookings.cancelling") : t("bookings.confirmCancel")}
             </Button>
           </div>
         </form>
@@ -104,3 +106,4 @@ export const CancelBookingDialog: React.FC<CancelBookingDialogProps> = ({
 };
 
 export default CancelBookingDialog;
+

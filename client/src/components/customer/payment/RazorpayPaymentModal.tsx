@@ -1,9 +1,9 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   CreditCard,
   ShieldCheck,
   CheckCircle2,
-  AlertCircle,
   Loader2,
   Lock,
   Receipt,
@@ -43,6 +43,7 @@ export const RazorpayPaymentModal: React.FC<RazorpayPaymentModalProps> = ({
   onOpenChange,
   onPaymentSuccess,
 }) => {
+  const { t } = useTranslation();
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -59,7 +60,7 @@ export const RazorpayPaymentModal: React.FC<RazorpayPaymentModalProps> = ({
     onOpenChange(false);
     setIsProcessing(true);
 
-    const toastId = toast.loading("Initializing Razorpay checkout...");
+    const toastId = toast.loading(t("bookingDetails.paymentModal.initToast"));
 
     try {
       // 1. Create order on backend
@@ -69,7 +70,7 @@ export const RazorpayPaymentModal: React.FC<RazorpayPaymentModalProps> = ({
 
       // 2. Check if running in mock/sandbox development mode
       if (orderData.isMock) {
-        toast.loading("Processing test gateway payment...", { id: toastId });
+        toast.loading(t("bookingDetails.paymentModal.testGatewayToast"), { id: toastId });
 
         // Short simulation delay
         await new Promise((r) => setTimeout(r, 800));
@@ -84,7 +85,7 @@ export const RazorpayPaymentModal: React.FC<RazorpayPaymentModalProps> = ({
 
         const result = await verifyPaymentMutation.mutateAsync(mockPayload);
         setIsProcessing(false);
-        toast.success("Payment confirmed! Service invoice settled.", { id: toastId });
+        toast.success(t("bookingDetails.paymentModal.paymentConfirmedToast"), { id: toastId });
         onPaymentSuccess?.(result.booking);
         return;
       }
@@ -92,7 +93,7 @@ export const RazorpayPaymentModal: React.FC<RazorpayPaymentModalProps> = ({
       // 3. Load official Razorpay Checkout SDK
       const scriptLoaded = await loadRazorpayScript();
       if (!scriptLoaded) {
-        toast.error("Could not load Razorpay SDK. Please check your internet connection.", {
+        toast.error(t("bookingDetails.paymentModal.loadFailedToast"), {
           id: toastId,
         });
         setIsProcessing(false);
@@ -118,7 +119,7 @@ export const RazorpayPaymentModal: React.FC<RazorpayPaymentModalProps> = ({
           color: "#0f766e", // Teal brand color
         },
         handler: async (response: RazorpayResponsePayload) => {
-          const verifyToast = toast.loading("Verifying payment with bank...");
+          const verifyToast = toast.loading(t("bookingDetails.paymentModal.bankVerifyingToast"));
           try {
             const verifyPayload = {
               bookingId: targetBooking._id,
@@ -130,24 +131,24 @@ export const RazorpayPaymentModal: React.FC<RazorpayPaymentModalProps> = ({
 
             const result = await verifyPaymentMutation.mutateAsync(verifyPayload);
             setIsProcessing(false);
-            toast.success("Payment confirmed! Service invoice settled.", { id: verifyToast });
+            toast.success(t("bookingDetails.paymentModal.paymentConfirmedToast"), { id: verifyToast });
             onPaymentSuccess?.(result.booking);
           } catch {
             setIsProcessing(false);
-            toast.error("Payment verification failed. Please contact support.", { id: verifyToast });
+            toast.error(t("bookingDetails.paymentModal.verifyFailedToast"), { id: verifyToast });
           }
         },
         modal: {
           ondismiss: () => {
             setIsProcessing(false);
-            toast("Payment window closed", { icon: "ℹ️" });
+            toast(t("bookingDetails.paymentModal.windowClosedToast"), { icon: "ℹ️" });
           },
         },
       };
 
       const rzp = new window.Razorpay(options);
       rzp.open();
-    } catch (err: any) {
+    } catch {
       setIsProcessing(false);
       toast.dismiss(toastId);
     }
@@ -169,10 +170,10 @@ export const RazorpayPaymentModal: React.FC<RazorpayPaymentModalProps> = ({
               </div>
               <div>
                 <DialogTitle className="text-base sm:text-lg font-bold text-foreground">
-                  Complete Service Payment
+                  {t("bookingDetails.paymentModal.title")}
                 </DialogTitle>
                 <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                  Secure Checkout powered by Razorpay
+                  {t("bookingDetails.paymentModal.subtitle")}
                 </DialogDescription>
               </div>
             </div>
@@ -192,10 +193,10 @@ export const RazorpayPaymentModal: React.FC<RazorpayPaymentModalProps> = ({
               <CheckCircle2 className="size-8" />
             </div>
             <h3 className="text-base font-bold text-foreground">
-              Payment Confirmed!
+              {t("bookingDetails.paymentModal.confirmedTitle")}
             </h3>
             <p className="text-xs text-muted-foreground max-w-xs">
-              Thank you! Your payment has been verified. Unlocking worker rating and review...
+              {t("bookingDetails.paymentModal.confirmedDesc")}
             </p>
           </div>
         ) : (
@@ -205,10 +206,12 @@ export const RazorpayPaymentModal: React.FC<RazorpayPaymentModalProps> = ({
               <div className="flex justify-between items-start">
                 <div>
                   <span className="text-[11px] text-muted-foreground block font-medium">
-                    Trade Gig Service
+                    {t("bookingDetails.paymentModal.tradeGigService")}
                   </span>
                   <p className="text-sm font-bold text-foreground mt-0.5">
-                    {booking.service?.name || "Service Request"}
+                    {booking.service?.name
+                      ? t("services.trades." + booking.service.name.toLowerCase().replace(/\s+/g, "_"), { defaultValue: booking.service.name })
+                      : t("bookingDetails.paymentModal.serviceRequest")}
                   </p>
                 </div>
                 <Badge variant="secondary" className="rounded-lg text-[11px]">
@@ -220,9 +223,9 @@ export const RazorpayPaymentModal: React.FC<RazorpayPaymentModalProps> = ({
                 <div className="pt-2 border-t border-border/40 flex items-center gap-2 text-muted-foreground">
                   <UserCheck className="size-3.5 text-primary shrink-0" />
                   <span>
-                    Fulfilled by:{" "}
+                    {t("bookingDetails.paymentModal.fulfilledBy")}{" "}
                     <strong className="text-foreground">
-                      {booking.worker.userId?.name || "Verified Worker"}
+                      {booking.worker.userId?.name || t("bookingDetails.paymentModal.verifiedWorker")}
                     </strong>
                   </span>
                 </div>
@@ -233,35 +236,46 @@ export const RazorpayPaymentModal: React.FC<RazorpayPaymentModalProps> = ({
             <div className="p-4 rounded-2xl bg-card border border-border/70 space-y-2 text-xs">
               <div className="flex items-center gap-1.5 font-semibold text-foreground pb-1 border-b border-border/50">
                 <Receipt className="size-3.5 text-primary" />
-                <span>Invoice Breakdown</span>
+                <span>{t("bookingDetails.paymentModal.invoiceBreakdown")}</span>
               </div>
 
               <div className="flex justify-between text-muted-foreground">
                 <span>
-                  Base Rate ({booking.priceType === "hourly" ? "per hr" : "per meter"})
+                  {t("bookingDetails.paymentModal.baseRate", {
+                    type: booking.priceType === "hourly"
+                      ? t("bookingDetails.paymentModal.perHr")
+                      : t("bookingDetails.paymentModal.perMeter")
+                  })}
                 </span>
                 <span className="font-medium text-foreground">₹{booking.rate}</span>
               </div>
 
               <div className="flex justify-between text-muted-foreground">
-                <span>Units ({booking.units} {booking.priceType === "hourly" ? "hrs" : "m"})</span>
+                <span>
+                  {t("bookingDetails.paymentModal.units", {
+                    count: booking.units,
+                    unit: booking.priceType === "hourly"
+                      ? t("bookingDetails.paymentModal.hrs")
+                      : t("bookingDetails.paymentModal.m")
+                  })}
+                </span>
                 <span className="font-medium text-foreground">× {booking.units}</span>
               </div>
 
               <div className="flex justify-between text-muted-foreground">
-                <span>Cooperative Processing Fee</span>
+                <span>{t("bookingDetails.paymentModal.processingFee")}</span>
                 <span className="text-emerald-600 dark:text-emerald-400 font-medium">
-                  Free (Subsidized)
+                  {t("bookingDetails.paymentModal.freeSubsidized")}
                 </span>
               </div>
 
               <div className="pt-2.5 border-t border-border/60 flex justify-between items-baseline">
                 <div>
                   <span className="text-xs font-bold text-foreground block">
-                    Amount Payable
+                    {t("bookingDetails.paymentModal.amountPayable")}
                   </span>
                   <span className="text-[10px] text-muted-foreground">
-                    Inclusive of all taxes
+                    {t("bookingDetails.paymentModal.taxesIncluded")}
                   </span>
                 </div>
                 <span className="text-2xl font-black text-primary tracking-tight">
@@ -275,9 +289,9 @@ export const RazorpayPaymentModal: React.FC<RazorpayPaymentModalProps> = ({
               <ShieldCheck className="size-4 text-primary shrink-0 mt-0.5" />
               <div>
                 <strong className="text-foreground block font-semibold">
-                  Cooperative Escrow Guarantee
+                  {t("bookingDetails.paymentModal.escrowTitle")}
                 </strong>
-                Payment is held in a protected cooperative trust until service completion is confirmed.
+                {t("bookingDetails.paymentModal.escrowDesc")}
               </div>
             </div>
 
@@ -290,7 +304,7 @@ export const RazorpayPaymentModal: React.FC<RazorpayPaymentModalProps> = ({
                 disabled={isPending}
                 className="rounded-xl h-11 px-4 text-xs cursor-pointer"
               >
-                Pay Later
+                {t("bookingDetails.paymentModal.payLater")}
               </Button>
 
               <Button
@@ -302,12 +316,12 @@ export const RazorpayPaymentModal: React.FC<RazorpayPaymentModalProps> = ({
                 {isPending ? (
                   <>
                     <Loader2 className="size-3.5 animate-spin" />
-                    <span>Processing Payment...</span>
+                    <span>{t("bookingDetails.paymentModal.processingPayment")}</span>
                   </>
                 ) : (
                   <>
                     <Lock className="size-3.5" />
-                    <span>Pay ₹{booking.totalAmount} with Razorpay</span>
+                    <span>{t("bookingDetails.paymentModal.payWithRazorpay", { amount: booking.totalAmount })}</span>
                   </>
                 )}
               </Button>

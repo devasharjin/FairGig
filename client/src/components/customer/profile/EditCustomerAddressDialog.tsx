@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -45,6 +46,7 @@ export const EditCustomerAddressDialog: React.FC<
   onSubmit,
   isPending = false,
 }) => {
+  const { t } = useTranslation();
   const isEditing = mode === "edit-saved" || mode === "edit-primary";
 
   const [title, setTitle] = useState("Home");
@@ -82,7 +84,7 @@ export const EditCustomerAddressDialog: React.FC<
     e.preventDefault();
 
     if (!street.trim()) {
-      toast.error("Street address is required");
+      toast.error(t("profile.editAddressModal.streetError"));
       return;
     }
 
@@ -98,10 +100,24 @@ export const EditCustomerAddressDialog: React.FC<
     });
   };
 
-  const getTitleIcon = (t: string) => {
-    if (t === "Home") return Home;
-    if (t === "Work" || t === "Office") return Briefcase;
+  const getTitleIcon = (tStr: string) => {
+    if (tStr === "Home") return Home;
+    if (tStr === "Work" || tStr === "Office") return Briefcase;
     return Building;
+  };
+
+  const getTagLabel = (opt: string) => {
+    switch (opt.toLowerCase()) {
+      case "home":
+        return t("profile.editAddressModal.tags.home");
+      case "work":
+        return t("profile.editAddressModal.tags.work");
+      case "office":
+        return t("profile.editAddressModal.tags.office");
+      case "other":
+      default:
+        return t("profile.editAddressModal.tags.other");
+    }
   };
 
   return (
@@ -115,13 +131,13 @@ export const EditCustomerAddressDialog: React.FC<
             <div>
               <DialogTitle className="text-lg font-bold text-foreground">
                 {mode === "add"
-                  ? "Add New Address"
+                  ? t("profile.editAddressModal.addNewTitle")
                   : mode === "edit-primary"
-                  ? "Update Primary Address"
-                  : "Edit Saved Address"}
+                  ? t("profile.editAddressModal.updatePrimaryTitle")
+                  : t("profile.editAddressModal.editSavedTitle")}
               </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground">
-                Provide accurate address details for service dispatch & location accuracy
+                {t("profile.editAddressModal.subtitle")}
               </DialogDescription>
             </div>
           </div>
@@ -132,7 +148,7 @@ export const EditCustomerAddressDialog: React.FC<
           {mode !== "edit-primary" && (
             <div className="space-y-1.5">
               <Label className="text-xs font-semibold text-foreground">
-                Address Tag
+                {t("profile.editAddressModal.tagLabel")}
               </Label>
               <div className="flex flex-wrap gap-2">
                 {TITLE_OPTIONS.map((opt) => {
@@ -150,7 +166,7 @@ export const EditCustomerAddressDialog: React.FC<
                       }`}
                     >
                       <Icon className="size-3.5" />
-                      <span>{opt}</span>
+                      <span>{getTagLabel(opt)}</span>
                     </button>
                   );
                 })}
@@ -161,12 +177,12 @@ export const EditCustomerAddressDialog: React.FC<
           {/* Street Address */}
           <div className="space-y-1.5">
             <Label htmlFor="address-street" className="text-xs font-semibold text-foreground">
-              Flat / House No., Building, Street & Area{" "}
+              {t("profile.editAddressModal.streetLabel")}{" "}
               <span className="text-destructive">*</span>
             </Label>
             <Input
               id="address-street"
-              placeholder="e.g. Flat 402, Sunshine Heights, Gandhi Road"
+              placeholder={t("profile.editAddressModal.streetPlaceholder")}
               value={street}
               onChange={(e) => setStreet(e.target.value)}
               className="rounded-xl h-10 border-border/80 text-sm focus-visible:ring-primary"
@@ -179,11 +195,11 @@ export const EditCustomerAddressDialog: React.FC<
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div className="space-y-1.5">
               <Label htmlFor="address-city" className="text-xs font-semibold text-foreground">
-                City
+                {t("profile.editAddressModal.cityLabel")}
               </Label>
               <Input
                 id="address-city"
-                placeholder="e.g. Mumbai"
+                placeholder={t("profile.editAddressModal.cityPlaceholder")}
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 className="rounded-xl h-10 border-border/80 text-sm focus-visible:ring-primary"
@@ -193,11 +209,11 @@ export const EditCustomerAddressDialog: React.FC<
 
             <div className="space-y-1.5">
               <Label htmlFor="address-state" className="text-xs font-semibold text-foreground">
-                State
+                {t("profile.editAddressModal.stateLabel")}
               </Label>
               <Input
                 id="address-state"
-                placeholder="e.g. Maharashtra"
+                placeholder={t("profile.editAddressModal.statePlaceholder")}
                 value={state}
                 onChange={(e) => setState(e.target.value)}
                 className="rounded-xl h-10 border-border/80 text-sm focus-visible:ring-primary"
@@ -210,11 +226,11 @@ export const EditCustomerAddressDialog: React.FC<
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div className="space-y-1.5">
               <Label htmlFor="address-zip" className="text-xs font-semibold text-foreground">
-                PIN Code / Zip
+                {t("profile.editAddressModal.zipLabel")}
               </Label>
               <Input
                 id="address-zip"
-                placeholder="e.g. 400001"
+                placeholder={t("profile.editAddressModal.zipPlaceholder")}
                 value={zip}
                 onChange={(e) => setZip(e.target.value)}
                 className="rounded-xl h-10 border-border/80 text-sm focus-visible:ring-primary"
@@ -224,11 +240,11 @@ export const EditCustomerAddressDialog: React.FC<
 
             <div className="space-y-1.5">
               <Label htmlFor="address-country" className="text-xs font-semibold text-foreground">
-                Country
+                {t("profile.editAddressModal.countryLabel")}
               </Label>
               <Input
                 id="address-country"
-                placeholder="India"
+                placeholder={t("profile.editAddressModal.countryPlaceholder")}
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
                 className="rounded-xl h-10 border-border/80 text-sm focus-visible:ring-primary"
@@ -240,11 +256,11 @@ export const EditCustomerAddressDialog: React.FC<
           {/* Landmark */}
           <div className="space-y-1.5">
             <Label htmlFor="address-landmark" className="text-xs font-semibold text-foreground">
-              Nearby Landmark (Optional)
+              {t("profile.editAddressModal.landmarkLabel")}
             </Label>
             <Input
               id="address-landmark"
-              placeholder="e.g. Opposite Metro Station Gate 2"
+              placeholder={t("profile.editAddressModal.landmarkPlaceholder")}
               value={landmark}
               onChange={(e) => setLandmark(e.target.value)}
               className="rounded-xl h-10 border-border/80 text-sm focus-visible:ring-primary"
@@ -263,7 +279,7 @@ export const EditCustomerAddressDialog: React.FC<
                 disabled={isPending}
               />
               <span className="text-xs font-medium text-foreground">
-                Set as active default address for new service bookings
+                {t("profile.editAddressModal.setDefaultLabel")}
               </span>
             </label>
           )}
@@ -277,7 +293,7 @@ export const EditCustomerAddressDialog: React.FC<
               disabled={isPending}
               className="rounded-xl h-10 px-4 text-xs font-semibold cursor-pointer"
             >
-              Cancel
+              {t("profile.editAddressModal.cancel")}
             </Button>
             <Button
               type="submit"
@@ -287,12 +303,12 @@ export const EditCustomerAddressDialog: React.FC<
               {isPending ? (
                 <>
                   <Loader2 className="size-3.5 animate-spin" />
-                  <span>Saving...</span>
+                  <span>{t("profile.editAddressModal.saving")}</span>
                 </>
               ) : (
                 <>
                   <Save className="size-3.5" />
-                  <span>{isEditing ? "Save Changes" : "Add Address"}</span>
+                  <span>{isEditing ? t("profile.editAddressModal.saveChanges") : t("profile.editAddressModal.addAddress")}</span>
                 </>
               )}
             </Button>

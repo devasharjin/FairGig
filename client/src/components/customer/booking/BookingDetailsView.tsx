@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Calendar,
   MapPin,
@@ -39,6 +40,7 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
   onPay,
   className,
 }) => {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
 
   const canCancel =
@@ -58,7 +60,13 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  let formattedDate = "Immediate Dispatch";
+  const localizedTradeName = booking.service?.name
+    ? t(`services.trades.${booking.service.name.toLowerCase().replace(/\s+/g, "_")}`, {
+        defaultValue: booking.service.name,
+      })
+    : t("bookingDetails.gigServiceRequest");
+
+  let formattedDate = t("bookingDetails.immediateDispatch");
   try {
     if (booking.scheduledDate) {
       formattedDate = new Date(booking.scheduledDate).toLocaleString("en-US", {
@@ -100,7 +108,7 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
                 type="button"
                 onClick={handleCopyBookingNumber}
                 className="text-muted-foreground hover:text-foreground transition cursor-pointer p-1"
-                title="Copy booking number"
+                title={t("bookingDetails.copyTooltip")}
               >
                 {copied ? (
                   <Check className="size-3.5 text-emerald-500" />
@@ -110,12 +118,12 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
               </button>
               <BookingStatusBadge status={booking.status} />
               <Badge variant="secondary" className="rounded-lg text-xs font-semibold">
-                {booking.category?.name || "Trade Service"}
+                {booking.category?.name || t("bookingDetails.tradeService")}
               </Badge>
             </div>
 
             <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-              {booking.service?.name || "Gig Service Request"}
+              {localizedTradeName}
             </h1>
           </div>
 
@@ -128,7 +136,7 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
                 onClick={onCancel}
                 className="rounded-xl h-10 px-4 text-xs font-semibold text-destructive hover:bg-destructive/10 hover:text-destructive cursor-pointer border-destructive/30"
               >
-                Cancel Booking
+                {t("bookingDetails.cancelBooking")}
               </Button>
             )}
 
@@ -139,7 +147,7 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
                 className="rounded-xl h-10 px-5 text-xs font-bold gap-2 cursor-pointer shadow-md bg-emerald-600 hover:bg-emerald-700 text-white"
               >
                 <CreditCard className="size-4" />
-                <span>Pay ₹{booking.totalAmount} (Razorpay)</span>
+                <span>{t("bookingDetails.payWithRazorpay", { amount: booking.totalAmount })}</span>
               </Button>
             )}
 
@@ -150,7 +158,7 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
                 className="rounded-xl h-10 px-4 text-xs font-semibold gap-1.5 cursor-pointer shadow-xs bg-amber-500 hover:bg-amber-600 text-white"
               >
                 <Star className="size-4 fill-white" />
-                <span>Rate & Review Worker</span>
+                <span>{t("bookingDetails.rateAndReviewWorker")}</span>
               </Button>
             )}
 
@@ -161,7 +169,7 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
                 className="rounded-xl h-10 px-4 text-xs font-semibold cursor-pointer gap-1.5"
               >
                 <Sparkles className="size-3.5" />
-                <span>Book Another Service</span>
+                <span>{t("bookingDetails.bookAnotherService")}</span>
               </Button>
             </Link>
           </div>
@@ -186,7 +194,7 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
             <div className="flex items-center gap-2">
               <Calendar className="size-4 text-primary" />
               <h3 className="text-sm sm:text-base font-bold text-foreground">
-                Service Details & Schedule
+                {t("bookingDetails.serviceDetailsSchedule")}
               </h3>
             </div>
 
@@ -195,7 +203,7 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
                 <Clock className="size-4 text-primary shrink-0 mt-0.5" />
                 <div>
                   <span className="font-semibold text-foreground block text-sm">
-                    Scheduled Appointment
+                    {t("bookingDetails.scheduledAppointment")}
                   </span>
                   <span className="text-muted-foreground mt-0.5 block">
                     {formattedDate}
@@ -206,7 +214,7 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
               {booking.service?.description && (
                 <div className="p-4 rounded-2xl bg-card border border-border/60 space-y-1">
                   <span className="font-semibold text-foreground block text-xs">
-                    About the Service
+                    {t("bookingDetails.aboutTheService")}
                   </span>
                   <p className="text-muted-foreground leading-relaxed">
                     {booking.service.description}
@@ -218,7 +226,7 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
                 <div className="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/20 space-y-1">
                   <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 font-semibold">
                     <FileText className="size-3.5" />
-                    <span>Customer Special Instructions</span>
+                    <span>{t("bookingDetails.customerInstructions")}</span>
                   </div>
                   <p className="italic text-foreground">
                     "{booking.customerNotes}"
@@ -234,7 +242,7 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
               <div className="flex items-center gap-2">
                 <MapPin className="size-4 text-primary" />
                 <h3 className="text-sm sm:text-base font-bold text-foreground">
-                  Service Address
+                  {t("bookingDetails.serviceAddress")}
                 </h3>
               </div>
 
@@ -245,7 +253,7 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
                   rel="noopener noreferrer"
                   className="flex items-center gap-1 text-xs text-primary hover:underline font-medium"
                 >
-                  <span>Open in Maps</span>
+                  <span>{t("bookingDetails.openInMaps")}</span>
                   <ExternalLink className="size-3" />
                 </a>
               )}
@@ -253,7 +261,7 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
 
             <div className="p-4 rounded-2xl bg-muted/30 border border-border/50 space-y-1 text-xs">
               <p className="font-bold text-foreground text-sm">
-                {booking.address?.street || "Address provided at booking"}
+                {booking.address?.street || t("bookingDetails.addressProvidedAtBooking")}
               </p>
               <p className="text-muted-foreground">
                 {[
@@ -266,7 +274,7 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
               </p>
               {booking.address?.landmark && (
                 <p className="text-xs text-muted-foreground pt-1">
-                  <strong>Landmark:</strong> {booking.address.landmark}
+                  <strong>{t("bookingDetails.landmark")}</strong> {booking.address.landmark}
                 </p>
               )}
             </div>
@@ -283,10 +291,10 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
             <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/5 p-5 sm:p-6 shadow-xs space-y-3">
               <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
                 <CreditCard className="size-4 text-emerald-600 dark:text-emerald-400" />
-                <h3 className="text-sm font-bold">Service Completed • Payment Due</h3>
+                <h3 className="text-sm font-bold">{t("bookingDetails.serviceCompletedPaymentDue")}</h3>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                The gig service has been completed by your assigned worker. Please settle the invoice of <strong>₹{booking.totalAmount}</strong> via Razorpay to unlock your worker rating and review.
+                {t("bookingDetails.paymentDueNotice", { amount: booking.totalAmount })}
               </p>
               <Button
                 size="sm"
@@ -294,7 +302,7 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
                 className="w-full rounded-xl h-10 text-xs font-bold gap-2 cursor-pointer shadow-xs bg-emerald-600 hover:bg-emerald-700 text-white"
               >
                 <CreditCard className="size-3.5" />
-                <span>Pay ₹{booking.totalAmount} with Razorpay</span>
+                <span>{t("bookingDetails.payWithRazorpayBtn", { amount: booking.totalAmount })}</span>
               </Button>
             </div>
           )}
@@ -304,7 +312,7 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
             <div className="rounded-3xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold text-foreground">
-                  Your Worker Rating & Feedback
+                  {t("bookingDetails.workerRatingFeedback")}
                 </h3>
                 <BookingRatingStars rating={booking.rating.rating} size="md" />
               </div>
@@ -317,8 +325,9 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
 
               {booking.rating.createdAt && (
                 <p className="text-[11px] text-muted-foreground">
-                  Submitted on{" "}
-                  {new Date(booking.rating.createdAt).toLocaleDateString()}
+                  {t("bookingDetails.submittedOn", {
+                    date: new Date(booking.rating.createdAt).toLocaleDateString(),
+                  })}
                 </p>
               )}
             </div>
@@ -329,10 +338,10 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
             <div className="rounded-3xl border border-amber-500/30 bg-amber-500/5 p-5 sm:p-6 shadow-xs space-y-3">
               <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
                 <Star className="size-4 fill-amber-500" />
-                <h3 className="text-sm font-bold">Rate Your Experience</h3>
+                <h3 className="text-sm font-bold">{t("bookingDetails.rateExperience")}</h3>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Your feedback helps our cooperative recognize outstanding workers and improves dispatch quality for everyone.
+                {t("bookingDetails.rateExperienceDesc")}
               </p>
               <Button
                 size="sm"
@@ -340,7 +349,7 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
                 className="w-full rounded-xl h-10 text-xs font-semibold gap-2 cursor-pointer shadow-xs bg-amber-500 hover:bg-amber-600 text-white"
               >
                 <Star className="size-3.5 fill-white" />
-                <span>Submit Rating & Review</span>
+                <span>{t("bookingDetails.submitRatingBtn")}</span>
               </Button>
             </div>
           )}
@@ -350,19 +359,19 @@ export const BookingDetailsView: React.FC<BookingDetailsViewProps> = ({
             <div className="flex items-center gap-2">
               <HelpCircle className="size-4 text-primary" />
               <h3 className="text-sm font-bold text-foreground">
-                Need Help with this Booking?
+                {t("bookingDetails.needHelp")}
               </h3>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              If there's any discrepancy in timing, pricing, or service delivery, our Cooperative Support and Dispute Mediation team is here to help.
+              {t("bookingDetails.needHelpDesc")}
             </p>
             <div className="pt-1 flex items-center justify-between text-xs font-semibold text-primary">
               <div className="flex items-center gap-1.5">
                 <Shield className="size-3.5" />
-                <span>100% Satisfaction Guarantee</span>
+                <span>{t("bookingDetails.satisfactionGuarantee")}</span>
               </div>
               <Link to="/contact" className="hover:underline">
-                Contact Support →
+                {t("bookingDetails.contactSupport")}
               </Link>
             </div>
           </div>

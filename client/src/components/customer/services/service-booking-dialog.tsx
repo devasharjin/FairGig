@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import {
   ShieldCheck,
@@ -61,6 +62,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
   initialBookingType = "SCHEDULED",
   initialData,
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const createBooking = useCreateBooking();
@@ -270,7 +272,9 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
               </div>
               <div className="flex-1 min-w-0">
                 <DialogTitle className="text-base font-bold text-foreground leading-snug flex items-center gap-2 flex-wrap">
-                  <span className="truncate">{service.name}</span>
+                  <span className="truncate">
+                    {t(`services.trades.${service.name.toLowerCase().replace(/\s+/g, "_")}`, { defaultValue: service.name })}
+                  </span>
                   {isEmergency && (
                     <Badge variant="destructive" className="text-[10px] uppercase font-black tracking-wider py-0.5 px-2 animate-pulse shrink-0">
                       SOS
@@ -279,12 +283,12 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
                   {isPremium && (
                     <Badge variant="outline" className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 text-[10px] font-bold py-0.5 px-2 shrink-0 flex items-center gap-1">
                       <Star className="size-2.5 fill-amber-500 text-amber-500" />
-                      Premium (&gt;4.5★)
+                      {t("bookingDialog.premium")} (&gt;4.5★)
                     </Badge>
                   )}
                 </DialogTitle>
                 <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                  {categoryName} · Cooperative Fair Platform
+                  {categoryName} · {t("nav.cooperativePlatform")}
                 </DialogDescription>
               </div>
             </div>
@@ -307,7 +311,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
               )}
             >
               <Clock className="size-3.5 shrink-0" />
-              <span>Schedule</span>
+              <span>{t("bookingDialog.scheduled")}</span>
             </button>
             <button
               type="button"
@@ -320,7 +324,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
               )}
             >
               <Crown className="size-3.5 text-amber-500 shrink-0" />
-              <span>Premium</span>
+              <span>{t("bookingDialog.premium")}</span>
             </button>
             <button
               type="button"
@@ -333,7 +337,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
               )}
             >
               <AlertTriangle className="size-3.5 text-rose-500 shrink-0" />
-              <span>Emergency</span>
+              <span>{t("bookingDialog.emergency")}</span>
             </button>
           </div>
 
@@ -343,11 +347,11 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
               <Star className="size-4 text-amber-500 fill-amber-500 shrink-0 mt-0.5" />
               <div className="space-y-0.5">
                 <p className="font-semibold text-amber-900 dark:text-amber-100 flex items-center gap-1.5">
-                  Top-Rated Specialist Guarantee
+                  {t("bookingDialog.topRatedTitle")}
                   <span className="text-[10px] font-bold px-1.5 py-0.2 bg-amber-500/20 text-amber-700 dark:text-amber-300 rounded border border-amber-500/30">&gt; 4.5★</span>
                 </p>
                 <p className="leading-relaxed text-[11px] text-amber-700 dark:text-amber-300">
-                  Exclusive dispatch routed only to top-rated cooperative workers with at least <strong>4.5 stars</strong>.
+                  {t("bookingDialog.topRatedDesc")}
                 </p>
               </div>
             </div>
@@ -357,21 +361,21 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
           <div className="rounded-xl border border-border/60 bg-muted/30 overflow-hidden">
             <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/40 flex-wrap gap-2">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-semibold text-foreground">Pricing Estimate</span>
+                <span className="text-xs font-semibold text-foreground">{t("bookingDialog.pricingEstimate")}</span>
                 {isPremium && (
                   <Badge variant="outline" className="text-[10px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 py-0 px-2 flex items-center gap-1">
                     <Star className="size-2.5 fill-amber-500 text-amber-500" />
-                    +15% Top-Rated Surge
+                    {t("bookingDialog.topRatedSurge")}
                   </Badge>
                 )}
                 {isEmergency && (
                   <Badge variant="destructive" className="text-[10px] font-bold bg-rose-600 text-white py-0 px-2">
-                    +20% Emergency Surge
+                    {t("bookingDialog.emergencySurgeBadge")}
                   </Badge>
                 )}
                 {isScheduled && (
                   <Badge variant="secondary" className="text-[10px] font-medium text-muted-foreground py-0 px-2">
-                    Standard Rate
+                    {t("bookingDialog.standardRateBadge")}
                   </Badge>
                 )}
               </div>
@@ -379,21 +383,21 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
             </div>
             <div className="grid grid-cols-3 divide-x divide-border/40 text-center text-[11px]">
               <div className="px-2 py-2">
-                <p className="text-muted-foreground">1st Hour</p>
+                <p className="text-muted-foreground">{t("bookingDialog.firstHour")}</p>
                 <p className="font-bold text-foreground mt-0.5">₹{firstHourRate}</p>
                 {rateMultiplier !== 1.0 && (
                   <p className="text-[9px] text-muted-foreground line-through">₹{baseFirstHourRate}</p>
                 )}
               </div>
               <div className="px-2 py-2">
-                <p className="text-muted-foreground">Add. Hour</p>
+                <p className="text-muted-foreground">{t("bookingDialog.addHour")}</p>
                 <p className="font-bold text-foreground mt-0.5">₹{additionalHourRate}</p>
                 {rateMultiplier !== 1.0 && (
                   <p className="text-[9px] text-muted-foreground line-through">₹{baseAdditionalHourRate}</p>
                 )}
               </div>
               <div className="px-2 py-2">
-                <p className="text-muted-foreground">Transport</p>
+                <p className="text-muted-foreground">{t("bookingDialog.transport")}</p>
                 <p className="font-bold text-foreground mt-0.5">₹{transportFee}</p>
               </div>
             </div>
@@ -406,10 +410,10 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
             {isEmergency && (
               <div className="rounded-xl border border-rose-500/25 bg-rose-500/[0.03] p-3 space-y-1.5">
                 <Label className="text-[11px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <Phone className="size-3" /> Emergency Contact Number *
+                  <Phone className="size-3" /> {t("bookingDialog.emergencyContactLabel")}
                 </Label>
                 <Input
-                  placeholder="e.g. 9876543210 (For responder to call while en-route)"
+                  placeholder={t("bookingDialog.emergencyContactPlaceholder")}
                   value={immediateContact}
                   onChange={(e) => setImmediateContact(e.target.value)}
                   className="h-9 text-xs rounded-lg border-rose-500/30 bg-card"
@@ -423,7 +427,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
               <div className="flex items-center justify-between">
                 <Label htmlFor="req-address" className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                   <MapPin className="size-3.5 text-primary" />
-                  Service Address <span className="text-destructive">*</span>
+                  {t("bookingDialog.deliveryAddress")} <span className="text-destructive">*</span>
                 </Label>
                 <button
                   type="button"
@@ -432,7 +436,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
                   className="text-[11px] font-medium text-primary hover:underline flex items-center gap-1 cursor-pointer opacity-80 hover:opacity-100 transition-opacity"
                 >
                   <Crosshair className={cn("size-3", isLocating && "animate-spin")} />
-                  {isLocating ? "Locating…" : "Use GPS"}
+                  {isLocating ? t("bookingDialog.locating") : t("bookingDialog.useGps")}
                 </button>
               </div>
 
@@ -464,7 +468,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
 
               <Input
                 id="req-address"
-                placeholder="Flat 302, Green Valley Apartments, Main Street"
+                placeholder={t("bookingDialog.addressPlaceholder")}
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 disabled={createBooking.isPending}
@@ -478,13 +482,13 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                   <Calendar className="size-3.5 text-primary" />
-                  Preferred Date & Time
-                  <span className="text-muted-foreground font-normal">({isPremium ? "Optional — defaults to ASAP" : "Optional"})</span>
+                  {t("bookingDialog.preferredDateTime")}
+                  <span className="text-muted-foreground font-normal">({t("common.optional")})</span>
                 </Label>
                 <div className="grid grid-cols-2 gap-2">
                   {/* Date picker */}
                   <div className="space-y-1">
-                    <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Date</p>
+                    <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">{t("bookingDialog.dateLabel")}</p>
                     <Input
                       id="req-date"
                       type="date"
@@ -497,7 +501,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
                   </div>
                   {/* Time picker */}
                   <div className="space-y-1">
-                    <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Time</p>
+                    <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">{t("bookingDialog.timeLabel")}</p>
                     <Input
                       id="req-time"
                       type="time"
@@ -515,16 +519,16 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
             <div className="space-y-1.5">
               <Label htmlFor="req-notes" className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                 <FileText className="size-3.5 text-primary" />
-                {isEmergency ? "Hazard Description & Access Info" : "Notes"}{" "}
-                {!isEmergency && <span className="text-muted-foreground font-normal">(Optional)</span>}
+                {isEmergency ? t("bookingDialog.hazardDesc") : t("bookingDialog.accessNotes")}{" "}
+                {!isEmergency && <span className="text-muted-foreground font-normal">({t("common.optional")})</span>}
               </Label>
               <textarea
                 id="req-notes"
                 rows={2}
                 placeholder={
                   isEmergency
-                    ? "Location of hazard, gate code, landmark for fast arrival…"
-                    : "Specific issues, tools needed, or access instructions…"
+                    ? t("bookingDialog.hazardPlaceholder")
+                    : t("bookingDialog.standardNotesPlaceholder")
                 }
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
@@ -537,7 +541,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
             {!isEmergency && (
               <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                 <ShieldCheck className="size-3.5 shrink-0 text-primary" />
-                <span>ICA Cooperative · Zero Surge Pricing · Verified Worker Dispatch</span>
+                <span>{t("bookingDialog.trustGuaranteeLine")}</span>
               </div>
             )}
 
@@ -549,7 +553,7 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
                 disabled={createBooking.isPending}
                 className="h-9 px-4 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground border border-border/60 hover:bg-muted transition-all cursor-pointer"
               >
-                Cancel
+                {t("common.cancel")}
               </button>
               <Button
                 type="submit"
@@ -564,13 +568,13 @@ export const ServiceBookingDialog: React.FC<ServiceBookingDialogProps> = ({
                 )}
               >
                 {createBooking.isPending ? (
-                  "Processing…"
+                  t("bookingDialog.processing")
                 ) : isEmergency ? (
-                  <><AlertTriangle className="size-3.5" /><span>Broadcast SOS</span></>
+                  <><AlertTriangle className="size-3.5" /><span>{t("bookingDialog.broadcastSos")}</span></>
                 ) : isPremium ? (
-                  <><Crown className="size-3.5" /><span>Book Premium Specialist</span></>
+                  <><Crown className="size-3.5" /><span>{t("bookingDialog.bookPremium")}</span></>
                 ) : (
-                  "Confirm Booking"
+                  t("bookingDialog.confirmBooking")
                 )}
               </Button>
             </div>
