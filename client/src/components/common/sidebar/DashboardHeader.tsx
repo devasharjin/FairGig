@@ -2,6 +2,7 @@ import { Menu, PanelLeft, PanelLeftClose, Store } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { NavbarUserDropdown } from "@/components/common/navbar/NavbarUserDropdown";
+import { NotificationBell } from "@/components/common/notifications/NotificationBell";
 import { useSidebar } from "./SidebarContext";
 
 export interface DashboardHeaderProps {
@@ -69,6 +70,9 @@ export const DashboardHeader = ({
             <Store className="size-3.5" />
             <span className="hidden md:inline">Customer View</span>
           </Link>
+
+          {/* Notification Bell */}
+          <NotificationBell />
 
           {/* User profile dropdown */}
           <NavbarUserDropdown currentPortal={currentPortal} />

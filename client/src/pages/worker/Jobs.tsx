@@ -159,6 +159,34 @@ export const WorkerJobs: React.FC = () => {
         </div>
       )}
 
+      {/* Weekly Capacity Warning Banner */}
+      {stats?.canAcceptWeeklyService === false && (
+        <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+          <div className="flex items-start sm:items-center gap-3.5">
+            <div className="size-10 rounded-lg bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+              <Briefcase className="size-5" />
+            </div>
+            <div className="space-y-0.5">
+              <h4 className="text-sm sm:text-base font-bold text-foreground flex items-center gap-2">
+                <span>Weekly Workload Limit Reached ({stats?.activeJobs ?? 6}/{stats?.weeklyServiceLimit ?? 6} Active)</span>
+              </h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Cooperative policy limits active accepted services to protect workload quality. Complete an active job to decrease your count and unlock capacity for more services.
+              </p>
+            </div>
+          </div>
+
+          <Link to="/worker/bookings" className="shrink-0 self-start sm:self-auto">
+            <Button
+              size="sm"
+              className="rounded-lg h-9 px-4 text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white cursor-pointer shadow-xs"
+            >
+              Manage Active Jobs
+            </Button>
+          </Link>
+        </div>
+      )}
+
       {/* Quick Navigation to Bookings */}
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">
@@ -257,6 +285,7 @@ export const WorkerJobs: React.FC = () => {
               key={gig._id}
               gig={gig}
               isAccepting={acceptGigMutation.isPending}
+              canAccept={stats?.canAcceptWeeklyService !== false}
               onInspect={(g) => setSelectedGig(g)}
               onAccept={handleAccept}
             />
@@ -270,6 +299,7 @@ export const WorkerJobs: React.FC = () => {
         onClose={() => setSelectedGig(null)}
         onAccept={handleAccept}
         isAccepting={acceptGigMutation.isPending}
+        canAccept={stats?.canAcceptWeeklyService !== false}
         formatDate={formatDate}
       />
     </div>

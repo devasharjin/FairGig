@@ -321,6 +321,9 @@ export const WorkerMyBookings: React.FC = () => {
         onClose={() => setCancellingJob(null)}
         onConfirm={handleConfirmCancel}
         isPending={updateStatusMutation.isPending}
+        cancellationsToday={stats?.cancellationsToday}
+        cancellationLimit={stats?.cancellationLimit ?? 1}
+        canCancelToday={stats?.canCancelToday}
       />
     </div>
   );

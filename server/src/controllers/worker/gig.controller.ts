@@ -10,6 +10,7 @@ import User from "../../models/auth/user.model";
 import Service from "../../models/service.model";
 import { fail, ok } from "../../shared/envelope";
 import { FIXED_TRANSPORT_FEE, BillingService } from "../../services/billing.service";
+import { notifyCustomer } from "../../services/socket.service";
 
 /**
  * Calculates distance (randomly up to 5 km) and transport fee (₹5 per 1 km).
@@ -309,6 +310,28 @@ export async function acceptGig(req: Request, res: Response) {
     );
   }
 
+  // Enforce weekly service acceptance limit
+  const activeJobsCount = await Booking.countDocuments({
+    worker: worker._id,
+    status: {
+      $in: [
+        BookingStatus.CONFIRMED,
+        BookingStatus.ASSIGNED,
+        BookingStatus.IN_PROGRESS,
+      ],
+    },
+  });
+
+  const weeklyLimit = worker.weeklyServiceLimit ?? 6;
+  if (activeJobsCount >= weeklyLimit) {
+    return fail(
+      res,
+      `Weekly service acceptance limit reached (${activeJobsCount}/${weeklyLimit}). Please complete an active service to decrease your count and accept more services.`,
+      { activeJobsCount, weeklyLimit, canAcceptMore: false },
+      400
+    );
+  }
+
   booking.worker = worker._id;
   if (!booking.cooperative && worker.cooperativeId) {
     booking.cooperative = worker.cooperativeId;
@@ -317,6 +340,9 @@ export async function acceptGig(req: Request, res: Response) {
   booking.assignedAt = new Date();
 
   await booking.save();
+
+  worker.weeklyAcceptedCount = activeJobsCount + 1;
+  await worker.save();
 
   const updated = await Booking.findById(booking._id)
     .populate("service", "name description priceType firstHourRate additionalHourRate transportFee cooperativeShare insuranceShare hourlyPrice metersPrice")
@@ -330,12 +356,42 @@ export async function acceptGig(req: Request, res: Response) {
     ? "⭐ Premium specialist assignment accepted! Deliver top-tier service."
     : "Gig accepted successfully! It is now in your active jobs.";
 
+  // Real-time socket notification to customer
+  try {
+    const workerUser = await User.findById(worker.userId).select("name phone").lean();
+    const customerId = (updated as any)?.customer?._id || booking.customer;
+    const serviceName = (updated as any)?.service?.name || "Service";
+
+    if (customerId) {
+      notifyCustomer(customerId.toString(), "job:status_updated", {
+        type: "JOB_ACCEPTED",
+        title: "Worker Accepted Your Booking!",
+        message: `${workerUser?.name || "A certified worker"} has accepted your booking #${booking.bookingNumber} (${serviceName}) and is on their way!`,
+        bookingId: booking._id.toString(),
+        bookingNumber: booking.bookingNumber,
+        status: BookingStatus.CONFIRMED,
+        serviceName,
+        worker: {
+          id: worker._id.toString(),
+          name: workerUser?.name || "Verified Specialist",
+          phone: workerUser?.phone || "",
+          rating: worker.rating,
+        },
+        timestamp: new Date().toISOString(),
+      });
+    }
+  } catch (err) {
+    console.error("Failed to emit socket notification for acceptGig:", err);
+  }
+
   return ok(res, enrichGigWithDistance(updated), message);
 }
 
 export async function updateJobStatus(req: Request, res: Response) {
   const userId = (req.user as any)?.userId || (req.user as any)?._id;
-  const worker = await Worker.findOne({ userId }).select("_id totalJobsCompleted");
+  const worker = await Worker.findOne({ userId }).select(
+    "_id totalJobsCompleted weeklyAcceptedCount weeklyServiceLimit"
+  );
 
   if (!worker) {
     return fail(res, "Worker profile not found", null, 404);
@@ -458,17 +514,47 @@ export async function updateJobStatus(req: Request, res: Response) {
     booking.totalAmount = calcResult.customerTotal;
     booking.status = BookingStatus.COMPLETED;
 
-    // Increment worker's completed jobs
+    // Increment worker's completed jobs and decrease active accepted count
     worker.totalJobsCompleted = (worker.totalJobsCompleted || 0) + 1;
+    worker.weeklyAcceptedCount = Math.max(0, (worker.weeklyAcceptedCount || 1) - 1);
     await worker.save();
   } else if (status === BookingStatus.CANCELLED) {
     if (booking.status === BookingStatus.COMPLETED) {
       return fail(res, "Completed jobs cannot be cancelled", null, 400);
     }
+    if (booking.status === BookingStatus.CANCELLED) {
+      return fail(res, "Job is already cancelled", null, 400);
+    }
+
+    // Strict cooperative policy: limit worker to cancel at most 1 request per day
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const cancellationsToday = await Booking.countDocuments({
+      worker: worker._id,
+      status: BookingStatus.CANCELLED,
+      cancelledBy: CancelledByRole.WORKER,
+      cancelledAt: { $gte: startOfToday },
+    });
+
+    if (cancellationsToday >= 1) {
+      return fail(
+        res,
+        "Daily cancellation limit reached. Workers are allowed to cancel only 1 request per day to maintain cooperative service reliability.",
+        { cancellationsToday, cancellationLimit: 1, canCancelToday: false },
+        400
+      );
+    }
+
     booking.status = BookingStatus.CANCELLED;
     booking.cancelledAt = new Date();
     booking.cancelledBy = CancelledByRole.WORKER;
-    booking.cancellationReason = typeof reason === "string" ? reason.trim() : "Cancelled by worker";
+    booking.cancellationReason =
+      typeof reason === "string" && reason.trim() ? reason.trim() : "Cancelled by worker";
+
+    // Decrement worker's active accepted count when job is cancelled
+    worker.weeklyAcceptedCount = Math.max(0, (worker.weeklyAcceptedCount || 1) - 1);
+    await worker.save();
   } else {
     return fail(res, "Invalid status transition", null, 400);
   }
@@ -482,13 +568,63 @@ export async function updateJobStatus(req: Request, res: Response) {
     .populate("rating")
     .lean();
 
+  // Real-time socket notification to customer on start / completion / cancellation
+  try {
+    const customerId = (updated as any)?.customer?._id || booking.customer;
+    const serviceName = (updated as any)?.service?.name || "Service";
+
+    if (customerId) {
+      if (booking.status === BookingStatus.IN_PROGRESS) {
+        notifyCustomer(customerId.toString(), "job:status_updated", {
+          type: "JOB_STARTED",
+          title: "Worker Started Your Service!",
+          message: `Your booking #${booking.bookingNumber} (${serviceName}) is now in progress on-site!`,
+          bookingId: booking._id.toString(),
+          bookingNumber: booking.bookingNumber,
+          status: BookingStatus.IN_PROGRESS,
+          serviceName,
+          startedAt: booking.startedAt?.toISOString(),
+          timestamp: new Date().toISOString(),
+        });
+      } else if (booking.status === BookingStatus.COMPLETED) {
+        notifyCustomer(customerId.toString(), "job:status_updated", {
+          type: "JOB_COMPLETED",
+          title: "Service Completed!",
+          message: `Your booking #${booking.bookingNumber} (${serviceName}) has been completed. Total amount: ₹${booking.totalAmount}.`,
+          bookingId: booking._id.toString(),
+          bookingNumber: booking.bookingNumber,
+          status: BookingStatus.COMPLETED,
+          serviceName,
+          totalAmount: booking.totalAmount,
+          completedAt: booking.completedAt?.toISOString(),
+          timestamp: new Date().toISOString(),
+        });
+      } else if (booking.status === BookingStatus.CANCELLED) {
+        notifyCustomer(customerId.toString(), "job:status_updated", {
+          type: "JOB_CANCELLED",
+          title: "Booking Cancelled by Worker",
+          message: `Your booking #${booking.bookingNumber} (${serviceName}) was cancelled by the assigned worker: ${booking.cancellationReason || "No reason specified"}.`,
+          bookingId: booking._id.toString(),
+          bookingNumber: booking.bookingNumber,
+          status: BookingStatus.CANCELLED,
+          serviceName,
+          reason: booking.cancellationReason,
+          cancelledAt: booking.cancelledAt?.toISOString(),
+          timestamp: new Date().toISOString(),
+        });
+      }
+    }
+  } catch (err) {
+    console.error("Failed to emit socket notification for updateJobStatus:", err);
+  }
+
   return ok(res, updated, `Job status updated to ${booking.status}`);
 }
 
 export async function getWorkerStats(req: Request, res: Response) {
   const userId = (req.user as any)?.userId || (req.user as any)?._id;
   const worker = await Worker.findOne({ userId })
-    .select("_id category categories skills cooperativeId rating totalJobsCompleted verificationStatus")
+    .select("_id category categories skills cooperativeId rating totalJobsCompleted verificationStatus weeklyServiceLimit weeklyAcceptedCount")
     .lean();
 
   if (!worker) {
@@ -530,8 +666,11 @@ export async function getWorkerStats(req: Request, res: Response) {
 
   const gigFilter = { $and: statsAndConditions };
 
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
   // Run all counts and earnings aggregate in parallel in 1 roundtrip
-  const [activeJobsCount, completedJobsCount, availableGigsCount, earningsAgg] =
+  const [activeJobsCount, completedJobsCount, availableGigsCount, cancellationsToday, earningsAgg] =
     await Promise.all([
       Booking.countDocuments({
         worker: worker._id,
@@ -548,6 +687,12 @@ export async function getWorkerStats(req: Request, res: Response) {
         status: BookingStatus.COMPLETED,
       }),
       Booking.countDocuments(gigFilter),
+      Booking.countDocuments({
+        worker: worker._id,
+        status: BookingStatus.CANCELLED,
+        cancelledBy: CancelledByRole.WORKER,
+        cancelledAt: { $gte: startOfToday },
+      }),
       Booking.aggregate([
         {
           $match: {
@@ -580,6 +725,13 @@ export async function getWorkerStats(req: Request, res: Response) {
       rating: worker.rating || 0,
       totalJobsCompleted: worker.totalJobsCompleted || completedJobsCount,
       verificationStatus: worker.verificationStatus,
+      cancellationsToday,
+      cancellationLimit: 1,
+      canCancelToday: cancellationsToday < 1,
+      weeklyServiceLimit: (worker as any)?.weeklyServiceLimit || 6,
+      weeklyAcceptedCount: activeJobsCount,
+      weeklyServicesRemaining: Math.max(0, ((worker as any)?.weeklyServiceLimit || 6) - activeJobsCount),
+      canAcceptWeeklyService: activeJobsCount < ((worker as any)?.weeklyServiceLimit || 6),
     },
     "Worker stats retrieved successfully"
   );

@@ -18,6 +18,7 @@ interface GigDetailsDialogProps {
   onClose: () => void;
   onAccept: (gigId: string) => void;
   isAccepting: boolean;
+  canAccept?: boolean;
   formatDate: (dateStr?: string) => string;
 }
 
@@ -26,6 +27,7 @@ export const GigDetailsDialog: React.FC<GigDetailsDialogProps> = ({
   onClose,
   onAccept,
   isAccepting,
+  canAccept = true,
   formatDate,
 }) => {
   if (!selectedGig) return null;
@@ -201,25 +203,29 @@ export const GigDetailsDialog: React.FC<GigDetailsDialogProps> = ({
           </Button>
           <Button
             onClick={() => onAccept(selectedGig._id)}
-            disabled={isAccepting}
+            disabled={isAccepting || canAccept === false}
             className={cn(
-              "rounded-xl h-10 px-6 text-xs font-bold gap-1.5 cursor-pointer shadow-sm text-white",
-              isEmergency
-                ? "bg-rose-600 hover:bg-rose-700 shadow-rose-600/30"
-                : isPremium
-                  ? "bg-amber-600 hover:bg-amber-700 shadow-amber-600/30"
-                  : "bg-primary text-primary-foreground hover:bg-primary/90"
+              "rounded-xl h-10 px-6 text-xs font-bold gap-1.5 cursor-pointer shadow-sm text-white disabled:opacity-50 disabled:cursor-not-allowed",
+              canAccept === false
+                ? "bg-muted text-muted-foreground hover:bg-muted shadow-none"
+                : isEmergency
+                  ? "bg-rose-600 hover:bg-rose-700 shadow-rose-600/30"
+                  : isPremium
+                    ? "bg-amber-600 hover:bg-amber-700 shadow-amber-600/30"
+                    : "bg-primary text-primary-foreground hover:bg-primary/90"
             )}
           >
             <Check className="size-3.5" />
             <span>
               {isAccepting
                 ? "Claiming..."
-                : isEmergency
-                  ? "Claim Emergency SOS Mission"
-                  : isPremium
-                    ? "Claim Premium Specialist Assignment"
-                    : "Accept Assignment"}
+                : canAccept === false
+                  ? "Weekly Capacity Full"
+                  : isEmergency
+                    ? "Claim Emergency SOS Mission"
+                    : isPremium
+                      ? "Claim Premium Specialist Assignment"
+                      : "Accept Assignment"}
             </span>
           </Button>
         </div>

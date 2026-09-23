@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 interface GigCardProps {
   gig: WorkerJob;
   isAccepting: boolean;
+  canAccept?: boolean;
   onInspect: (gig: WorkerJob) => void;
   onAccept: (gigId: string) => void;
 }
@@ -28,6 +29,7 @@ interface GigCardProps {
 export const GigCard: React.FC<GigCardProps> = ({
   gig,
   isAccepting,
+  canAccept = true,
   onInspect,
   onAccept,
 }) => {
@@ -226,25 +228,29 @@ export const GigCard: React.FC<GigCardProps> = ({
           <Button
             size="sm"
             onClick={() => onAccept(gig._id)}
-            disabled={isAccepting}
+            disabled={isAccepting || canAccept === false}
             className={cn(
-              "rounded-lg h-9 text-xs font-semibold shadow-xs cursor-pointer gap-1.5 text-white transition-all",
-              isEmergency
-                ? "bg-rose-600 hover:bg-rose-700"
-                : isPremium
-                  ? "bg-amber-600 hover:bg-amber-700"
-                  : "bg-primary text-primary-foreground hover:bg-primary/90"
+              "rounded-lg h-9 text-xs font-semibold shadow-xs cursor-pointer gap-1.5 text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed",
+              canAccept === false
+                ? "bg-muted text-muted-foreground hover:bg-muted"
+                : isEmergency
+                  ? "bg-rose-600 hover:bg-rose-700"
+                  : isPremium
+                    ? "bg-amber-600 hover:bg-amber-700"
+                    : "bg-primary text-primary-foreground hover:bg-primary/90"
             )}
           >
             <Check className="size-3.5" />
             <span>
               {isAccepting
                 ? "Claiming..."
-                : isEmergency
-                  ? "Claim Emergency SOS"
-                  : isPremium
-                    ? "Claim Premium Gig"
-                    : "Accept Gig"}
+                : canAccept === false
+                  ? "Capacity Full"
+                  : isEmergency
+                    ? "Claim Emergency SOS"
+                    : isPremium
+                      ? "Claim Premium Gig"
+                      : "Accept Gig"}
             </span>
           </Button>
         </div>

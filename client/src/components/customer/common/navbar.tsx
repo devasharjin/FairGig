@@ -33,6 +33,7 @@ import {
   NavbarNavLink,
   NavbarUserDropdown,
 } from "@/components/common/navbar";
+import { NotificationBell } from "@/components/common/notifications/NotificationBell";
 
 export const CustomerNavbar = () => {
   const { user, clearAuth } = useAuthStore();
@@ -120,6 +121,9 @@ export const CustomerNavbar = () => {
             <Mic className="size-3.5 text-accent animate-pulse" />
             <span className="hidden sm:inline">Voice Booking</span>
           </Button>
+
+          {/* Real-Time Notification Bell */}
+          {user && <NotificationBell />}
 
           {user ? (
             /* Logged In: Reusable Clean User Dropdown */

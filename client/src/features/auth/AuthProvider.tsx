@@ -1,11 +1,14 @@
-import { Outlet } from "react-router-dom"
-import { useBootstrapAuth } from "./useBootstrapAuth"
-
+import { Outlet } from "react-router-dom";
+import { useBootstrapAuth } from "./useBootstrapAuth";
+import { SocketNotificationProvider } from "@/features/socket/SocketNotificationProvider";
 
 const AuthProvider = () => {
-    useBootstrapAuth()
-  return <Outlet/>
+  useBootstrapAuth();
+  return (
+    <SocketNotificationProvider>
+      <Outlet />
+    </SocketNotificationProvider>
+  );
+};
 
-}
-
-export default AuthProvider
+export default AuthProvider;

@@ -44,6 +44,9 @@ export interface IWorker extends Document {
   };
   rating: number;
   totalJobsCompleted: number;
+  weeklyServiceLimit: number;
+  weeklyAcceptedCount: number;
+  weeklyResetDate?: Date;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -170,6 +173,20 @@ const WorkerSchema = new Schema<IWorker>(
       type: Number,
       min: 0,
       default: 0,
+    },
+    weeklyServiceLimit: {
+      type: Number,
+      min: 1,
+      default: 6,
+    },
+    weeklyAcceptedCount: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+    weeklyResetDate: {
+      type: Date,
+      default: Date.now,
     },
     isActive: {
       type: Boolean,

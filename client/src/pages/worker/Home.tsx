@@ -1,5 +1,6 @@
 import React from "react";
-import { Sparkles, PlayCircle, CheckCircle2, Star } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Sparkles, PlayCircle, CheckCircle2, Star, AlertTriangle, ArrowRight } from "lucide-react";
 import { useAuthStore } from "@/features/auth/store";
 import {
   useWorkerStats,
@@ -7,6 +8,7 @@ import {
   useWorkerJobs,
   useWorkerProfile,
 } from "@/features/worker/gigs/hooks";
+import { Button } from "@/components/ui/button";
 import { WorkerMetricCard } from "@/components/worker/common/WorkerMetricCard";
 import { WorkerWelcomeBanner } from "@/components/worker/home/WorkerWelcomeBanner";
 import { WorkerPriorityMission } from "@/components/worker/home/WorkerPriorityMission";
@@ -44,6 +46,43 @@ export const WorkerHome: React.FC = () => {
       {/* 1. Welcome Banner */}
       <WorkerWelcomeBanner workerName={user?.name?.split(" ")[0] || "Worker"} />
 
+      {/* 1.5 Emergency SOS Callout Banner */}
+      {matchingAvailableGigs.some((g) => g.isEmergency) && (
+        <div className="p-4 sm:p-5 rounded-2xl border-2 border-rose-500/40 bg-gradient-to-r from-rose-950 via-rose-900 to-rose-950 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl ring-1 ring-rose-500/20">
+          <div className="flex items-start sm:items-center gap-3.5">
+            <div className="size-11 rounded-xl bg-rose-600 text-white flex items-center justify-center shrink-0 shadow-lg animate-pulse ring-2 ring-rose-400/40">
+              <AlertTriangle className="size-6 text-white" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-wider bg-rose-600 text-white px-2 py-0.5 rounded-full">
+                  🚨 URGENT SOS CALLOUT
+                </span>
+                <span className="text-xs text-rose-200 font-semibold">
+                  {matchingAvailableGigs.filter((g) => g.isEmergency).length} nearby emergency awaiting responder
+                </span>
+              </div>
+              <h3 className="text-sm sm:text-base font-bold text-white">
+                Emergency callout: {matchingAvailableGigs.find((g) => g.isEmergency)?.service?.name} (₹{matchingAvailableGigs.find((g) => g.isEmergency)?.rate}/hr)
+              </h3>
+              <p className="text-xs text-rose-200/80">
+                Customer Location: {matchingAvailableGigs.find((g) => g.isEmergency)?.address?.street || "Nearby"} • Immediate priority dispatch
+              </p>
+            </div>
+          </div>
+
+          <Link to="/worker/jobs" className="shrink-0 self-start sm:self-auto">
+            <Button
+              size="sm"
+              className="rounded-xl h-10 px-5 text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white shadow-lg cursor-pointer transition-transform hover:scale-105"
+            >
+              <span>Claim Emergency SOS</span>
+              <ArrowRight className="size-3.5 ml-1.5" />
+            </Button>
+          </Link>
+        </div>
+      )}
+
       {/* 2. Key Metrics Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <WorkerMetricCard
@@ -56,8 +95,8 @@ export const WorkerHome: React.FC = () => {
         />
         <WorkerMetricCard
           label="Active Work"
-          value={stats?.activeJobs ?? 0}
-          subtitle="Confirmed & In Progress"
+          value={`${stats?.activeJobs ?? 0} / ${stats?.weeklyServiceLimit ?? 6}`}
+          subtitle={`Weekly quota (${stats?.weeklyServicesRemaining ?? Math.max(0, 6 - (stats?.activeJobs ?? 0))} left)`}
           icon={PlayCircle}
           iconBgClass="bg-blue-500/10"
           iconColorClass="text-blue-500"

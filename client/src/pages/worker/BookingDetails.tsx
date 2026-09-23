@@ -4,6 +4,7 @@ import { ArrowLeft, AlertCircle, RotateCcw } from "lucide-react";
 import {
   useWorkerJob,
   useUpdateJobStatus,
+  useWorkerStats,
 } from "@/features/worker/gigs/hooks";
 import { Button } from "@/components/ui/button";
 import { WorkerBookingDetailsView } from "@/components/worker/bookings/WorkerBookingDetailsView";
@@ -26,6 +27,7 @@ export const WorkerBookingDetails: React.FC = () => {
     refetch,
   } = useWorkerJob(id || "");
 
+  const { data: stats } = useWorkerStats();
   const updateStatusMutation = useUpdateJobStatus();
 
   const handleStartJob = async (jobId: string) => {
@@ -172,6 +174,9 @@ export const WorkerBookingDetails: React.FC = () => {
         }}
         onConfirm={handleConfirmCancel}
         isPending={updateStatusMutation.isPending}
+        cancellationsToday={stats?.cancellationsToday}
+        cancellationLimit={stats?.cancellationLimit ?? 1}
+        canCancelToday={stats?.canCancelToday}
       />
     </div>
   );

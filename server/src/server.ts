@@ -1,4 +1,6 @@
 import express, { Express, Request, Response } from 'express';
+import http from 'http';
+import { initSocket } from './services/socket.service';
 import cors from 'cors';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
@@ -91,12 +93,16 @@ app.use('/api/cooperative/forecasting', cooperativeForecastingRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
+// Create HTTP server and attach Socket.io
+const server = http.createServer(app);
+const io = initSocket(server);
+
 // Start server
 const startServer = async () => {
   try {
     await connectDB();
-    app.listen(PORT, () => {
-      console.log(`🚀 Server is running on http://localhost:${PORT}`);
+    server.listen(PORT, () => {
+      console.log(`🚀 Server with Socket.io is running on http://localhost:${PORT}`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);

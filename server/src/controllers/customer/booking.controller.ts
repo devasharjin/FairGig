@@ -11,6 +11,7 @@ import Rating from "../../models/rating.model";
 import Service from "../../models/service.model";
 import { fail, ok } from "../../shared/envelope";
 import { FIXED_TRANSPORT_FEE, BillingService } from "../../services/billing.service";
+import { notifyWorkers } from "../../services/socket.service";
 
 export async function createBooking(req: Request, res: Response) {
   const customerId = (req.user as any)?.userId || (req.user as any)?._id;
@@ -175,6 +176,31 @@ export async function createBooking(req: Request, res: Response) {
     : finalBookingType === BookingType.PREMIUM || (finalBookingType as any) === "ON_DEMAND"
     ? "⭐ Premium specialist booking submitted! Routed exclusively to top-rated specialists (> 4.5★)."
     : "Booking requested successfully";
+
+  // Broadcast real-time socket notification to all active workers if emergency
+  if (finalIsEmergency) {
+    try {
+      notifyWorkers("emergency:created", {
+        type: "EMERGENCY_BOOKING",
+        title: "🚨 URGENT: New Emergency SOS Callout!",
+        message: `Emergency SOS callout for ${service.name} at ${booking.address?.street || "Customer Location"}!`,
+        bookingId: booking._id.toString(),
+        bookingNumber: booking.bookingNumber,
+        serviceName: service.name,
+        categoryName: (populated as any)?.category?.name || "Emergency Service",
+        rate: booking.rate,
+        totalAmount: booking.totalAmount,
+        address: booking.address,
+        urgencyLevel: booking.urgencyLevel || "CRITICAL",
+        hazardType: booking.emergencyDetails?.hazardType,
+        immediateContact: booking.emergencyDetails?.immediateContact,
+        createdAt: booking.createdAt?.toISOString(),
+        timestamp: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.error("Failed to emit emergency socket event:", err);
+    }
+  }
 
   return ok(res, populated, successMessage);
 }

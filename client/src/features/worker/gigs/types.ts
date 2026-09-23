@@ -71,6 +71,13 @@ export interface WorkerStats {
   rating: number;
   totalJobsCompleted: number;
   verificationStatus: string;
+  cancellationsToday?: number;
+  cancellationLimit?: number;
+  canCancelToday?: boolean;
+  weeklyServiceLimit?: number;
+  weeklyAcceptedCount?: number;
+  weeklyServicesRemaining?: number;
+  canAcceptWeeklyService?: boolean;
 }
 
 export interface WorkerJobsFilterParams {
